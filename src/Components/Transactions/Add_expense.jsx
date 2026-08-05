@@ -200,7 +200,7 @@ const Add_expense = ({ onClose, onSubmit }) => {
                                 setShowConfirm(false);
                                 onClose();
                             }}
-                            className="px-5 py-2 rounded-lg border border-gray-200 text-slate-600"
+                            className="px-4 py-2 border border-slate-300 rounded-lg"
                         >
                             Cancel
                         </button>

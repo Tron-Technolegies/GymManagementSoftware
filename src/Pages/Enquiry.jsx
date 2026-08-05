@@ -258,7 +258,7 @@ const Enquiry = () => {
                                         date: "",
                                     });
                                 }}
-                                className="px-5 py-2 rounded-lg border"
+                                className="px-4 py-2 border border-slate-300 rounded-lg"
                             >
                                 Cancel
                             </button>

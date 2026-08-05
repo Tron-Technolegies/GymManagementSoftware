@@ -442,7 +442,7 @@ const Dashboard = () => {
               <div className="flex justify-end gap-2">
                 <button
                   onClick={closeRenewModal}
-                  className="px-4 py-2 border rounded-lg"
+                  className="px-4 py-2 border border-slate-300 rounded-lg"
                 >
                   Cancel
                 </button>

@@ -239,12 +239,12 @@ export default function Branches() {
               <div className="md:col-span-2 flex justify-end gap-3">
                 <button
                   onClick={closeForm}
-                  className="border bordertext-black px-4 py-2 rounded">
+                  className="px-4 py-2 border border-slate-300 rounded-lg">
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="bg-blue-600 text-white px-4 py-2 rounded">
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg">
                   {editing ? "Update" : "Save"}
                 </button>
               </div>

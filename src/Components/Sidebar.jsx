@@ -132,7 +132,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     <>
       {/* Mobile Overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
@@ -150,7 +150,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             alt="Logo"
             className="w-24 md:w-28 object-contain"
           />
-          <button 
+          <button
             className="lg:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-lg"
             onClick={() => setSidebarOpen(false)}
           >
@@ -183,7 +183,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             path="/branches"
             onClick={() => setSidebarOpen(false)}
           />
-
+          <SidebarItem
+            icon={Building2}
+            label="diet"
+            path="/diet"
+            onClick={() => setSidebarOpen(false)}
+          />
           <SidebarItem
             icon={Tag}
             label="Plans"

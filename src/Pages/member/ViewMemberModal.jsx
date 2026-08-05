@@ -1,14 +1,16 @@
 import React from "react";
-import { X, Pause, CirclePlay } from "lucide-react";
+import { X, Pause, CirclePlay, Astroid } from "lucide-react";
 import { useState } from "react";
 import PauseMember from "./PauseMember";
 import ResumeMember from "./ResumeMember";
 import Pausememberview from "./Pausememberview";
+import DietPlan from "../Dietplan";
 
 const ViewMemberModal = ({ member, onClose }) => {
     const [memberData, setMemberData] = useState(member);
     const [showPauseModal, setShowPauseModal] = useState(false);
     const [showResumeModal, setShowResumeModal] = useState(false);
+    const [showDietPlan, setShowDietPlan] = useState(false);
 
     const getStatusStyle = (status) => {
         switch (status) {
@@ -158,7 +160,16 @@ const ViewMemberModal = ({ member, onClose }) => {
                                     : "Pause Membership"}
                             </button>
 
+                            <button
+                                onClick={() => setShowDietPlan(true)}
+                                className="flex items-center gap-2 bg-blue-500 hover:bg-violet-600 text-white 
+                                rounded-full px-5 py-2 shadow-md hover:shadow-lg transition-all duration-200">
+                                <Astroid size={18} />
+                                <span>Generate AI Diet Plan</span>
+                            </button>
+
                         </div>
+
 
                         {/* Details */}
                         <div className="flex-1 space-y-8">
@@ -261,6 +272,18 @@ const ViewMemberModal = ({ member, onClose }) => {
 
                         </div>
                     </div>
+                    {showDietPlan && (
+                        <div className="mt-8 border-t pt-6">
+
+                            <DietPlan
+                                member={memberData}
+                                onClose={() => setShowDietPlan(false)}
+                            />
+
+                        </div>
+                    )}
+
+
                 </div>
 
                 {/* Footer */}

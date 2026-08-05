@@ -503,15 +503,13 @@ const Staffs = () => {
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={() => setShowPaymentForm(false)}
-                                className="px-4 py-2 border rounded-lg"
-                            >
+                                className="px-4 py-2 border border-slate-300 rounded-lg">
                                 Cancel
                             </button>
 
                             <button
                                 onClick={handleSavePayment}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-                            >
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg">
                                 Pay Salary
                             </button>
                         </div>

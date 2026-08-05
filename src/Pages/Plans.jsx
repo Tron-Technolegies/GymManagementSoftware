@@ -192,13 +192,15 @@ export default function Plans() {
               />
 
               <div className="md:col-span-2 flex justify-end gap-3">
-                <button onClick={closeForm}>
+                <button onClick={closeForm}
+                  className="px-4 py-2 border border-slate-300 rounded-lg"
+                >
                   Cancel
                 </button>
 
                 <button
                   onClick={handleSubmit}
-                  className="bg-blue-600 text-white px-4 py-2 rounded"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg"
                 >
                   {editing ? "Update" : "Save"}
                 </button>

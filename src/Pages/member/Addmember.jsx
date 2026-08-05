@@ -629,7 +629,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                     {/* Footer */}
                     <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
                         <button
-                            className="px-5 py-2 text-sm font-bold text-slate-400 hover:text-slate-600"
+                            className="px-4 py-2 border border-slate-300 rounded-lg"
                             onClick={onClose}
                         >
                             Cancel
