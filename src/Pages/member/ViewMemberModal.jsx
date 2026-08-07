@@ -1,16 +1,24 @@
 import React from "react";
-import { X, Pause, CirclePlay, Astroid } from "lucide-react";
+import { X, Pause, CirclePlay, Sparkles, Dumbbell } from "lucide-react";
 import { useState } from "react";
 import PauseMember from "./PauseMember";
 import ResumeMember from "./ResumeMember";
 import Pausememberview from "./Pausememberview";
 import DietPlan from "../Dietplan";
+import { generateDietPlan } from "../../api/dietplan";
+import WorkoutPlan from "../WorkoutPlan"
+import { generateWorkoutPlan } from "../../api/workoutplan"
 
 const ViewMemberModal = ({ member, onClose }) => {
     const [memberData, setMemberData] = useState(member);
     const [showPauseModal, setShowPauseModal] = useState(false);
     const [showResumeModal, setShowResumeModal] = useState(false);
     const [showDietPlan, setShowDietPlan] = useState(false);
+    const [dietData, setDietData] = useState(null);
+    const [loadingDiet, setLoadingDiet] = useState(false);
+    const [showWorkout, setShowWorkout] = useState(false);
+    const [workoutData, setWorkoutData] = useState(null);
+    const [loadingWorkout, setLoadingWorkout] = useState(false);
 
     const getStatusStyle = (status) => {
         switch (status) {
@@ -27,6 +35,46 @@ const ViewMemberModal = ({ member, onClose }) => {
         }
     };
 
+    const handleGenerateDiet = async () => {
+        try {
+            setShowDietPlan(true);      // Open AI Diet page immediately
+            setLoadingDiet(true);
+            setDietData(null);
+
+            const res = await generateDietPlan(memberData.id);
+
+            console.log(res.data);
+
+            setDietData(res.data.diet_plan);
+        } catch (err) {
+            console.error("Diet generation failed:", err);
+            setShowDietPlan(false);
+        } finally {
+            setLoadingDiet(false);
+        }
+    };
+
+    const handleGenerateWorkout = async () => {
+        if (!memberData?.id) {
+            console.error("No member selected.");
+            return;
+        }
+
+        try {
+            setShowWorkout(true);
+            setLoadingWorkout(true);
+            setWorkoutData(null);
+
+            const res = await generateWorkoutPlan(memberData.id);
+            setWorkoutData(res.data.workout_plan);
+
+        } catch (err) {
+            console.error("Workout generation failed:", err);
+            setShowWorkout(false);
+        } finally {
+            setLoadingWorkout(false);
+        }
+    };
     return (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             {showPauseModal && (
@@ -67,19 +115,12 @@ const ViewMemberModal = ({ member, onClose }) => {
                     onSuccess={(newExpiryDate) => {
                         setMemberData(prev => ({
                             ...prev,
-
                             status: "Active",
-
                             is_paused: false,
-
                             pause_start_date: null,
-
                             pause_days_used: 0,
-
                             pause_days_remaining: 15,
-
                             pause_count: prev.pause_count,
-
                             expiry_date: newExpiryDate,
 
                         }));
@@ -94,10 +135,23 @@ const ViewMemberModal = ({ member, onClose }) => {
                 <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
                     <div>
                         <h2 className="text-xl font-bold text-slate-900">
-                            Member Profile
+                            {
+                                showWorkout
+                                    ? "AI Workout Plan"
+                                    : showDietPlan
+                                        ? "AI Diet Plan"
+                                        : "Member Profile"
+                            }
                         </h2>
+
                         <p className="text-sm text-slate-500">
-                            View member information
+                            {
+                                showWorkout
+                                    ? "Personalized workout program"
+                                    : showDietPlan
+                                        ? "Personalized nutrition plan"
+                                        : "View member information"
+                            }
                         </p>
                     </div>
 
@@ -111,175 +165,193 @@ const ViewMemberModal = ({ member, onClose }) => {
 
                 {/* Body */}
                 <div className="p-6 overflow-y-auto max-h-[80vh]">
-                    <div className="flex flex-col lg:flex-row gap-8">
 
-                        {/* Profile */}
-                        <div className="w-full lg:w-64 flex flex-col items-center">
-                            <div className="w-44 h-44 rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
-                                {member?.photo ? (
-                                    <img
-                                        src={member.photo}
-                                        alt={member.name}
-                                        className="w-full h-full object-cover"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-5xl font-bold text-slate-400">
-                                        {member?.name?.charAt(0)}
-                                    </div>
-                                )}
+                    {showWorkout ? (
+                        <WorkoutPlan
+                            member={memberData}
+                            workout={workoutData}
+                            loading={loadingWorkout}
+                            onClose={() => setShowWorkout(false)}
+                        />
+                    ) : showDietPlan ? (
+                        <DietPlan
+                            member={memberData}
+                            diet={dietData}
+                            loading={loadingDiet}
+                            onClose={() => setShowDietPlan(false)}
+                        />
+                    ) : (
+                        <div className="flex flex-col lg:flex-row gap-8">
+
+                            {/* Profile */}
+                            <div className="w-full lg:w-64 flex flex-col items-center">
+                                <div className="w-44 h-44 rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+                                    {member?.photo ? (
+                                        <img
+                                            src={member.photo}
+                                            alt={member.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-5xl font-bold text-slate-400">
+                                            {member?.name?.charAt(0)}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <h3 className="mt-4 text-lg font-bold">
+                                    {member?.name}
+                                </h3>
+
+                                <span
+                                    className={`mt-2 px-3 py-1 rounded-full text-xs font-bold ${getStatusStyle(memberData?.status)}`}>
+                                    {memberData?.status}
+                                </span>
+                                <div className="space-y-5 my-5 mx-auto flex flex-col items-center">
+                                    <button
+                                        onClick={() =>
+                                            memberData?.is_paused
+                                                ? setShowResumeModal(true)
+                                                : setShowPauseModal(true)
+                                        }
+                                        className={`flex items-center gap-2 rounded-md px-5 py-1 text-white ${memberData?.is_paused
+                                            ? "bg-green-600"
+                                            : "bg-yellow-500"
+                                            }`}
+                                    >
+                                        {memberData?.is_paused ? (
+                                            <CirclePlay size={16} />
+                                        ) : (
+                                            <Pause size={16} />
+                                        )}
+
+                                        {memberData?.is_paused
+                                            ? "Resume Membership"
+                                            : "Pause Membership"}
+                                    </button>
+
+                                    <button
+                                        onClick={handleGenerateDiet}
+                                        disabled={loadingDiet}
+                                        className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700 disabled:opacity-60">
+                                        <Sparkles size={18} />
+                                        <span>
+                                            {loadingDiet ? "Generating..." : "Generate AI Diet Plan"}
+                                        </span>
+                                    </button>
+                                    <button
+                                        onClick={handleGenerateWorkout}
+                                        disabled={loadingWorkout}
+                                        className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700 disabled:opacity-60">
+                                        <Dumbbell size={18} />
+                                        <span>
+                                            {loadingWorkout ? "Generating..." : "AI Workout Plan"}
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
 
-                            <h3 className="mt-4 text-lg font-bold">
-                                {member?.name}
-                            </h3>
 
-                            <span
-                                className={`mt-2 px-3 py-1 rounded-full text-xs font-bold ${getStatusStyle(memberData?.status)}`}>
-                                {memberData?.status}
-                            </span>
+                            {/* Details */}
+                            <div className="flex-1 space-y-8">
 
-                            <button
-                                onClick={() =>
-                                    memberData?.is_paused
-                                        ? setShowResumeModal(true)
-                                        : setShowPauseModal(true)
-                                }
-                                className={`flex items-center gap-2 rounded-full my-5 px-5 py-1 text-white ${memberData?.is_paused
-                                    ? "bg-green-600"
-                                    : "bg-yellow-500"
-                                    }`}
-                            >
-                                {memberData?.is_paused ? (
-                                    <CirclePlay size={16} />
-                                ) : (
-                                    <Pause size={16} />
-                                )}
+                                {/* Personal Details */}
+                                <section>
+                                    <h3 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4">
+                                        Personal Details
+                                    </h3>
 
-                                {memberData?.is_paused
-                                    ? "Resume Membership"
-                                    : "Pause Membership"}
-                            </button>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                            <button
-                                onClick={() => setShowDietPlan(true)}
-                                className="flex items-center gap-2 bg-blue-500 hover:bg-violet-600 text-white 
-                                rounded-full px-5 py-2 shadow-md hover:shadow-lg transition-all duration-200">
-                                <Astroid size={18} />
-                                <span>Generate AI Diet Plan</span>
-                            </button>
+                                        <DetailCard label="Member ID" value={member?.id} />
+                                        <DetailCard label="Phone" value={member?.phone} />
+                                        <DetailCard label="Email" value={member?.email} />
+                                        <DetailCard label="Age" value={member?.age} />
+                                        <DetailCard label="Gender" value={member?.gender} />
+                                        <DetailCard label="Blood Group" value={member?.blood_group} />
+                                        <DetailCard label="Location" value={member?.location} />
+                                        <DetailCard label="Aadhaar" value={member?.adhaar_number} />
 
-                        </div>
-
-
-                        {/* Details */}
-                        <div className="flex-1 space-y-8">
-
-                            {/* Personal Details */}
-                            <section>
-                                <h3 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4">
-                                    Personal Details
-                                </h3>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                                    <DetailCard label="Member ID" value={member?.id} />
-                                    <DetailCard label="Phone" value={member?.phone} />
-                                    <DetailCard label="Email" value={member?.email} />
-                                    <DetailCard label="Age" value={member?.age} />
-                                    <DetailCard label="Gender" value={member?.gender} />
-                                    <DetailCard label="Blood Group" value={member?.blood_group} />
-                                    <DetailCard label="Location" value={member?.location} />
-                                    <DetailCard label="Aadhaar" value={member?.adhaar_number} />
-
-                                </div>
-                            </section>
-
-                            {/* Body Stats */}
-                            <section>
-                                <h3 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4">
-                                    Body Statistics
-                                </h3>
-
-                                <div className="grid grid-cols-3 gap-4">
-                                    <DetailCard
-                                        label="Height"
-                                        value={`${member?.height} cm`}
-                                    />
-                                    <DetailCard
-                                        label="Weight"
-                                        value={`${member?.weight} kg`}
-                                    />
-                                    <DetailCard
-                                        label="BMI"
-                                        value={member?.bmi || "-"}
-                                    />
-                                </div>
-                            </section>
-
-                            <section>
-                                <h3 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4">
-                                    Membership Details
-                                </h3>
-
-                                <div className="grid grid-cols-2 gap-4">
-
-                                    <DetailCard
-                                        label="Join Date"
-                                        value={memberData?.join_date}
-                                    />
-
-                                    <DetailCard
-                                        label="Expiry Date"
-                                        value={memberData?.expiry_date}
-                                    />
-
-                                </div>
-
-
-                                {/* Pause Status */}
-                                <div className="mt-5">
-
-                                    <Pausememberview
-                                        memberData={memberData}
-                                    />
-
-                                </div>
-
-                            </section>
-
-                            {/* Payments */}
-                            <section>
-                                <h3 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4">
-                                    Payment Details
-                                </h3>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <DetailCard
-                                        label="Paid Amount"
-                                        value={`₹${member?.paid_amount}`}
-                                    />
-
-                                    <div className="bg-red-50 border border-red-100 rounded-xl p-4">
-                                        <p className="text-xs font-semibold text-slate-500 uppercase">
-                                            Due Amount
-                                        </p>
-                                        <h4 className="text-lg font-bold text-red-600 mt-1">
-                                            ₹{member?.due_amount}
-                                        </h4>
                                     </div>
-                                </div>
-                            </section>
+                                </section>
 
-                        </div>
-                    </div>
-                    {showDietPlan && (
-                        <div className="mt-8 border-t pt-6">
+                                {/* Body Stats */}
+                                <section>
+                                    <h3 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4">
+                                        Body Statistics
+                                    </h3>
 
-                            <DietPlan
-                                member={memberData}
-                                onClose={() => setShowDietPlan(false)}
-                            />
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <DetailCard
+                                            label="Height"
+                                            value={`${member?.height} cm`}
+                                        />
+                                        <DetailCard
+                                            label="Weight"
+                                            value={`${member?.weight} kg`}
+                                        />
+                                        <DetailCard
+                                            label="BMI"
+                                            value={member?.bmi || "-"}
+                                        />
+                                    </div>
+                                </section>
 
+                                <section>
+                                    <h3 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4">
+                                        Membership Details
+                                    </h3>
+
+                                    <div className="grid grid-cols-2 gap-4">
+
+                                        <DetailCard
+                                            label="Join Date"
+                                            value={memberData?.join_date}
+                                        />
+
+                                        <DetailCard
+                                            label="Expiry Date"
+                                            value={memberData?.expiry_date}
+                                        />
+
+                                    </div>
+
+
+                                    {/* Pause Status */}
+                                    <div className="mt-5">
+
+                                        <Pausememberview
+                                            memberData={memberData}
+                                        />
+
+                                    </div>
+
+                                </section>
+
+                                {/* Payments */}
+                                <section>
+                                    <h3 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4">
+                                        Payment Details
+                                    </h3>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <DetailCard
+                                            label="Paid Amount"
+                                            value={`₹${member?.paid_amount}`}
+                                        />
+
+                                        <div className="bg-red-50 border border-red-100 rounded-xl p-4">
+                                            <p className="text-xs font-semibold text-slate-500 uppercase">
+                                                Due Amount
+                                            </p>
+                                            <h4 className="text-lg font-bold text-red-600 mt-1">
+                                                ₹{member?.due_amount}
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </section>
+
+                            </div>
                         </div>
                     )}
 
@@ -288,12 +360,26 @@ const ViewMemberModal = ({ member, onClose }) => {
 
                 {/* Footer */}
                 <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end">
-                    <button
-                        onClick={onClose}
-                        className="px-6 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800"
-                    >
-                        Close
-                    </button>
+
+                    {(showDietPlan || showWorkout) ? (
+                        <button
+                            onClick={() => {
+                                setShowDietPlan(false);
+                                setShowWorkout(false);
+                            }}
+                            className="px-6 py-2 bg-slate-900 text-white rounded-lg"
+                        >
+                            Back to Profile
+                        </button>
+                    ) : (
+                        <button
+                            onClick={onClose}
+                            className="px-6 py-2 bg-slate-900 text-white rounded-lg"
+                        >
+                            Close
+                        </button>
+                    )}
+
                 </div>
 
             </div>

@@ -1,32 +1,34 @@
-import React from 'react'
+import React from "react";
+import { ShoppingCart } from "lucide-react";
 
-const Shoppinglist = () => {
+const Shoppinglist = ({ shoppingList }) => {
     return (
-        <>
-            <div className="border rounded-lg p-4">
+        <div className="rounded-lg p-4 bg-[#F7F9FB] shadow-sm">
 
-                <h3 className="font-semibold mb-3">
+            <div className="flex items-center gap-2 mb-3">
+                <ShoppingCart size={18} />
+                <h3 className="font-semibold">
                     Shopping List
                 </h3>
+            </div>
 
-                <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2">
 
-                    {diet.shopping_list.map((item) => (
+                {shoppingList?.map((item, index) => (
 
-                        <span
-                            key={item}
-                            className="bg-gray-100 px-3 py-1 rounded"
-                        >
-                            {item}
-                        </span>
+                    <span
+                        key={index}
+                        className="bg-white px-3 py-1 rounded-lg"
+                    >
+                        {item}
+                    </span>
 
-                    ))}
-
-                </div>
+                ))}
 
             </div>
-        </>
-    )
-}
 
-export default Shoppinglist
+        </div>
+    );
+};
+
+export default Shoppinglist;

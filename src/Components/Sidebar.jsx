@@ -171,6 +171,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           />
 
           <SidebarItem
+            icon={LayoutDashboard}
+            label="workplan"
+            path="/workplan"
+            onClick={() => setSidebarOpen(false)}
+          />
+
+          <SidebarItem
             icon={Users}
             label="Members"
             path="/members"
@@ -181,12 +188,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             icon={Building2}
             label="Branches"
             path="/branches"
-            onClick={() => setSidebarOpen(false)}
-          />
-          <SidebarItem
-            icon={Building2}
-            label="diet"
-            path="/diet"
             onClick={() => setSidebarOpen(false)}
           />
           <SidebarItem

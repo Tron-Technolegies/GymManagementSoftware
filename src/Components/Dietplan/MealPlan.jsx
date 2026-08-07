@@ -1,56 +1,54 @@
-import React from 'react'
+import React from "react";
+import { Clock3, Flame } from "lucide-react";
 
-const MealPlan = () => {
+const MealPlan = ({ diet }) => {
+    if (!diet || !diet.meals) {
+        return (
+            <p className="text-gray-500">
+                No meal plan available
+            </p>
+        );
+    }
+
     return (
-        <>
-            <div className="space-y-4">
+        <div className="space-y-4">
+            {diet.meals.map((meal, index) => (
+                <div
+                    key={index}
+                    className="rounded-xl bg-[#F7F9FB] p-5 shadow-sm"
+                >
+                    <div className="flex items-center justify-between mb-4 ">
+                        <div>
+                            <h3 className="text-lg font-semibold">
+                                {meal.meal}
+                            </h3>
 
-                {diet.meals.map((meal) => (
-
-                    <div
-                        key={meal.meal}
-                        className="border rounded-lg p-5 bg-white"
-                    >
-
-                        <div className="flex justify-between">
-
-                            <div>
-
-                                <h3 className="font-semibold">
-                                    {meal.meal}
-                                </h3>
-
+                            <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
+                                <Clock3 size={15} />
                                 <span>{meal.time}</span>
-
                             </div>
-
-                            <div>
-
-                                {meal.calories} CAL
-
-                            </div>
-
                         </div>
 
-                        <ul className="mt-3 list-disc ml-6">
-
-                            {meal.foods.map((food) => (
-
-                                <li key={food}>
-                                    {food}
-                                </li>
-
-                            ))}
-
-                        </ul>
-
+                        <div className="flex items-center gap-1 font-semibold">
+                            <Flame size={16} />
+                            <span>{meal.calories} CAL</span>
+                        </div>
                     </div>
 
-                ))}
+                    <div className="space-y-2">
+                        {meal.foods?.map((food, index) => (
+                            <div
+                                key={index}
+                                className="px-4 text-sm text-slate-700"
+                            >
+                                {food}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
 
-            </div>
-        </>
-    )
-}
-
-export default MealPlan
+export default MealPlan;

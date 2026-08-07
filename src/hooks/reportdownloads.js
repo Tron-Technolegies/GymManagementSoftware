@@ -20,12 +20,7 @@ export const handleDownload = async (
             fromDate,
             toDate
         );
-
-
         setReportData(res.data);
-
-
-
         setTimeout(async () => {
 
 
@@ -36,9 +31,6 @@ export const handleDownload = async (
                 console.error("PDF element not found");
                 return;
             }
-
-
-
             const canvas = await html2canvas(
                 element,
                 {
@@ -48,29 +40,17 @@ export const handleDownload = async (
                 }
             );
 
-
-
             const pdf = new jsPDF(
                 "p",
                 "mm",
                 "a4"
             );
-
-
             const pageWidth =
                 pdf.internal.pageSize.getWidth();
-
-
             const pageHeight =
                 pdf.internal.pageSize.getHeight();
-
-
-
             const imgWidth =
                 pageWidth;
-
-
-
             const imgHeight =
                 (
                     canvas.height *
@@ -82,13 +62,7 @@ export const handleDownload = async (
 
 
             let heightLeft = imgHeight;
-
-
-
             let position = 0;
-
-
-
             // First page
 
             pdf.addImage(
@@ -99,25 +73,13 @@ export const handleDownload = async (
                 imgWidth,
                 imgHeight
             );
-
-
             heightLeft -= pageHeight;
-
-
-
-            // Remaining pages
 
             while (heightLeft > 0) {
 
-
                 position =
                     heightLeft - imgHeight;
-
-
                 pdf.addPage();
-
-
-
                 pdf.addImage(
                     canvas.toDataURL("image/png"),
                     "PNG",
@@ -131,19 +93,11 @@ export const handleDownload = async (
                 heightLeft -= pageHeight;
 
             }
-
-
-
             pdf.save(
                 `profit-loss-${period}.pdf`
             );
 
-
-
         }, 1000);
-
-
-
     }
     catch (error) {
 

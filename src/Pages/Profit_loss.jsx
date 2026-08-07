@@ -1,5 +1,5 @@
 // import React, { useRef, useState } from "react";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, ArrowDownToLine } from "lucide-react";
 import { useRef, useState } from "react";
 import Income_members from "../Components/Profit_Loss/Income_members";
 import Expense_category from "../Components/Profit_Loss/Expense_category";
@@ -125,9 +125,11 @@ const Profit_loss = () => {
                                 setReportData
                             )
                         }
-                        className="bg-blue-500 rounded-lg px-3 py-2 text-xs text-white"
+                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4 py-2"
                     >
-                        DOWNLOAD PDF
+                        <ArrowDownToLine size={18} />
+
+                        Download
                     </button>
 
                 </div>

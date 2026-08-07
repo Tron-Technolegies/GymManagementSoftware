@@ -15,6 +15,7 @@ import Enquiry from "./Pages/Enquiry";
 import Transaction from "./Pages/Transaction";
 import Profit_loss from "./Pages/Profit_loss";
 import DietPlan from "./Pages/Dietplan";
+import WorkoutPlan from "./Components/WorkoutPlannn";
 // import Login from "./Pages/Login";
 
 const router = createBrowserRouter([
@@ -36,6 +37,9 @@ const router = createBrowserRouter([
       { path: "settings", element: <Settings /> },
       { path: "sales", element: <Sales /> },
       { path: "diet", element: <DietPlan /> },
+      { path: "/workplan", element: <WorkoutPlan /> },
+
+
 
       // { path: "invoice", element: <Invoice /> },
       { path: "staffs", element: <Staffs /> },
