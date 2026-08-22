@@ -1,6 +1,5 @@
 import api from "./api";
 
-
 export const getDashboardStats = (
     period = "daily",
     selectedDate = null
@@ -18,7 +17,24 @@ export const getDashboardStats = (
 
 };
 
+export const getExpiringSoonMembers = () => {
+    return api.get("admin/api/expiring_soon_members/");
+};
 
+export const getBlockedMembers = () => {
+    return api.get("admin/api/blocked_members/");
+};
+
+export const getPlans = () => {
+    return api.get("admin/api/plans/");
+};
+
+export const renewMember = (memberId, plan) => {
+    const formData = new FormData();
+    formData.append("plan", plan);
+
+    return api.post(`admin/api/members/${memberId}/renew/`, formData);
+};
 
 export const getExpensecategory = (
     period = "daily",

@@ -7,18 +7,25 @@ import Pausememberview from "./Pausememberview";
 import DietPlan from "../Dietplan";
 import { generateDietPlan } from "../../api/dietplan";
 import WorkoutPlan from "../WorkoutPlan"
-import { generateWorkoutPlan } from "../../api/workoutplan"
+import { useWorkoutPlan } from "../../hooks/useWorkoutPlan";
 
 const ViewMemberModal = ({ member, onClose }) => {
     const [memberData, setMemberData] = useState(member);
     const [showPauseModal, setShowPauseModal] = useState(false);
     const [showResumeModal, setShowResumeModal] = useState(false);
     const [showDietPlan, setShowDietPlan] = useState(false);
+    const {
+        workout,
+        workoutMember,
+        loading: loadingWorkout,
+        error: workoutError,
+        generate,
+        reset,
+    } = useWorkoutPlan();
     const [dietData, setDietData] = useState(null);
     const [loadingDiet, setLoadingDiet] = useState(false);
     const [showWorkout, setShowWorkout] = useState(false);
-    const [workoutData, setWorkoutData] = useState(null);
-    const [loadingWorkout, setLoadingWorkout] = useState(false);
+    // const [loadingWorkout, setLoadingWorkout] = useState(false);
 
     const getStatusStyle = (status) => {
         switch (status) {
@@ -29,7 +36,7 @@ const ViewMemberModal = ({ member, onClose }) => {
             case "Expired":
                 return "bg-yellow-100 text-yellow-700";
             case "Paused":
-                return "bg-blue-100 text-blue-700";
+                return "bg-yellow-100 text-yellow-700";
             default:
                 return "bg-slate-100 text-slate-700";
         }
@@ -60,21 +67,15 @@ const ViewMemberModal = ({ member, onClose }) => {
             return;
         }
 
-        try {
-            setShowWorkout(true);
-            setLoadingWorkout(true);
-            setWorkoutData(null);
-
-            const res = await generateWorkoutPlan(memberData.id);
-            setWorkoutData(res.data.workout_plan);
-
-        } catch (err) {
-            console.error("Workout generation failed:", err);
-            setShowWorkout(false);
-        } finally {
-            setLoadingWorkout(false);
-        }
+        setShowWorkout(true);
+        await generate(memberData.id);
     };
+
+    const handleCloseWorkout = () => {
+        setShowWorkout(false);
+        reset();
+    };
+
     return (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             {showPauseModal && (
@@ -169,9 +170,14 @@ const ViewMemberModal = ({ member, onClose }) => {
                     {showWorkout ? (
                         <WorkoutPlan
                             member={memberData}
-                            workout={workoutData}
+                            workout={workout}
+                            workoutMember={workoutMember}
                             loading={loadingWorkout}
-                            onClose={() => setShowWorkout(false)}
+                            error={workoutError}
+                            onClose={() => {
+                                setShowWorkout(false);
+                                reset();
+                            }}
                         />
                     ) : showDietPlan ? (
                         <DietPlan
@@ -214,7 +220,7 @@ const ViewMemberModal = ({ member, onClose }) => {
                                                 ? setShowResumeModal(true)
                                                 : setShowPauseModal(true)
                                         }
-                                        className={`flex items-center gap-2 rounded-md px-5 py-1 text-white ${memberData?.is_paused
+                                        className={`flex items-center gap-2 rounded-md px-5 py-2 text-white ${memberData?.is_paused
                                             ? "bg-green-600"
                                             : "bg-yellow-500"
                                             }`}
@@ -233,8 +239,8 @@ const ViewMemberModal = ({ member, onClose }) => {
                                     <button
                                         onClick={handleGenerateDiet}
                                         disabled={loadingDiet}
-                                        className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700 disabled:opacity-60">
-                                        <Sparkles size={18} />
+                                        className="inline-flex items-center gap-2 rounded-lg bg-blue-500 px-3 py-2 text-white hover:bg-blue-700 disabled:opacity-60">
+                                        <Sparkles size={16} />
                                         <span>
                                             {loadingDiet ? "Generating..." : "Generate AI Diet Plan"}
                                         </span>
@@ -242,7 +248,7 @@ const ViewMemberModal = ({ member, onClose }) => {
                                     <button
                                         onClick={handleGenerateWorkout}
                                         disabled={loadingWorkout}
-                                        className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700 disabled:opacity-60">
+                                        className="inline-flex items-center gap-2 rounded-lg bg-violet-500 px-8 py-2 text-white hover:bg-violet-700 disabled:opacity-60">
                                         <Dumbbell size={18} />
                                         <span>
                                             {loadingWorkout ? "Generating..." : "AI Workout Plan"}
@@ -257,7 +263,7 @@ const ViewMemberModal = ({ member, onClose }) => {
 
                                 {/* Personal Details */}
                                 <section>
-                                    <h3 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4">
+                                    <h3 className="text-xs font-bold text-yellow-600 uppercase tracking-widest mb-4">
                                         Personal Details
                                     </h3>
 
@@ -277,7 +283,7 @@ const ViewMemberModal = ({ member, onClose }) => {
 
                                 {/* Body Stats */}
                                 <section>
-                                    <h3 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4">
+                                    <h3 className="text-xs font-bold text-yellow-600 uppercase tracking-widest mb-4">
                                         Body Statistics
                                     </h3>
 
@@ -298,7 +304,7 @@ const ViewMemberModal = ({ member, onClose }) => {
                                 </section>
 
                                 <section>
-                                    <h3 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4">
+                                    <h3 className="text-xs font-bold text-yellow-600 uppercase tracking-widest mb-4">
                                         Membership Details
                                     </h3>
 
@@ -330,7 +336,7 @@ const ViewMemberModal = ({ member, onClose }) => {
 
                                 {/* Payments */}
                                 <section>
-                                    <h3 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4">
+                                    <h3 className="text-xs font-bold text-yellow-600 uppercase tracking-widest mb-4">
                                         Payment Details
                                     </h3>
 

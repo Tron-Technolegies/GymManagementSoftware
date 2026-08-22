@@ -43,7 +43,7 @@ const AddStaffs = ({
                         value={form.name}
                         placeholder="Name"
                         onChange={handleChange}
-                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                         required
                     />
 
@@ -53,7 +53,7 @@ const AddStaffs = ({
                         value={form.role}
                         placeholder="Role"
                         onChange={handleChange}
-                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     />
 
                     <input
@@ -62,7 +62,7 @@ const AddStaffs = ({
                         value={form.specialization}
                         placeholder="Specialization"
                         onChange={handleChange}
-                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     />
 
                     <input
@@ -71,12 +71,12 @@ const AddStaffs = ({
                         value={form.phone}
                         placeholder="Phone"
                         onChange={handleChange}
-                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                         required
                     />
 
                     {form.phone.length > 0 && form.phone.length < 10 && (
-                        <p className="text-blue-500 text-sm mt-1">
+                        <p className="text-yellow-500 text-sm mt-1">
                             Phone number must be 10 digits.
                         </p>
                     )}
@@ -87,7 +87,7 @@ const AddStaffs = ({
                         value={form.experience}
                         placeholder="Experience"
                         onChange={handleChange}
-                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     />
 
                     <input
@@ -95,7 +95,7 @@ const AddStaffs = ({
                         name="joining_date"
                         value={form.joining_date}
                         onChange={handleChange}
-                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     />
 
                     <input
@@ -104,14 +104,14 @@ const AddStaffs = ({
                         value={form.salary}
                         placeholder="Salary"
                         onChange={handleChange}
-                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     />
 
                     <select
                         name="status"
                         value={form.status}
                         onChange={handleChange}
-                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border p-2 rounded border-slate-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     >
                         <option value="Active">Active</option>
                         <option value="Blocked">Blocked</option>
@@ -128,7 +128,7 @@ const AddStaffs = ({
 
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                            className="px-4 py-2 bg-yellow-500 text-white rounded-lg"
                         >
                             {isEdit ? "Update Staff" : "Save Staff"}
                         </button>

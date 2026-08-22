@@ -44,8 +44,8 @@ const NutritionCards = ({ nutrition }) => {
             title: "Water Intake",
             value: nutrition.water,
             icon: GlassWater,
-            color: "text-blue-500",
-            bg: "bg-blue-50",
+            color: "text-yellow-500",
+            bg: "bg-yellow-50",
         },
     ];
 

@@ -13,9 +13,11 @@ import {
   ChevronDown,
   ChevronRight,
   TrendingUp,
+  LogOut,
 } from "lucide-react";
-import logo from "../assets/logo.png";
+import originallogo from "../assets/originallogo.png";
 import { useNavigate, useLocation } from "react-router-dom";
+import Logout from "./Logout";
 
 const SidebarItem = ({
   icon: Icon,
@@ -27,9 +29,7 @@ const SidebarItem = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
   const active = path ? location.pathname === path : false;
-
   const handleClick = () => {
     if (onClick) {
       onClick();
@@ -37,6 +37,12 @@ const SidebarItem = ({
     if (path) {
       navigate(path);
     }
+  };
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("adminUser");
+    window.location.href = "/login";
   };
 
   return (
@@ -46,35 +52,39 @@ const SidebarItem = ({
         flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer
         transition-all duration-200 text-sm font-medium
         ${active
-          ? "bg-slate-100 text-slate-900"
+          ? "bg-yellow-50 text-slate-900"
           : danger
             ? "text-red-500 hover:bg-red-50"
             : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
         }
         ${className}
-      `}
-    >
+      `}>
+
       <Icon
         size={20}
         className={
           active
-            ? "text-slate-900"
+            ? "text-yellow-500"
             : danger
               ? "text-red-500"
               : "text-slate-400"
         }
       />
 
-      <span>{label}</span>
+      <span className={
+        active
+          ? "text-yellow-600"
+          : danger
+            ? "text-red-500"
+            : "text-slate-400"
+      }>{label}</span>
     </div>
   );
 };
 
 const SidebarDropdown = ({ icon: Icon, label, children, paths = [] }) => {
   const location = useLocation();
-
   const isActive = paths.includes(location.pathname);
-
   const [open, setOpen] = useState(isActive);
 
   return (
@@ -89,13 +99,11 @@ const SidebarDropdown = ({ icon: Icon, label, children, paths = [] }) => {
             ? "bg-slate-100 text-slate-900"
             : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
           }
-        `}
-      >
+        `}>
         <div className="flex items-center gap-3">
           <Icon
             size={20}
-            className={isActive ? "text-slate-900" : "text-slate-400"}
-          />
+            className={isActive ? "text-slate-900" : "text-slate-400"} />
 
           <span className="text-sm font-medium">{label}</span>
         </div>
@@ -119,18 +127,17 @@ const SidebarDropdown = ({ icon: Icon, label, children, paths = [] }) => {
 };
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  // const handleLogout = () => {
-  //   localStorage.removeItem("accessToken");
-  //   localStorage.removeItem("refreshToken");
-  //   localStorage.removeItem("adminUser");
-  //   navigate("/login");
-  // };
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("adminUser");
+    navigate("/login");
+  };
 
   return (
     <>
-      {/* Mobile Overlay */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -146,9 +153,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       `}>
         <div className="h-16 md:h-24 flex items-center justify-between lg:justify-center border-b border-slate-100 px-4">
           <img
-            src={logo}
+            src={originallogo}
             alt="Logo"
-            className="w-24 md:w-28 object-contain"
+            className="h-10 md:h-16 w-auto object-contain"
           />
           <button
             className="lg:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-lg"
@@ -170,12 +177,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             onClick={() => setSidebarOpen(false)}
           />
 
-          <SidebarItem
-            icon={LayoutDashboard}
-            label="workplan"
-            path="/workplan"
-            onClick={() => setSidebarOpen(false)}
-          />
 
           <SidebarItem
             icon={Users}
@@ -223,13 +224,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             label="Transactions"
             paths={["/transactions", "/transactions/profit"]}
           >
-            {/* <SidebarItem
-              icon={IndianRupee}
-              label="Transactions"
-              path="/transactions"
-              className="text-[13px]"
-              onClick={() => setSidebarOpen(false)}
-            /> */}
 
             <SidebarItem
               icon={IndianRupee}
@@ -240,7 +234,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             />
 
             <SidebarItem
-              icon={IndianRupee}
+              icon={TrendingUp}
               label="Profit"
               path="/profit_loss"
               className="text-[13px]"
@@ -254,17 +248,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             path="/enquiry"
             onClick={() => setSidebarOpen(false)}
           />
-
-          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 mt-8 mb-3">
-            System
-          </p>
-
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 mt-8 mb-3">System</p>
           <SidebarItem
             icon={Settings}
             label="Settings"
             path="/settings"
             onClick={() => setSidebarOpen(false)}
           />
+
+          <Logout>
+            <SidebarItem
+              icon={LogOut}
+              label="Logout"
+            />
+          </Logout>
         </nav>
       </aside>
     </>

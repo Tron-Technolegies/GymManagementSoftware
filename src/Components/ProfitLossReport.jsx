@@ -165,13 +165,6 @@ const ProfitLossReport = forwardRef(
 
                 </Section>
 
-
-
-
-
-
-
-
                 {/* SALES DETAILS */}
 
 

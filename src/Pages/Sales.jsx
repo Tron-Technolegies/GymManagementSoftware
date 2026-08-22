@@ -105,7 +105,7 @@ const Sales = () => {
 
                             <ArrowDownToLine
                                 size={18}
-                                className="text-blue-600"
+                                className="text-yellow-600"
                             />
                         </button>
                     </div>

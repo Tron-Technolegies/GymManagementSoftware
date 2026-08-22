@@ -8,21 +8,19 @@ import Members from "./Pages/member/Members";
 import Settings from "./Pages/Settings";
 import Products from "./Pages/products/Products";
 import Sales from "./Pages/Sales";
-// import Invoice from "./Pages/Invoice";
-import Staffs from "./Pages/Staffs/Staffs";
-import Transactions from "./Pages/Transactions";
+import Staffs from "./Pages/Staffs";
 import Enquiry from "./Pages/Enquiry";
 import Transaction from "./Pages/Transaction";
 import Profit_loss from "./Pages/Profit_loss";
 import DietPlan from "./Pages/Dietplan";
-import WorkoutPlan from "./Components/WorkoutPlannn";
-// import Login from "./Pages/Login";
+import Login from "./Pages/Login";
+import WorkoutPlan from "./Pages/WorkoutPlan";
 
 const router = createBrowserRouter([
-  // {
-  //   path: "/login",
-  //   element: <Login />,
-  // },
+  {
+    path: "/login",
+    element: <Login />,
+  },
 
   {
     path: "/",
@@ -39,11 +37,7 @@ const router = createBrowserRouter([
       { path: "diet", element: <DietPlan /> },
       { path: "/workplan", element: <WorkoutPlan /> },
 
-
-
-      // { path: "invoice", element: <Invoice /> },
       { path: "staffs", element: <Staffs /> },
-      { path: "transactions", element: <Transactions /> },
       { path: "enquiry", element: <Enquiry /> },
       { path: "/transaction", element: <Transaction /> },
       { path: "/profit_loss", element: <Profit_loss /> },

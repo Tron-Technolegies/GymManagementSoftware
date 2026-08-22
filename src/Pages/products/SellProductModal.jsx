@@ -160,7 +160,7 @@ const SellProductModal = ({
                                 onClick={handleOpenConfirm}
                                 className={`px-4 py-2 rounded-lg text-white ${memberError || quantityerror
                                     ? "bg-gray-400 cursor-not-allowed"
-                                    : "bg-blue-600"
+                                    : "bg-yellow-600"
                                     }`}
                             >
                                 Sell

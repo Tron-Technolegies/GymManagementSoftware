@@ -116,8 +116,8 @@ const Settings = () => {
                 {/* Admin Profile */}
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
-                            <User className="w-5 h-5 text-blue-600" />
+                        <div className="w-11 h-11 rounded-xl bg-yellow-50 flex items-center justify-center">
+                            <User className="w-5 h-5 text-yellow-600" />
                         </div>
 
                         <h2 className="text-lg font-bold text-slate-900">
@@ -170,8 +170,8 @@ const Settings = () => {
                 {/* Change Password */}
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
-                            <Lock className="w-5 h-5 text-blue-600" />
+                        <div className="w-11 h-11 rounded-xl bg-yellow-50 flex items-center justify-center">
+                            <Lock className="w-5 h-5 text-yellow-600" />
                         </div>
 
                         <h2 className="text-lg font-bold text-slate-900">
@@ -284,7 +284,7 @@ const Settings = () => {
                         <button
                             onClick={handleUpdatePassword}
                             disabled={loading}
-                            className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition disabled:opacity-60"
+                            className="w-full h-12 rounded-xl bg-yellow-600 hover:bg-yellow-700 text-white font-semibold transition disabled:opacity-60"
                         >
                             {loading ? "Updating..." : "Update Password"}
                         </button>
@@ -296,8 +296,8 @@ const Settings = () => {
             <div className="mt-4 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center">
-                            <Database className="w-5 h-5 text-green-600" />
+                        <div className="w-11 h-11 rounded-xl bg-yellow-50 flex items-center justify-center">
+                            <Database className="w-5 h-5 text-yellow-600" />
                         </div>
 
                         <div>
@@ -311,7 +311,7 @@ const Settings = () => {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2 bg-green-50 text-green-600 px-4 py-2 rounded-full text-sm font-semibold">
+                    <div className="flex items-center gap-2 bg-yellow-50 text-yellow-600 px-4 py-2 rounded-full text-sm font-semibold">
                         CONNECTED
                     </div>
                 </div>

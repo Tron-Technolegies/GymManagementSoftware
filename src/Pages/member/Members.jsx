@@ -37,7 +37,7 @@ const Members = () => {
   const [selectedMember, setSelectedMember] = useState(null);
   const [showEditMember, setShowEditMember] = useState(false);
   const [search, setSearch] = useState("");
-
+  const user = JSON.parse(localStorage.getItem("adminUser") || "null");
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
 
@@ -76,7 +76,7 @@ const Members = () => {
     expiry_date: "",
   });
 
-  const buttons = ["All", "Active", "Expired", "Paused", "Blocked"];
+  const buttons = ["All", "Active", "Expired", "Paused", "Blocked", "Due"];
 
   useEffect(() => {
     fetchMembers();
@@ -336,9 +336,14 @@ const Members = () => {
 
   const filteredMembers = members
     .filter((member) => {
-      const matchesStatus =
-        active === "All" ||
-        member.status?.toLowerCase() === active.toLowerCase();
+      let matchesStatus = true;
+
+      if (active === "Due") {
+        matchesStatus = Number(member.due_amount) > 0;
+      } else if (active !== "All") {
+        matchesStatus =
+          member.status?.toLowerCase() === active.toLowerCase();
+      }
 
       const matchesSearch =
         member.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -373,8 +378,8 @@ const Members = () => {
       case "Blocked":
         return "bg-red-100 text-red-700";
       case "Paused":
-        return "bg-blue-100 text-blue-700";
-      case "Pending":
+        return "bg-yellow-100 text-yellow-700";
+      case "Due":
         return "bg-purple-100 text-purple-700";
       default:
         return "bg-slate-100 text-slate-700";
@@ -389,7 +394,7 @@ const Members = () => {
         </div>
 
         <button
-          className="px-4 py-2 rounded-md text-sm bg-blue-500 font-semibold text-white hover:bg-blue-600 transition"
+          className="px-4 py-2 rounded-md text-sm bg-yellow-500 font-semibold text-white hover:bg-yellow-600 transition"
           onClick={() => setShowAddMember(true)}
         >
           + ADD MEMBER
@@ -402,7 +407,7 @@ const Members = () => {
             <p className="text-xs sm:text-sm text-slate-500 tracking-wide">
               ACTIVE MEMBERS
             </p>
-            <ShieldCheck size={22} className="text-green-500 shrink-0" />
+            <ShieldCheck size={22} className="text-yellow-500 shrink-0" />
           </div>
           <h2 className="text-2xl md:text-3xl font-bold mt-3 text-slate-900">
             {stats?.active_members ?? 0}
@@ -414,7 +419,7 @@ const Members = () => {
             <p className="text-xs sm:text-sm text-slate-500 tracking-wide">
               PAUSED MEMBERS
             </p>
-            <ShieldCheck size={22} className="text-blue-500 shrink-0" />
+            <ShieldCheck size={22} className="text-green-500 shrink-0" />
           </div>
           <h2 className="text-2xl md:text-3xl font-bold mt-3 text-slate-900">
             {stats?.paused_members ?? 0}
@@ -453,7 +458,7 @@ const Members = () => {
               key={btn}
               onClick={() => setActive(btn)}
               className={`px-4 py-1 rounded-md transition text-sm ${active === btn
-                ? "bg-blue-500 font-semibold text-white"
+                ? "bg-yellow-500 font-semibold text-white"
                 : "bg-white text-slate-400 font-bold hover:text-black"
                 }`}
             >
@@ -467,7 +472,7 @@ const Members = () => {
           placeholder="Search members..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-72 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-72 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
         />
       </div>
 
@@ -587,7 +592,7 @@ const Members = () => {
                 <td className="px-6 py-4">
                   <div className="flex gap-3 whitespace-nowrap">
                     <button
-                      className="p-2 rounded-md hover:bg-blue-100"
+                      className="p-2 rounded-md hover:bg-purple-100"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleOpenRenewForm(member);
@@ -597,8 +602,8 @@ const Members = () => {
                     </button>
 
                     {member.due_amount <= 0 ? (
-                      <span className="pt-2 px-2 bg-blue-100 rounded-full text-xs">
-                        <CircleCheckBig size={18} className="text-blue-600" />
+                      <span className="pt-2 px-2 bg-yellow-100 rounded-full text-xs">
+                        <CircleCheckBig size={18} className="text-yellow-600" />
                       </span>
                     ) : (
                       <button
@@ -622,7 +627,7 @@ const Members = () => {
                           size={25}
                           className={
                             member.status === "Blocked"
-                              ? "text-red-600"
+                              ? "text-red-600 hover-p- rounded-md hover:bg-red-100"
                               : "text-green-600"
                           }
                         />
@@ -630,25 +635,26 @@ const Members = () => {
                     )}
 
                     <button
-                      className="p-2 rounded-md hover:bg-blue-100"
+                      className="p-2 rounded-md hover:bg-yellow-100"
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedMember(member);
                         setShowEditMember(true);
                       }}
                     >
-                      <Pencil size={18} className="text-blue-600" />
+                      <Pencil size={18} className="text-yellow-600" />
                     </button>
-
-                    <button
-                      className="p-2 rounded-md hover:bg-red-100"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteMember(member.id, member.name);
-                      }}
-                    >
-                      <Trash size={18} className="text-red-600" />
-                    </button>
+                    {user?.is_superuser && (
+                      <button
+                        className="p-2 rounded-md hover:bg-red-100"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteMember(member.id, member.name);
+                        }}
+                      >
+                        <Trash size={18} className="text-red-600" />
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>
@@ -732,7 +738,7 @@ const Members = () => {
                   amount: e.target.value,
                 })
               }
-              className="w-full border border-slate-300 shadow-md rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-slate-300 shadow-md rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />
 
             {/* <input
@@ -745,7 +751,7 @@ const Members = () => {
                   payment_type: e.target.value,
                 })
               }
-              className="w-full border border-slate-300 shadow-md rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-slate-300 shadow-md rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-500"
             /> */}
 
             <select
@@ -756,7 +762,7 @@ const Members = () => {
                   payment_method: e.target.value,
                 })
               }
-              className="w-full border border-slate-300 shadow-md rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-slate-300 shadow-md rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-500"
             >
               <option value="">Payment Method</option>
               <option value="Cash">Cash</option>
@@ -774,7 +780,7 @@ const Members = () => {
                   payment_date: e.target.value,
                 })
               }
-              className="w-full border border-slate-300 shadow-md rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-slate-300 shadow-md rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />
 
             <div className="flex justify-end gap-2">
@@ -787,7 +793,7 @@ const Members = () => {
 
               <button
                 onClick={handleSavePayment}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                className="px-4 py-2 bg-yellow-600 text-white rounded-lg"
               >
                 Save
               </button>
@@ -811,7 +817,7 @@ const Members = () => {
               <select
                 value={renewForm.plan}
                 onChange={handleRenewPlanChange}
-                className="w-full border border-slate-300 shadow-md rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-slate-300 shadow-md rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
               >
                 <option value="">Select Plan</option>
                 {plans.map((plan) => (
@@ -838,7 +844,7 @@ const Members = () => {
 
                 <button
                   onClick={handleRenewSubmit}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                  className="px-4 py-2 bg-yellow-600 text-white rounded-lg"
                 >
                   Renew
                 </button>

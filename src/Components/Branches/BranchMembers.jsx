@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Branch_members({
+export default function BranchMembers({
     isOpen,
     onClose,
     branch,
@@ -58,6 +58,6 @@ export default function Branch_members({
                 </div>
 
             </div>
-        </div >
+        </div>
     );
 }

@@ -5,7 +5,7 @@ const Pausememberview = ({ memberData }) => {
     return (
         <>
             {memberData?.is_paused && (
-                <div className="relative overflow-hidden bg-blue-900 p-5 rounded-lg">
+                <div className="relative overflow-hidden bg-yellow-900 p-5 rounded-lg">
 
                     <CirclePlay
                         size={120}

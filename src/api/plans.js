@@ -12,7 +12,7 @@ export const createPlan = (data) => {
     formData.append("name", data.name);
     formData.append("price", data.price);
     formData.append("duration", data.duration);
-    formData.append("description", data.description);
+    formData.append("description", data.description || "");
 
     return api.post("admin/api/plans/create/", formData);
 };
@@ -24,7 +24,7 @@ export const updatePlan = (id, data) => {
     formData.append("name", data.name);
     formData.append("price", data.price);
     formData.append("duration", data.duration);
-    formData.append("description", data.description);
+    formData.append("description", data.description || "");
 
     return api.post(`admin/api/plans/${id}/update/`, formData);
 };

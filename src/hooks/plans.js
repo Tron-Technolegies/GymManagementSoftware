@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
     getPlans,
     createPlan,
@@ -10,9 +11,10 @@ export default function usePlans() {
     const [plans, setPlans] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // FETCH
+    // FETCH PLANS
     const fetchPlans = async () => {
         setLoading(true);
+
         try {
             const res = await getPlans();
             setPlans(res.data);
@@ -42,7 +44,10 @@ export default function usePlans() {
     // DELETE
     const removePlan = async (id) => {
         await deletePlan(id);
-        setPlans((prev) => prev.filter((p) => p.id !== id));
+
+        setPlans((prev) =>
+            prev.filter((plan) => plan.id !== id)
+        );
     };
 
     return {

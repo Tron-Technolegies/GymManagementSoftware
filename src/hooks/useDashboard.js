@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import {
     getDashboardStats,
     getExpensecategory,
-} from "../api/dashboard";
+} from "../api/dashboardapi";
 
 
 const useDashboard = (
@@ -24,7 +24,6 @@ const useDashboard = (
         selectedPeriod = period,
         date = selectedDate
     ) => {
-
         try {
 
             const res = await getDashboardStats(

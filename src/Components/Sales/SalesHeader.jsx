@@ -10,7 +10,7 @@ const SalesHeader = ({ onDownload }) => {
 
             <button
                 onClick={onDownload}
-                className="flex items-center bg-blue-500 text-white gap-2 rounded-lg px-4 py-2"
+                className="flex items-center bg-yellow-500 text-white gap-2 rounded-lg px-4 py-2"
             >
                 <span className="text-sm">
                     Print Report

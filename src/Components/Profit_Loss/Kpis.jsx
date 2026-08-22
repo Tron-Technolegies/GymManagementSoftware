@@ -58,7 +58,7 @@ const Kpis = ({
             value: stats?.[getPeriodKey("sales")],
             icon: ShoppingCart,
             iconStyle:
-                "bg-blue-50 text-blue-500",
+                "bg-yellow-50 text-yellow-500",
         },
 
         {

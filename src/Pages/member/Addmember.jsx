@@ -30,7 +30,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
 
     const [showCamera, setShowCamera] = useState(false);
     const [preview, setPreview] = useState(null);
-    const [errors, setErrors] = useState()
+    const [errors, setErrors] = useState({});
     const [plans, setPlans] = useState([]);
     const [branches, setBranches] = useState([]);
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -146,6 +146,9 @@ const Addmember = ({ member, onClose, onSuccess }) => {
         try {
             setConfirmLoading(true);
 
+            // Clear old errors
+            setErrors({});
+
             const payload = new FormData();
 
             Object.keys(formData).forEach((key) => {
@@ -153,15 +156,22 @@ const Addmember = ({ member, onClose, onSuccess }) => {
             });
 
             if (member) {
-                await api.post(`admin/api/members/${member.id}/update/`, payload);
+                await api.post(
+                    `admin/api/members/${member.id}/update/`,
+                    payload
+                );
 
                 setAlertState({
                     show: true,
                     message: "Member updated successfully",
                     type: "success",
                 });
+
             } else {
-                await api.post("admin/api/members/create/", payload);
+                await api.post(
+                    "admin/api/members/create/",
+                    payload
+                );
 
                 setAlertState({
                     show: true,
@@ -180,16 +190,53 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                 onClose();
             }, 800);
         } catch (error) {
-            console.error(error.response?.data || error);
+            console.error(
+                "Backend error:",
+                error.response?.data || error
+            );
+
+            const backendError = error.response?.data;
+
+            if (
+                backendError?.error ===
+                "Mobile number already exists"
+            ) {
+                setAlertState({
+                    show: true,
+                    message: "Mobile number already exists. Please use a different number.",
+                    type: "error",
+                });
+
+                setConfirmOpen(false);
+                return;
+            }
+
+            if (
+                backendError?.error ===
+                "Email already exists"
+            ) {
+                setAlertState({
+                    show: true,
+                    message: "Email already exists. Please use a different email.",
+                    type: "error",
+                });
+
+                setConfirmOpen(false);
+                return;
+            }
+
             setAlertState({
                 show: true,
-                message: "Something went wrong",
+                message:
+                    backendError?.error ||
+                    "Something went wrong",
                 type: "error",
             });
+
         } finally {
             setConfirmLoading(false);
         }
-    };
+    }
 
     const capture = async () => {
 
@@ -266,7 +313,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                         <button
                                             type="button"
                                             onClick={() => setShowCamera(true)}
-                                            className="bg-blue-600 text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-blue-700 w-32 flex items-center justify-center gap-2"
+                                            className="bg-yellow-600 text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-yellow-700 w-32 flex items-center justify-center gap-2"
                                         >
                                             <Camera size={14} />
                                             Webcam
@@ -323,7 +370,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
 
                                                 <button
                                                     onClick={capture}
-                                                    className="px-4 py-2 bg-blue-600 text-white rounded"
+                                                    className="px-4 py-2 bg-yellow-600 text-white rounded"
                                                 >
                                                     Capture
                                                 </button>
@@ -342,7 +389,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                             <div className="flex-1 space-y-6">
                                 {/* Personal Details */}
                                 <section>
-                                    <h3 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4 border-b border-blue-50 pb-1">
+                                    <h3 className="text-xs font-bold text-yellow-600 uppercase tracking-widest mb-4 border-b border-yellow-50 pb-1">
                                         Personal Details
                                     </h3>
 
@@ -360,7 +407,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                                         name: e.target.value,
                                                     })
                                                 }
-                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                                             />
                                         </div>
 
@@ -368,6 +415,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                             <label className="text-xs font-medium text-slate-600">
                                                 PHONE
                                             </label>
+
                                             <input
                                                 type="tel"
                                                 value={formData.phone}
@@ -377,11 +425,12 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                                         phone: e.target.value,
                                                     })
                                                 }
-                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                                             />
+
                                             {formData.phone.length > 0 &&
                                                 formData.phone.length < 10 && (
-                                                    <p className="text-blue-500 text-sm mt-1">
+                                                    <p className="text-yellow-500 text-sm mt-1">
                                                         Phone number must be 10 digits.
                                                     </p>
                                                 )}
@@ -391,8 +440,9 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                             <label className="text-xs font-medium text-slate-600">
                                                 EMAIL
                                             </label>
+
                                             <input
-                                                type="email"
+                                                type="text"
                                                 value={formData.email}
                                                 onChange={(e) =>
                                                     setFormData({
@@ -400,8 +450,15 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                                         email: e.target.value,
                                                     })
                                                 }
-                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                                             />
+
+                                            {formData.email.length > 0 &&
+                                                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) && (
+                                                    <p className="text-yellow-500 text-sm mt-1">
+                                                        Enter a valid email address.
+                                                    </p>
+                                                )}
                                         </div>
 
                                         <div>
@@ -417,7 +474,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                                         location: e.target.value,
                                                     })
                                                 }
-                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                                             />
                                         </div>
 
@@ -434,7 +491,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                                         age: e.target.value,
                                                     })
                                                 }
-                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                                             />
                                         </div>
 
@@ -451,7 +508,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                                         gender: e.target.value,
                                                     })
                                                 }
-                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                                             >
                                                 <option value="">Select Gender</option>
                                                 <option value="Male">Male</option>
@@ -472,7 +529,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                                         blood_group: e.target.value,
                                                     })
                                                 }
-                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                                             >
                                                 <option value="">Select Blood Group</option>
                                                 <option value="A+">A+</option>
@@ -499,7 +556,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                                         join_date: e.target.value,
                                                     })
                                                 }
-                                                className="border border-slate-200 rounded-lg px-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="border border-slate-200 rounded-lg px-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                                             />
                                         </div>
 
@@ -515,7 +572,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                                         plan: e.target.value,
                                                     })
                                                 }
-                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                                             >
                                                 <option value="">Select Plan</option>
                                                 {plans.map((plan) => (
@@ -539,7 +596,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                                         branch: e.target.value,
                                                     })
                                                 }
-                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                                             >
                                                 <option value="">Select Branch</option>
                                                 {branches.map((branch) => (
@@ -549,12 +606,6 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                                 ))}
                                             </select>
                                         </div>
-
-
-
-
-
-
 
                                         <div>
                                             <label className="text-xs font-medium text-slate-600">
@@ -587,7 +638,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                                             height: e.target.value,
                                                         })
                                                     }
-                                                    className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                                                 />
                                             </div>
 
@@ -604,7 +655,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                                             weight: e.target.value,
                                                         })
                                                     }
-                                                    className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                                                 />
                                             </div>
 
@@ -636,7 +687,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                         </button>
                         <button
                             onClick={openConfirmModal}
-                            className="px-8 py-2 text-sm font-bold bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                            className="px-8 py-2 text-sm font-bold bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
                         >
                             {member ? "Update Member" : "Save Member"}
                         </button>

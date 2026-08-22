@@ -55,7 +55,7 @@ const ResumeMember = ({ member, onClose, onSuccess }) => {
             <div className="bg-white p-6 rounded-xl shadow-xl w-96">
                 <div className="flex items-center gap-4 mb-4">
                     <div className="w-15 h-8 rounded-full bg-yellow-100 flex items-center justify-center">
-                        <TriangleAlert size={24} className="text-blue-600" />
+                        <TriangleAlert size={24} className="text-yellow-600" />
                     </div>
 
                     <div>
@@ -99,7 +99,7 @@ const ResumeMember = ({ member, onClose, onSuccess }) => {
                     <button
                         onClick={handleResumeClick}
                         disabled={loading}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50"
+                        className="px-4 py-2 bg-yellow-500 text-white rounded-lg disabled:opacity-50"
                     >
                         {loading ? "Resuming..." : "Confirm"}
                     </button>

@@ -149,7 +149,7 @@ const Income_members = ({
 
 
                                             <div
-                                                className="w-14 bg-blue-500 rounded-t-md transition-all duration-300"
+                                                className="w-14 bg-yellow-500 rounded-t-md transition-all duration-300"
                                                 style={{
                                                     height: `${height}px`
                                                 }}

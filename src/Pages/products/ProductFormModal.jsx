@@ -67,16 +67,17 @@ const ProductFormModal = ({
                             onChange={(e) =>
                                 setFormData({ ...formData, name: e.target.value })
                             }
-                            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                         />
 
-                        <textarea
+                        <input
+                            type="text"
                             placeholder="Description"
                             value={formData.description}
                             onChange={(e) =>
                                 setFormData({ ...formData, description: e.target.value })
                             }
-                            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                         />
 
                         <select
@@ -86,7 +87,7 @@ const ProductFormModal = ({
                                 setFormData({ ...formData, category: e.target.value })
                             }
                             required
-                            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                         >
                             <option value="">Select Category</option>
                             <option value="supplements">Supplements</option>
@@ -105,7 +106,7 @@ const ProductFormModal = ({
                             onChange={(e) =>
                                 setFormData({ ...formData, price: e.target.value })
                             }
-                            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                         />
 
                         <input
@@ -115,7 +116,7 @@ const ProductFormModal = ({
                             onChange={(e) =>
                                 setFormData({ ...formData, stock: e.target.value })
                             }
-                            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                         />
 
                         <input
@@ -141,7 +142,7 @@ const ProductFormModal = ({
 
                         <button
                             onClick={handleMainSubmit}
-                            className="px-5 py-2 rounded-lg bg-blue-600 text-white"
+                            className="px-5 py-2 rounded-lg bg-yellow-600 text-white"
                         >
                             {editing ? "Update" : "Save"}
                         </button>

@@ -20,11 +20,11 @@ export default function ConfirmActionModal({
 
             case "update":
             case "edit":
-                return "bg-blue-600 ";
+                return "bg-yellow-600 ";
 
             case "add":
             case "create":
-                return "bg-blue-600 ";
+                return "bg-yellow-600 ";
 
             case "payment":
                 return "bg-purple-600 ";

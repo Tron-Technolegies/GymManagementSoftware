@@ -1,126 +1,132 @@
 import React from "react";
+
 import {
     Activity,
-    Target,
-    Flame,
-    Clock,
     CalendarDays,
-    Scale
+    Scale,
 } from "lucide-react";
+
 
 const Card = ({
     icon,
     title,
     value,
-    color
-}) => (
-    <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+    color,
+}) => {
 
-        <div className="flex items-center gap-3">
+    return (
 
-            <div
-                className={`w-12 h-12 rounded-xl flex items-center justify-center ${color}`}
-            >
-                {icon}
-            </div>
+        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
 
-            <div>
+            <div className="flex items-center gap-3">
 
-                <p className="text-sm text-slate-500">
-                    {title}
-                </p>
+                <div
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center ${color}`}
+                >
 
-                <h3 className="text-lg font-bold text-slate-900 mt-1">
-                    {value}
-                </h3>
+                    {icon}
+
+                </div>
+
+
+                <div>
+
+                    <p className="text-sm text-slate-500">
+
+                        {title}
+
+                    </p>
+
+                    <h3 className="text-lg font-bold text-slate-900 mt-1">
+
+                        {value}
+
+                    </h3>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
-);
+    );
 
-const WorkoutSummary = ({ workout }) => {
+};
 
-    if (!workout?.summary) {
+
+const WorkoutSummary = ({
+    workout,
+    member,
+}) => {
+
+    if (!workout) {
         return null;
     }
 
-    const summary = workout.summary;
+
+    const bmi =
+        member?.bmi ??
+        "N/A";
+
+
+    const daysCount =
+        workout?.days?.length || 0;
+
+
+    const exercisesCount =
+        workout?.days?.reduce(
+            (total, day) =>
+                total +
+                (day.exercises?.length || 0),
+            0
+        ) || 0;
+
 
     return (
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
 
+
+            {/* BMI */}
+
             <Card
                 title="BMI"
-                value={summary.bmi}
-                color="bg-blue-100"
+                value={bmi}
+                color="bg-yellow-100"
                 icon={
                     <Scale
                         size={24}
-                        className="text-blue-600"
+                        className="text-yellow-600"
                     />
                 }
             />
 
-            <Card
-                title="Goal"
-                value={summary.goal}
-                color="bg-green-100"
-                icon={
-                    <Target
-                        size={24}
-                        className="text-green-600"
-                    />
-                }
-            />
+
+            {/* DAYS */}
 
             <Card
-                title="Workout Level"
-                value={summary.level}
+                title="Workout Days"
+                value={`${daysCount} Days`}
                 color="bg-purple-100"
                 icon={
-                    <Activity
+                    <CalendarDays
                         size={24}
                         className="text-purple-600"
                     />
                 }
             />
 
-            <Card
-                title="Workout Duration"
-                value={summary.duration}
-                color="bg-orange-100"
-                icon={
-                    <Clock
-                        size={24}
-                        className="text-orange-600"
-                    />
-                }
-            />
+
+            {/* EXERCISES */}
 
             <Card
-                title="Days / Week"
-                value={summary.days_per_week}
-                color="bg-indigo-100"
+                title="Exercises"
+                value={exercisesCount}
+                color="bg-green-100"
                 icon={
-                    <CalendarDays
+                    <Activity
                         size={24}
-                        className="text-indigo-600"
-                    />
-                }
-            />
-
-            <Card
-                title="Calories / Session"
-                value={summary.calories_burn}
-                color="bg-red-100"
-                icon={
-                    <Flame
-                        size={24}
-                        className="text-red-600"
+                        className="text-green-600"
                     />
                 }
             />
@@ -130,5 +136,6 @@ const WorkoutSummary = ({ workout }) => {
     );
 
 };
+
 
 export default WorkoutSummary;

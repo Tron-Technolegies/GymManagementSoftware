@@ -15,7 +15,7 @@ const SalesFilter = ({
                         key={item}
                         onClick={() => setPeriod(item)}
                         className={`px-4 py-2 rounded-lg shadow-lg ${period === item
-                            ? "bg-blue-600 text-white"
+                            ? "bg-yellow-600 text-white"
                             : "bg-white"
                             }`}
                     >

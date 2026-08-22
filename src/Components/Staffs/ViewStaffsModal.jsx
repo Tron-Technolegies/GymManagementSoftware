@@ -69,7 +69,7 @@ const ViewStaffsModal = ({ staff, onClose }) => {
 
                             {/* Personal Details */}
                             <section>
-                                <h3 className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4">
+                                <h3 className="text-xs font-bold text-yellow-600 uppercase tracking-widest mb-4">
                                     Personal Details
                                 </h3>
 

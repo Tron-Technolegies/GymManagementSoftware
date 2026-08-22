@@ -46,7 +46,7 @@ const Profit_loss = () => {
                             onClick={() => setPeriod(item)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition
                             ${period === item
-                                    ? "bg-blue-500 text-white"
+                                    ? "bg-yellow-500 text-white"
                                     : "text-slate-500 hover:text-slate-900"
                                 }`}
                         >
@@ -125,10 +125,9 @@ const Profit_loss = () => {
                                 setReportData
                             )
                         }
-                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4 py-2"
+                        className="flex items-center gap-2 bg-yellow-500 text-white rounded-lg px-4 py-2"
                     >
                         <ArrowDownToLine size={18} />
-
                         Download
                     </button>
 
