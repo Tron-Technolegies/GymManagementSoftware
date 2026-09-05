@@ -1,8 +1,8 @@
 import React from "react";
 
-import useKpis from "../hooks/usedashboard/Usekpis";
-import useExpiringMembers from "../hooks/usedashboard/useExpiringMembers";
-import useBlockedMembers from "../hooks/usedashboard/useBlockedMembers";
+import useKpis from "../hooks/Dashboard/useKpis";
+import useExpiringMembers from "../hooks/Dashboard/useExpiringMembers";
+import useBlockedMembers from "../hooks/Dashboard/useBlockedMembers";
 
 import Kpi from "../components/dashboard/Kpi";
 import Recentregistrations from "../components/dashboard/Recentregistrations";
