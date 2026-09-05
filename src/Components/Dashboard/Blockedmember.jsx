@@ -3,7 +3,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import { sendPlanExpiryWhatsApp } from "../../utils/sendWhatsApp";
 
 
-const Blockedmembers = ({
+const Blockedmember = ({
     blockedMembers = [],
     plans = [],
     showRenewForm,
@@ -499,4 +499,4 @@ const Blockedmembers = ({
     );
 };
 
-export default Blockedmembers;
+export default Blockedmember;

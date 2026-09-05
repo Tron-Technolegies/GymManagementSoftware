@@ -1,6 +1,6 @@
 import React from "react";
 
-const Recentregistrations = ({ registrations }) => {
+const Recentregistration = ({ registrations }) => {
     return (
         <div className="lg:col-span-2 min-w-0">
             <div className="p-4 border-b border-slate-100">
@@ -36,4 +36,4 @@ const Recentregistrations = ({ registrations }) => {
     );
 };
 
-export default Recentregistrations;
+export default Recentregistration;

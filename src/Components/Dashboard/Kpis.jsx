@@ -1,7 +1,7 @@
 import React from "react";
 import { DollarSign, Percent, Landmark } from "lucide-react";
 
-const Kpi = ({ stats }) => {
+const Kpis = ({ stats }) => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Income */}
@@ -91,4 +91,4 @@ const Kpi = ({ stats }) => {
     );
 };
 
-export default Kpi;
+export default Kpis;

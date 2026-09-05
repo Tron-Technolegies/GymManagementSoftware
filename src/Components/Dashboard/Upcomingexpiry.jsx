@@ -2,7 +2,7 @@ import React from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import { sendWhatsApp } from "../../utils/sendWhatsApp";
 
-const Upcomingexpiries = ({ expiredMembers }) => {
+const Upcomingexpir = ({ expiredMembers }) => {
     return (
         <div className="lg:col-span-2 min-w-0">
             <div className="p-4 border-b border-slate-100">
@@ -58,4 +58,4 @@ const Upcomingexpiries = ({ expiredMembers }) => {
     );
 };
 
-export default Upcomingexpiries;
+export default Upcomingexpiry;
