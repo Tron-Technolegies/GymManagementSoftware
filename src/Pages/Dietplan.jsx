@@ -177,13 +177,13 @@ const DietPlan = ({
 
                         <div className="lg:col-span-4 space-y-4">
 
-                            <Shoppinglist
+                            <Shoppinglists
                                 shoppingList={
                                     diet.shopping_list
                                 }
                             />
 
-                            <Avoidfood
+                            <Avoidfoods
                                 foods={
                                     diet.foods_to_avoid
                                 }
