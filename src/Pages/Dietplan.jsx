@@ -8,12 +8,12 @@ import {
 
 import useDownloadPDF from "../hooks/useDownloadPDF";
 
-import NutritionCards from "../Components/DietPlan/NutritionCards";
-import MealPlan from "../Components/DietPlan/MealPlan";
-import Avoidfood from "../Components/DietPlan/Avoidfood";
-import Shoppinglist from "../Components/DietPlan/Shoppinglist";
-import Supplements from "../Components/DietPlan/Supplements";
-import Tips from "../Components/DietPlan/Tips";
+import NutritionCard from "../Components/Dietplan/NutritionCard";
+import MealPlans from "../Components/Dietplan/Mealplans";
+import Tip from "../Components/Dietplan/Tip";
+import Supplement from "../Components/Dietplan/Supplement";
+import Shoppinglists from "../Components/Dietplan/Shoppinglists";
+import Avoidfoods from "../Components/Dietplan/Avoidfoods";
 
 import {
     sendDietPlanWhatsApp
