@@ -1,193 +1,460 @@
 import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
-// import { uploadDietPDF } from "../api/dietplan"
 
-const buildFileName = (memberName) => {
+
+// =====================================================
+// BUILD FILE NAME
+// =====================================================
+
+const buildFileName = (
+    memberName,
+    reportTitle
+) => {
+
     const safeMemberName = memberName
         .trim()
         .replace(/[^a-zA-Z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
-    return `${safeMemberName}-AI-Diet-Plan.pdf`;
+
+    const safeReportTitle = reportTitle
+        .trim()
+        .replace(/[^a-zA-Z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
+    return `${safeMemberName}-${safeReportTitle}.pdf`;
 };
 
-/**
- * Captures pdfRef's content and builds a jsPDF document with a proper
- * header, clean page slicing, and footer page numbers.
- */
-const generatePDF = async (pdfRef, options = {}) => {
-    const { memberName = "Member", reportTitle = "AI Diet Plan Report" } = options;
 
-    const element = pdfRef.current;
+// =====================================================
+// GENERATE PDF
+// =====================================================
+
+const generatePDF = async (
+    pdfRef,
+    options = {}
+) => {
+
+    const {
+        memberName = "Member",
+        reportTitle = "AI Diet Plan Report"
+    } = options;
+
+
+    // =================================================
+    // GET ELEMENT
+    // =================================================
+
+    const element =
+        pdfRef.current;
+
     if (!element) {
-        throw new Error("PDF element not found");
+        throw new Error(
+            "PDF element not found"
+        );
     }
 
-    const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-    });
 
-    const pdf = new jsPDF("p", "mm", "a4");
+    // =================================================
+    // CAPTURE REACT CONTENT
+    // =================================================
 
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
+    const canvas =
+        await html2canvas(
+            element,
+            {
+                scale: 2,
+                useCORS: true,
+                backgroundColor:
+                    "#ffffff",
+            }
+        );
+
+
+    // =================================================
+    // CREATE PDF
+    // =================================================
+
+    const pdf =
+        new jsPDF(
+            "p",
+            "mm",
+            "a4"
+        );
+
+
+    const pageWidth =
+        pdf.internal.pageSize.getWidth();
+
+    const pageHeight =
+        pdf.internal.pageSize.getHeight();
+
 
     const margin = 10;
-    const contentWidth = pageWidth - margin * 2;
+
+    const contentWidth =
+        pageWidth -
+        margin * 2;
+
     const headerHeight = 24;
 
-    pdf.setFillColor(37, 99, 235);
-    pdf.rect(0, 0, pageWidth, headerHeight, "F");
 
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFont("helvetica", "bold");
+    // =================================================
+    // HEADER
+    // =================================================
+
+    pdf.setFillColor(
+        37,
+        99,
+        235
+    );
+
+    pdf.rect(
+        0,
+        0,
+        pageWidth,
+        headerHeight,
+        "F"
+    );
+
+
+    // Header text
+
+    pdf.setTextColor(
+        255,
+        255,
+        255
+    );
+
+
+    pdf.setFont(
+        "helvetica",
+        "bold"
+    );
+
     pdf.setFontSize(16);
-    pdf.text(reportTitle, margin, 13);
 
-    pdf.setFont("helvetica", "normal");
+
+    pdf.text(
+        reportTitle,
+        margin,
+        13
+    );
+
+
+    // Member name
+
+    pdf.setFont(
+        "helvetica",
+        "normal"
+    );
+
     pdf.setFontSize(10);
-    pdf.text(`Prepared for: ${memberName}`, margin, 20);
 
-    const dateStr = new Date().toLocaleDateString("en-IN", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-    });
-    pdf.text(dateStr, pageWidth - margin, 20, { align: "right" });
 
-    const imgWidthPx = canvas.width;
-    const imgHeightPx = canvas.height;
-    const pxPerMm = imgWidthPx / contentWidth;
+    pdf.text(
+        `Prepared for: ${memberName}`,
+        margin,
+        20
+    );
 
-    const firstPageContentHeightMm = pageHeight - headerHeight - margin * 1.5;
-    const otherPageContentHeightMm = pageHeight - margin * 2;
 
-    const sliceCanvas = document.createElement("canvas");
-    const sliceCtx = sliceCanvas.getContext("2d");
+    // Date
+
+    const dateStr =
+        new Date().toLocaleDateString(
+            "en-IN",
+            {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+            }
+        );
+
+
+    pdf.text(
+        dateStr,
+        pageWidth - margin,
+        20,
+        {
+            align: "right"
+        }
+    );
+
+
+    // =================================================
+    // IMAGE / CONTENT CALCULATION
+    // =================================================
+
+    const imgWidthPx =
+        canvas.width;
+
+    const imgHeightPx =
+        canvas.height;
+
+
+    const pxPerMm =
+        imgWidthPx /
+        contentWidth;
+
+
+    // First page available height
+
+    const firstPageContentHeightMm =
+        pageHeight -
+        headerHeight -
+        margin * 1.5;
+
+
+    // Other pages available height
+
+    const otherPageContentHeightMm =
+        pageHeight -
+        margin * 2;
+
+
+    // =================================================
+    // CREATE TEMPORARY CANVAS
+    // =================================================
+
+    const sliceCanvas =
+        document.createElement(
+            "canvas"
+        );
+
+
+    const sliceCtx =
+        sliceCanvas.getContext(
+            "2d"
+        );
+
 
     let renderedPx = 0;
+
     let isFirstPage = true;
+
     let pageNum = 1;
 
-    while (renderedPx < imgHeightPx) {
-        const availableMm = isFirstPage
-            ? firstPageContentHeightMm
-            : otherPageContentHeightMm;
 
-        const sliceHeightPx = Math.min(
-            Math.floor(availableMm * pxPerMm),
-            imgHeightPx - renderedPx
+    // =================================================
+    // CREATE PDF PAGES
+    // =================================================
+
+    while (
+        renderedPx <
+        imgHeightPx
+    ) {
+
+        const availableMm =
+            isFirstPage
+                ? firstPageContentHeightMm
+                : otherPageContentHeightMm;
+
+
+        // Calculate how many pixels
+        // can fit on the current page
+
+        const sliceHeightPx =
+            Math.min(
+                Math.floor(
+                    availableMm *
+                    pxPerMm
+                ),
+                imgHeightPx -
+                renderedPx
+            );
+
+
+        // Resize temporary canvas
+
+        sliceCanvas.width =
+            imgWidthPx;
+
+        sliceCanvas.height =
+            sliceHeightPx;
+
+
+        // Clear canvas
+
+        sliceCtx.clearRect(
+            0,
+            0,
+            imgWidthPx,
+            sliceHeightPx
         );
 
-        sliceCanvas.width = imgWidthPx;
-        sliceCanvas.height = sliceHeightPx;
-        sliceCtx.clearRect(0, 0, imgWidthPx, sliceHeightPx);
+
+        // =================================================
+        // COPY PART OF ORIGINAL CANVAS
+        // =================================================
+
         sliceCtx.drawImage(
             canvas,
-            0, renderedPx, imgWidthPx, sliceHeightPx,
-            0, 0, imgWidthPx, sliceHeightPx
+
+            // Source
+            0,
+            renderedPx,
+            imgWidthPx,
+            sliceHeightPx,
+
+            // Destination
+            0,
+            0,
+            imgWidthPx,
+            sliceHeightPx
         );
 
-        const sliceData = sliceCanvas.toDataURL("image/png");
-        const sliceHeightMm = sliceHeightPx / pxPerMm;
-        const yPos = isFirstPage ? headerHeight + 5 : margin;
 
-        pdf.addImage(sliceData, "PNG", margin, yPos, contentWidth, sliceHeightMm);
+        // =================================================
+        // CONVERT SLICE TO IMAGE
+        // =================================================
 
-        pdf.setTextColor(148, 163, 184);
+        const sliceData =
+            sliceCanvas.toDataURL(
+                "image/png"
+            );
+
+
+        // Calculate image height in mm
+
+        const sliceHeightMm =
+            sliceHeightPx /
+            pxPerMm;
+
+
+        // Position
+
+        const yPos =
+            isFirstPage
+                ? headerHeight + 5
+                : margin;
+
+
+        // =================================================
+        // ADD IMAGE TO PDF
+        // =================================================
+
+        pdf.addImage(
+            sliceData,
+            "PNG",
+            margin,
+            yPos,
+            contentWidth,
+            sliceHeightMm
+        );
+
+
+        // =================================================
+        // FOOTER
+        // =================================================
+
+        pdf.setTextColor(
+            148,
+            163,
+            184
+        );
+
         pdf.setFontSize(8);
-        pdf.setFont("helvetica", "normal");
-        pdf.text(`Page ${pageNum}`, pageWidth / 2, pageHeight - 6, { align: "center" });
 
-        renderedPx += sliceHeightPx;
+        pdf.setFont(
+            "helvetica",
+            "normal"
+        );
+
+
+        pdf.text(
+            `Page ${pageNum}`,
+            pageWidth / 2,
+            pageHeight - 6,
+            {
+                align: "center"
+            }
+        );
+
+
+        // =================================================
+        // UPDATE POSITION
+        // =================================================
+
+        renderedPx +=
+            sliceHeightPx;
+
+
         isFirstPage = false;
 
-        if (renderedPx < imgHeightPx) {
+
+        // =================================================
+        // ADD NEXT PAGE
+        // =================================================
+
+        if (
+            renderedPx <
+            imgHeightPx
+        ) {
+
             pdf.addPage();
+
             pageNum++;
+
         }
+
     }
 
-    return { pdf, fileName: buildFileName(memberName) };
+
+    // =================================================
+    // RETURN PDF
+    // =================================================
+
+    return {
+
+        pdf,
+
+        fileName:
+            buildFileName(
+                memberName,
+                reportTitle
+            )
+
+    };
 };
 
-const useDownloadPDF = () => {
-    const downloadPDF = async (pdfRef, options = {}) => {
-        try {
-            const { pdf, fileName } = await generatePDF(pdfRef, options);
-            pdf.save(fileName);
-        } catch (error) {
-            console.error("PDF ERROR", error);
-        }
-    };
 
-    /**
-     * Generates the PDF, uploads it to Django to get a public URL, then
-     * opens WhatsApp directly in the member's chat with the link
-     * prefilled in the message text. No attach step needed since it's
-     * a link, not a file - member just taps Send.
-     *
-     * @param {React.RefObject} pdfRef
-     * @param {Object} options - memberName, reportTitle
-     * @param {Object} member - full member object (needs id, phone)
-     */
-    const sharePDFToWhatsApp = async (
+// =====================================================
+// HOOK
+// =====================================================
+
+const useDownloadPDF = () => {
+
+
+    // =================================================
+    // DOWNLOAD PDF
+    // =================================================
+
+    const downloadPDF = async (
         pdfRef,
         options = {}
     ) => {
 
         try {
 
-            const { pdf, fileName } = await generatePDF(
-                pdfRef,
-                options
-            );
-
-
-            const pdfBlob = pdf.output("blob");
-            const pdfFile = new File(
-                [pdfBlob],
-                fileName,
-                {
-                    type: "application/pdf"
-                }
-            );
-
-
-            if (navigator.canShare && navigator.canShare({
-                files: [pdfFile]
-            })) {
-
-                await navigator.share({
-
-                    title: "AI Diet Plan",
-
-                    text: `Dear ${options.memberName},
-
-Your AI Diet Plan is ready.`,
-
-                    files: [
-                        pdfFile
-                    ]
-
-                });
-
-            } else {
-
-                // fallback for unsupported browsers
-                pdf.save(fileName);
-
-                alert(
-                    "Direct sharing is not supported on this device. PDF downloaded."
+            const {
+                pdf,
+                fileName
+            } =
+                await generatePDF(
+                    pdfRef,
+                    options
                 );
-            }
+
+
+            pdf.save(
+                fileName
+            );
 
 
         } catch (error) {
 
             console.error(
-                "WHATSAPP SHARE ERROR",
+                "PDF ERROR:",
                 error
             );
 
@@ -195,10 +462,18 @@ Your AI Diet Plan is ready.`,
 
     };
 
+
+    // =================================================
+    // RETURN
+    // =================================================
+
     return {
-        downloadPDF,
-        sharePDFToWhatsApp
+
+        downloadPDF
+
     };
+
 };
+
 
 export default useDownloadPDF;

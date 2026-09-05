@@ -2,6 +2,7 @@ import { getProfitLossReport } from "../api/reportdownload";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
+// *********PROFIT LOSS REPORT***************
 
 export const handleDownload = async (
     period,
@@ -58,9 +59,6 @@ export const handleDownload = async (
                 )
                 /
                 canvas.width;
-
-
-
             let heightLeft = imgHeight;
             let position = 0;
             // First page
@@ -88,10 +86,7 @@ export const handleDownload = async (
                     imgWidth,
                     imgHeight
                 );
-
-
                 heightLeft -= pageHeight;
-
             }
             pdf.save(
                 `profit-loss-${period}.pdf`

@@ -1,8 +1,13 @@
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
-export const generateInvoicePDF = async (invoiceRef) => {
+// **************ADMIN SALES REPORT ****************
 
+export const generateInvoicePDF = async (
+    invoiceRef,
+    period = "daily",
+    selectedDate = ""
+) => {
     const element = invoiceRef.current;
 
     if (!element) return;
@@ -43,7 +48,9 @@ export const generateInvoicePDF = async (invoiceRef) => {
 
     while (heightLeft > 0) {
         position -= pdf.internal.pageSize.getHeight();
+
         pdf.addPage();
+
         pdf.addImage(
             imgData,
             "PNG",
@@ -52,8 +59,27 @@ export const generateInvoicePDF = async (invoiceRef) => {
             pdfWidth,
             pdfHeight
         );
+
         heightLeft -= pdf.internal.pageSize.getHeight();
     }
 
-    pdf.save(`invoice_${Date.now()}.pdf`);
+    // ==============================
+    // PDF FILE NAME
+    // ==============================
+
+    let fileName;
+
+    if (period === "daily") {
+        fileName = `Daily-Sales-Report-${selectedDate}.pdf`;
+    } else if (period === "weekly") {
+        fileName = "Weekly-Sales-Report.pdf";
+    } else if (period === "monthly") {
+        fileName = "Monthly-Sales-Report.pdf";
+    } else if (period === "yearly") {
+        fileName = "Yearly-Sales-Report.pdf";
+    } else {
+        fileName = `Sales-Report-${selectedDate}.pdf`;
+    }
+
+    pdf.save(fileName);
 };

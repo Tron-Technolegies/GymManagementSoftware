@@ -5,7 +5,7 @@ import {
     Cell,
     ResponsiveContainer,
 } from "recharts";
-import { useSales } from "../../hooks/useSales";
+import { useSales } from "../../hooks/Sales/useSales";
 
 
 const COLORS = [

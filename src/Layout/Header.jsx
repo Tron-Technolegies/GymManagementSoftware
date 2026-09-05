@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { User, Menu } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import useAdminSettings from '../hooks/useAdminSettings';
+import useAdminSettings from '../hooks/useAdminSettings'
 
 const Header = ({ setSidebarOpen }) => {
     const { admin, fetchAdminProfile } = useAdminSettings();

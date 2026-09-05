@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
     getSales,
     Saleslist,
-} from "../api/getSales";
+} from "../../api/getSales"
 
 
 export const useSales = (

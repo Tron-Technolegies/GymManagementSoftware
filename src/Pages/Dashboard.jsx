@@ -43,13 +43,15 @@ const Dashboard = () => {
       <Kpi stats={stats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
         <Recentregistrations
-          registrations={stats.recent_registrations}
+          registrations={stats?.recent_registrations || []}
         />
 
         <Upcomingexpiries
-          expiredMembers={expiredMembers}
+          expiredMembers={expiredMembers || []}
         />
+
       </div>
 
       <Blockedmembers

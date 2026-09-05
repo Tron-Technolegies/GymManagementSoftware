@@ -42,7 +42,7 @@ export default function BranchMembers({
                                     <tr key={member.id} className="border-t border-slate-100">
                                         <td className="px-6 py-4">{member.name}</td>
                                         <td className="px-6 py-4">{member.phone}</td>
-                                        <td className="px-6 py-4">{member.plan}</td>
+                                        <td className="px-6 py-4">{member.plan?.name}</td>
                                         <td className="px-6 py-4">{member.email}</td>
                                     </tr>
                                 ))

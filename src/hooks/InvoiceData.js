@@ -1,3 +1,6 @@
+
+//************ADMIN SALES REPORT*************8
+
 export const createInvoiceData = (sales) => ({
     invoice_no: `INV-${Date.now()}`,
     customer_name: "Daily Sales",

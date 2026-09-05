@@ -1,5 +1,7 @@
 import React, { forwardRef } from "react";
 
+// ***********SINGLE SALE INVOICE 
+
 const thStyle = {
     padding: "10px",
     border: "1px solid #ddd",
@@ -47,22 +49,10 @@ const Invoice = forwardRef(({ sale }, ref) => {
                     <strong>Sale ID:</strong> {sale.id}
                 </p>
 
-                <p>
-                    <strong>Invoice No:</strong> {sale.invoice_no}
-                </p>
-
-                <p>
-                    <strong>Member ID:</strong> {sale.member_id}
-                </p>
-
-                <p>
-                    <strong>Member Name:</strong> {sale.member_name}
-                </p>
-
-                <p>
-                    <strong>Payment Method:</strong> {sale.payment_method}
-                </p>
-
+                <p><strong>Invoice No:</strong> {sale.invoice_no}</p>
+                <p><strong>Member ID:</strong> {sale.member_id}</p>
+                <p><strong>Member Name:</strong> {sale.member_name}</p>
+                <p><strong>Payment Method:</strong> {sale.payment_method}</p>
                 <p>
                     <strong>Sold At:</strong>{" "}
                     {sale.sold_at

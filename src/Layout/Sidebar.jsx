@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import originallogo from "../assets/originallogo.png";
 import { useNavigate, useLocation } from "react-router-dom";
-import Logout from "./Logout";
+import Logout from "../Components/Logout"
 
 const SidebarItem = ({
   icon: Icon,

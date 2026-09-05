@@ -1,12 +1,10 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Layout from "./Components/Layout";
 import Dashboard from "./Pages/Dashboard";
 import Branches from "./Pages/Branches";
 import Plans from "./Pages/Plans";
 import Members from "./Pages/member/Members";
 import Settings from "./Pages/Settings";
-import Products from "./Pages/products/Products";
 import Sales from "./Pages/Sales";
 import Staffs from "./Pages/Staffs";
 import Enquiry from "./Pages/Enquiry";
@@ -15,6 +13,8 @@ import Profit_loss from "./Pages/Profit_loss";
 import DietPlan from "./Pages/Dietplan";
 import Login from "./Pages/Login";
 import WorkoutPlan from "./Pages/WorkoutPlan";
+import Layout from "./Layout/Layout";
+import Products from "./Pages/Products";
 
 const router = createBrowserRouter([
   {

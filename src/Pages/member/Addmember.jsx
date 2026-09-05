@@ -17,10 +17,12 @@ const Addmember = ({ member, onClose, onSuccess }) => {
         height: member?.height || "",
         weight: member?.weight || "",
         bmi: member?.bmi || "",
+        goal: member?.goal || "",
+        food_category: member?.food_category || "",
         join_date: member?.join_date || "",
         expiry_date: member?.expiry_date || "",
-        plan: member?.plan?.id || member?.plan || "",
-        branch: member?.branch?.id || member?.branch || "",
+        plan: member?.plan?.id || "",
+        branch: member?.branch?.id || "",
         paid_amount: member?.paid_amount || "",
         due_amount: member?.due_amount || 0,
         photo: null,
@@ -152,7 +154,15 @@ const Addmember = ({ member, onClose, onSuccess }) => {
             const payload = new FormData();
 
             Object.keys(formData).forEach((key) => {
-                payload.append(key, formData[key] || "");
+                if (key === "plan") {
+                    // Send only Plan ID
+                    payload.append("plan", String(formData.plan || ""));
+                } else if (key === "branch") {
+                    // Send only Branch ID
+                    payload.append("branch", String(formData.branch || ""));
+                } else {
+                    payload.append(key, formData[key] ?? "");
+                }
             });
 
             if (member) {
@@ -624,7 +634,8 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                 {/* Body Stats */}
                                 <div>
                                     <section>
-                                        <div className="flex gap-4">
+                                        <div className="grid grid-cols-3 gap-4">
+
                                             <div>
                                                 <label className="text-xs font-medium text-slate-600">
                                                     HEIGHT (CM)
@@ -670,6 +681,52 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                                     className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg bg-slate-100 font-bold text-slate-700"
                                                 />
                                             </div>
+
+                                            <div>
+                                                <label className="text-xs font-medium text-slate-600">
+                                                    Goals
+                                                </label>
+
+                                                <select
+                                                    value={formData.goal}
+                                                    onChange={(e) =>
+                                                        setFormData({
+                                                            ...formData,
+                                                            goal: e.target.value,
+                                                        })
+                                                    }
+                                                    className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                                >
+                                                    <option value="">Select Goal</option>
+                                                    <option value="weight_loss">Weight Loss</option>
+                                                    <option value="weight_gain">Weight Gain</option>
+                                                    <option value="muscle_gain">Muscle Gain</option>
+                                                    <option value="maintenance">Maintenance</option>
+                                                </select>
+                                            </div>
+
+                                            <div>
+                                                <label className="text-xs font-medium text-slate-600">
+                                                    Food Category
+                                                </label>
+
+                                                <select
+                                                    value={formData.food_category}
+                                                    onChange={(e) =>
+                                                        setFormData({
+                                                            ...formData,
+                                                            food_category: e.target.value,
+                                                        })
+                                                    }
+                                                    className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                                >
+                                                    <option value="">Select Food Category</option>
+                                                    <option value="vegetarian">Vegetarian</option>
+                                                    <option value="non_vegetarian">Non-Vegetarian</option>
+                                                    <option value="vegan">Vegan</option>
+                                                </select>
+                                            </div>
+
                                         </div>
                                     </section>
                                 </div>

@@ -1,13 +1,12 @@
 import React, { useRef, useState } from "react";
 import { ArrowDownToLine } from "lucide-react";
 
-import { useSales, useTodaySales } from "../hooks/useSales";
+import { useSales, useTodaySales } from "../hooks/Sales/useSales"
 
 import Invoice from "../Components/Sales/Invoice";
 import SalesHeader from "../Components/Sales/SalesHeader";
 import SalesFilter from "../Components/Sales/SalesFilter";
 import SalesTable from "../Components/Sales/SalesTable";
-
 import { createInvoiceData } from "../hooks/InvoiceData";
 import { generateInvoicePDF } from "../hooks/InvoiceDownload";
 
@@ -43,7 +42,11 @@ const Sales = () => {
             });
         });
 
-        await generateInvoicePDF(invoiceRef);
+        await generateInvoicePDF(
+            invoiceRef,
+            period,
+            selectedDate
+        );
     };
 
     return (

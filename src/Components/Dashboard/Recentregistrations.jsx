@@ -25,7 +25,7 @@ const Recentregistrations = ({ registrations }) => {
                                 <td className="p-4 text-sm font-semibold text-slate-800 whitespace-nowrap">{m.name}</td>
                                 <td className="p-4 text-sm text-slate-600">{m.phone}</td>
                                 <td className="p-4 text-sm text-slate-600">{m.email}</td>
-                                <td className="p-4 text-sm text-slate-600">{m.plan}</td>
+                                <td className="p-4 text-sm text-slate-600">{m.plan?.name || "No Plan"}</td>
                                 <td className="p-4 text-sm text-right text-slate-500">{m.join_date}</td>
                             </tr>
                         ))}

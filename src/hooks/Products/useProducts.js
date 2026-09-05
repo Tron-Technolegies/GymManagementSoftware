@@ -4,7 +4,7 @@ import {
     createProduct,
     updateProduct,
     deleteProduct,
-} from "../api/products";
+} from "../../api/products";
 
 export default function useProducts() {
     const [products, setProducts] = useState([]);

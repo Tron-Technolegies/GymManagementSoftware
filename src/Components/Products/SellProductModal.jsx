@@ -1,5 +1,5 @@
-import ConfirmActionModal from "../../Components/ConfirmActionModal"
-import AlertMessage from "../../Components/AlertMessage";
+import ConfirmActionModal from "../ConfirmActionModal"
+import AlertMessage from "../AlertMessage"
 import { useState } from "react";
 
 const SellProductModal = ({

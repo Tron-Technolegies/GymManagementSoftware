@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
-import Header from "./Header";
+import Header from "./Header"
 import { Outlet, Navigate } from "react-router-dom";
 
 const Layout = () => {

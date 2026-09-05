@@ -11,6 +11,10 @@ import useDownloadPDF from "../hooks/useDownloadPDF";
 import WorkoutSummary from "../Components/WorkoutPlan/WorkoutSummary";
 import WeeklySchedule from "../Components/WorkoutPlan/WeeklySchedule";
 
+import {
+    sendWorkoutPlanWhatsApp
+} from "../utils/SendWorkoutPlan";
+
 
 const WorkoutPlan = ({
     member,
@@ -23,17 +27,17 @@ const WorkoutPlan = ({
 
     const pdfRef = useRef();
 
+
     const {
-        downloadPDF,
-        sharePDFToWhatsApp,
+        downloadPDF
     } = useDownloadPDF();
 
 
-    /*
-    --------------------------------------------------
-    DEBUG
-    --------------------------------------------------
-    */
+    const displayMember =
+        workoutMember ||
+        member ||
+        {};
+
 
     console.log(
         "WorkoutPlan workout:",
@@ -51,35 +55,16 @@ const WorkoutPlan = ({
     );
 
 
-    /*
-    --------------------------------------------------
-    MEMBER DATA
-    --------------------------------------------------
-    */
-
-    const displayMember =
-        workoutMember ||
-        member ||
-        {};
-
-
     return (
 
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
 
-
-            {/* =========================================
-                HEADER
-            ========================================= */}
-
             <div className="flex justify-between items-center mb-6">
 
                 <div>
-
                     <h2 className="text-2xl font-bold text-slate-900">
                         AI Workout Plan
                     </h2>
-
                     <p className="text-slate-500 mt-1">
 
                         Personalized workout program for{" "}
@@ -92,11 +77,14 @@ const WorkoutPlan = ({
                 </div>
 
 
-                {/* BUTTONS */}
-
                 {!loading && workout && (
 
                     <div className="flex items-center gap-3">
+
+
+                        {/* ==================================
+                            DOWNLOAD PDF
+                        ================================== */}
 
                         <button
                             onClick={() =>
@@ -115,31 +103,31 @@ const WorkoutPlan = ({
                             className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg px-4 py-2"
                         >
 
-                            <ArrowDownToLine size={18} />
+                            <ArrowDownToLine
+                                size={18}
+                            />
 
                             Download
 
                         </button>
 
 
+                        {/* ==================================
+                            WHATSAPP
+                        ================================== */}
+
                         <button
                             onClick={() =>
-                                sharePDFToWhatsApp(
-                                    pdfRef,
-                                    {
-                                        memberName:
-                                            displayMember?.name ||
-                                            "Member",
-
-                                        reportTitle:
-                                            "AI Workout Plan Report",
-                                    }
+                                sendWorkoutPlanWhatsApp(
+                                    displayMember
                                 )
                             }
                             className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white rounded-lg px-5 py-2"
                         >
 
-                            <Share2 size={18} />
+                            <Share2
+                                size={18}
+                            />
 
                             Share
 
@@ -149,6 +137,10 @@ const WorkoutPlan = ({
 
                 )}
 
+
+                {/* ==========================================
+                    CLOSE
+                ========================================== */}
 
                 <button
                     onClick={onClose}
@@ -162,9 +154,9 @@ const WorkoutPlan = ({
             </div>
 
 
-            {/* =========================================
+            {/* ==========================================
                 LOADING
-            ========================================= */}
+            ========================================== */}
 
             {loading && (
 
@@ -189,9 +181,9 @@ const WorkoutPlan = ({
             )}
 
 
-            {/* =========================================
+            {/* ==========================================
                 ERROR
-            ========================================= */}
+            ========================================== */}
 
             {!loading && error && (
 
@@ -204,9 +196,7 @@ const WorkoutPlan = ({
                     </h3>
 
                     <p className="text-red-600 mt-2">
-
                         {error}
-
                     </p>
 
                 </div>
@@ -214,9 +204,9 @@ const WorkoutPlan = ({
             )}
 
 
-            {/* =========================================
+            {/* ==========================================
                 NO WORKOUT
-            ========================================= */}
+            ========================================== */}
 
             {!loading &&
                 !error &&
@@ -231,9 +221,9 @@ const WorkoutPlan = ({
                 )}
 
 
-            {/* =========================================
-                WORKOUT
-            ========================================= */}
+            {/* ==========================================
+                WORKOUT PLAN
+            ========================================== */}
 
             {!loading && workout && (
 
@@ -257,7 +247,6 @@ const WorkoutPlan = ({
             )}
 
         </div>
-
     );
 };
 

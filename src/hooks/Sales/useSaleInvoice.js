@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { sellProduct, One_sale } from "../api/getSales";
+import { sellProduct, One_sale } from "../../api/getSales";
 
 export const useSaleInvoice = () => {
     const [saleModal, setSaleModal] = useState(null);

@@ -23,24 +23,17 @@ const Card = ({
                 <div
                     className={`w-12 h-12 rounded-xl flex items-center justify-center ${color}`}
                 >
-
                     {icon}
-
                 </div>
-
 
                 <div>
 
                     <p className="text-sm text-slate-500">
-
                         {title}
-
                     </p>
 
                     <h3 className="text-lg font-bold text-slate-900 mt-1">
-
                         {value}
-
                     </h3>
 
                 </div>
@@ -63,21 +56,18 @@ const WorkoutSummary = ({
         return null;
     }
 
-
     const bmi =
         member?.bmi ??
         "N/A";
 
-
     const daysCount =
-        workout?.days?.length || 0;
+        workout?.length || 0;
 
-
-    const exercisesCount =
-        workout?.days?.reduce(
+    const workoutsCount =
+        workout?.reduce(
             (total, day) =>
                 total +
-                (day.exercises?.length || 0),
+                (day.workouts?.length || 0),
             0
         ) || 0;
 
@@ -85,7 +75,6 @@ const WorkoutSummary = ({
     return (
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-
 
             {/* BMI */}
 
@@ -102,7 +91,7 @@ const WorkoutSummary = ({
             />
 
 
-            {/* DAYS */}
+            {/* WORKOUT DAYS */}
 
             <Card
                 title="Workout Days"
@@ -117,11 +106,11 @@ const WorkoutSummary = ({
             />
 
 
-            {/* EXERCISES */}
+            {/* TOTAL WORKOUTS */}
 
             <Card
-                title="Exercises"
-                value={exercisesCount}
+                title="Workouts"
+                value={workoutsCount}
                 color="bg-green-100"
                 icon={
                     <Activity

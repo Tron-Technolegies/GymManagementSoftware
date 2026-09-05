@@ -11,7 +11,6 @@ const Logout = ({ children }) => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("adminUser");
-
         navigate("/login");
     };
 

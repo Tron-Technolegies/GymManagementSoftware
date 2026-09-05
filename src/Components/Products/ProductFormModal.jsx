@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ConfirmActionModal from "../../Components/ConfirmActionModal"
+import ConfirmActionModal from "../ConfirmActionModal"
 
 const ProductFormModal = ({
     open,

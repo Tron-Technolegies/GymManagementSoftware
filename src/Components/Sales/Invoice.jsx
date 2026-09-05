@@ -1,5 +1,7 @@
 import React, { forwardRef } from "react";
 
+// **************SALES INVOICE REPORT ADMIN*********
+
 const Invoice = forwardRef(({ sale }, ref) => {
     if (!sale) return null;
 

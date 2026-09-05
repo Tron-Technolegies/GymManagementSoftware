@@ -1,19 +1,70 @@
 import React from "react";
-import { X, Pause, CirclePlay, Sparkles, Dumbbell } from "lucide-react";
+import {
+    X,
+    Pause,
+    CirclePlay,
+    Sparkles,
+    Dumbbell
+} from "lucide-react";
+
 import { useState } from "react";
+
 import PauseMember from "./PauseMember";
 import ResumeMember from "./ResumeMember";
 import Pausememberview from "./Pausememberview";
 import DietPlan from "../Dietplan";
+import WorkoutPlan from "../WorkoutPlan";
+
 import { generateDietPlan } from "../../api/dietplan";
-import WorkoutPlan from "../WorkoutPlan"
 import { useWorkoutPlan } from "../../hooks/useWorkoutPlan";
+import { useMember } from "../../hooks/Members/ViewMember";
+
 
 const ViewMemberModal = ({ member, onClose }) => {
+
+    // =========================
+    // GET LATEST MEMBER DATA
+    // =========================
+
+    const {
+        memberData: fetchedMember,
+        loading: memberLoading,
+        error: memberError,
+    } = useMember(member?.id);
+
+
+    // =========================
+    // LOCAL MEMBER DATA
+    // =========================
+
     const [memberData, setMemberData] = useState(member);
+
+
+    // Use latest API data when available
+    React.useEffect(() => {
+        if (fetchedMember) {
+            setMemberData(fetchedMember);
+        }
+    }, [fetchedMember]);
+
+
+    // =========================
+    // MODAL STATES
+    // =========================
+
     const [showPauseModal, setShowPauseModal] = useState(false);
     const [showResumeModal, setShowResumeModal] = useState(false);
     const [showDietPlan, setShowDietPlan] = useState(false);
+    const [showWorkout, setShowWorkout] = useState(false);
+
+    const [dietData, setDietData] = useState(null);
+    const [loadingDiet, setLoadingDiet] = useState(false);
+
+
+    // =========================
+    // WORKOUT HOOK
+    // =========================
+
     const {
         workout,
         workoutMember,
@@ -22,139 +73,137 @@ const ViewMemberModal = ({ member, onClose }) => {
         generate,
         reset,
     } = useWorkoutPlan();
-    const [dietData, setDietData] = useState(null);
-    const [loadingDiet, setLoadingDiet] = useState(false);
-    const [showWorkout, setShowWorkout] = useState(false);
-    // const [loadingWorkout, setLoadingWorkout] = useState(false);
+
+
+    // =========================
+    // STATUS STYLE
+    // =========================
 
     const getStatusStyle = (status) => {
+
         switch (status) {
+
             case "Active":
                 return "bg-green-100 text-green-700";
+
             case "Blocked":
                 return "bg-red-100 text-red-700";
+
             case "Expired":
                 return "bg-yellow-100 text-yellow-700";
+
             case "Paused":
                 return "bg-yellow-100 text-yellow-700";
+
             default:
                 return "bg-slate-100 text-slate-700";
         }
     };
 
+
+    // =========================
+    // GENERATE DIET
+    // =========================
+
     const handleGenerateDiet = async () => {
+
         try {
-            setShowDietPlan(true);      // Open AI Diet page immediately
+
+            setShowDietPlan(true);
             setLoadingDiet(true);
             setDietData(null);
 
             const res = await generateDietPlan(memberData.id);
 
-            console.log(res.data);
-
             setDietData(res.data.diet_plan);
+
         } catch (err) {
+
             console.error("Diet generation failed:", err);
+
             setShowDietPlan(false);
+
         } finally {
+
             setLoadingDiet(false);
         }
     };
 
+
+    // =========================
+    // GENERATE WORKOUT
+    // =========================
+
     const handleGenerateWorkout = async () => {
+
         if (!memberData?.id) {
-            console.error("No member selected.");
             return;
         }
 
         setShowWorkout(true);
+
         await generate(memberData.id);
     };
 
-    const handleCloseWorkout = () => {
-        setShowWorkout(false);
-        reset();
-    };
+
+    // =========================
+    // LOADING
+    // =========================
+
+    if (memberLoading && !memberData) {
+
+        return (
+            <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center">
+
+                <div className="bg-white rounded-xl p-8">
+                    Loading member...
+                </div>
+
+            </div>
+        );
+    }
+
+
+    // =========================
+    // UI
+    // =========================
 
     return (
+
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            {showPauseModal && (
-                <PauseMember
-                    member={memberData}
-                    onClose={() => setShowPauseModal(false)}
-                    onSuccess={(data) => {
 
-                        setMemberData(prev => ({
-                            ...prev,
-
-                            status: data.status,
-
-                            is_paused: data.is_paused,
-
-                            pause_start_date: data.paused_date,
-
-                            pause_days_used:
-                                data.used_days_this_month,
-
-                            pause_days_remaining:
-                                data.remaining_days_this_month,
-
-                            pause_count:
-                                data.pause_count_this_month,
-
-                        }));
-
-                        setShowPauseModal(false);
-                    }}
-                />
-            )}
-
-            {showResumeModal && (
-                <ResumeMember
-                    member={memberData}
-                    onClose={() => setShowResumeModal(false)}
-                    onSuccess={(newExpiryDate) => {
-                        setMemberData(prev => ({
-                            ...prev,
-                            status: "Active",
-                            is_paused: false,
-                            pause_start_date: null,
-                            pause_days_used: 0,
-                            pause_days_remaining: 15,
-                            pause_count: prev.pause_count,
-                            expiry_date: newExpiryDate,
-
-                        }));
-
-                        setShowResumeModal(false);
-                    }}
-                />
-            )}
             <div className="bg-white w-full max-w-4xl rounded-xl shadow-xl overflow-hidden">
 
-                {/* Header */}
+                {/* HEADER */}
+
                 <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+
                     <div>
+
                         <h2 className="text-xl font-bold text-slate-900">
-                            {
-                                showWorkout
-                                    ? "AI Workout Plan"
-                                    : showDietPlan
-                                        ? "AI Diet Plan"
-                                        : "Member Profile"
+
+                            {showWorkout
+                                ? "AI Workout Plan"
+                                : showDietPlan
+                                    ? "AI Diet Plan"
+                                    : "Member Profile"
                             }
+
                         </h2>
 
                         <p className="text-sm text-slate-500">
-                            {
-                                showWorkout
-                                    ? "Personalized workout program"
-                                    : showDietPlan
-                                        ? "Personalized nutrition plan"
-                                        : "View member information"
+
+                            {showWorkout
+                                ? "Personalized workout program"
+                                : showDietPlan
+                                    ? "Personalized nutrition plan"
+                                    : "View member information"
                             }
+
                         </p>
+
                     </div>
+
 
                     <button
                         onClick={onClose}
@@ -162,12 +211,16 @@ const ViewMemberModal = ({ member, onClose }) => {
                     >
                         <X size={20} />
                     </button>
+
                 </div>
 
-                {/* Body */}
+
+                {/* BODY */}
+
                 <div className="p-6 overflow-y-auto max-h-[80vh]">
 
                     {showWorkout ? (
+
                         <WorkoutPlan
                             member={memberData}
                             workout={workout}
@@ -179,41 +232,64 @@ const ViewMemberModal = ({ member, onClose }) => {
                                 reset();
                             }}
                         />
+
                     ) : showDietPlan ? (
+
                         <DietPlan
                             member={memberData}
                             diet={dietData}
                             loading={loadingDiet}
                             onClose={() => setShowDietPlan(false)}
                         />
+
                     ) : (
+
                         <div className="flex flex-col lg:flex-row gap-8">
 
-                            {/* Profile */}
+
+                            {/* PROFILE */}
+
                             <div className="w-full lg:w-64 flex flex-col items-center">
+
                                 <div className="w-44 h-44 rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
-                                    {member?.photo ? (
+
+                                    {memberData?.photo ? (
+
                                         <img
-                                            src={member.photo}
-                                            alt={member.name}
+                                            src={memberData.photo}
+                                            alt={memberData.name}
                                             className="w-full h-full object-cover"
                                         />
+
                                     ) : (
+
                                         <div className="w-full h-full flex items-center justify-center text-5xl font-bold text-slate-400">
-                                            {member?.name?.charAt(0)}
+
+                                            {memberData?.name?.charAt(0)}
+
                                         </div>
+
                                     )}
+
                                 </div>
 
+
                                 <h3 className="mt-4 text-lg font-bold">
-                                    {member?.name}
+                                    {memberData?.name}
                                 </h3>
 
+
                                 <span
-                                    className={`mt-2 px-3 py-1 rounded-full text-xs font-bold ${getStatusStyle(memberData?.status)}`}>
+                                    className={`mt-2 px-3 py-1 rounded-full text-xs font-bold ${getStatusStyle(memberData?.status)}`}
+                                >
                                     {memberData?.status}
                                 </span>
+
+
                                 <div className="space-y-5 my-5 mx-auto flex flex-col items-center">
+
+                                    {/* PAUSE */}
+
                                     <button
                                         onClick={() =>
                                             memberData?.is_paused
@@ -225,6 +301,7 @@ const ViewMemberModal = ({ member, onClose }) => {
                                             : "bg-yellow-500"
                                             }`}
                                     >
+
                                         {memberData?.is_paused ? (
                                             <CirclePlay size={16} />
                                         ) : (
@@ -233,80 +310,162 @@ const ViewMemberModal = ({ member, onClose }) => {
 
                                         {memberData?.is_paused
                                             ? "Resume Membership"
-                                            : "Pause Membership"}
+                                            : "Pause Membership"
+                                        }
+
                                     </button>
+
+
+                                    {/* DIET */}
 
                                     <button
                                         onClick={handleGenerateDiet}
                                         disabled={loadingDiet}
-                                        className="inline-flex items-center gap-2 rounded-lg bg-blue-500 px-3 py-2 text-white hover:bg-blue-700 disabled:opacity-60">
+                                        className="inline-flex items-center gap-2 rounded-lg bg-blue-500 px-3 py-2 text-white hover:bg-blue-700 disabled:opacity-60"
+                                    >
+
                                         <Sparkles size={16} />
-                                        <span>
-                                            {loadingDiet ? "Generating..." : "Generate AI Diet Plan"}
-                                        </span>
+
+                                        {loadingDiet
+                                            ? "Generating..."
+                                            : "Generate AI Diet Plan"
+                                        }
+
                                     </button>
+
+
+                                    {/* WORKOUT */}
+
                                     <button
                                         onClick={handleGenerateWorkout}
                                         disabled={loadingWorkout}
-                                        className="inline-flex items-center gap-2 rounded-lg bg-violet-500 px-8 py-2 text-white hover:bg-violet-700 disabled:opacity-60">
+                                        className="inline-flex items-center gap-2 rounded-lg bg-violet-500 px-8 py-2 text-white hover:bg-violet-700 disabled:opacity-60"
+                                    >
+
                                         <Dumbbell size={18} />
-                                        <span>
-                                            {loadingWorkout ? "Generating..." : "AI Workout Plan"}
-                                        </span>
+
+                                        {loadingWorkout
+                                            ? "Generating..."
+                                            : "AI Workout Plan"
+                                        }
+
                                     </button>
+
                                 </div>
+
                             </div>
 
 
-                            {/* Details */}
+                            {/* DETAILS */}
+
                             <div className="flex-1 space-y-8">
 
-                                {/* Personal Details */}
+
+                                {/* PERSONAL */}
+
                                 <section>
+
                                     <h3 className="text-xs font-bold text-yellow-600 uppercase tracking-widest mb-4">
                                         Personal Details
                                     </h3>
 
+
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                                        <DetailCard label="Member ID" value={member?.id} />
-                                        <DetailCard label="Phone" value={member?.phone} />
-                                        <DetailCard label="Email" value={member?.email} />
-                                        <DetailCard label="Age" value={member?.age} />
-                                        <DetailCard label="Gender" value={member?.gender} />
-                                        <DetailCard label="Blood Group" value={member?.blood_group} />
-                                        <DetailCard label="Location" value={member?.location} />
-                                        <DetailCard label="Aadhaar" value={member?.adhaar_number} />
+                                        <DetailCard
+                                            label="Member ID"
+                                            value={memberData?.id}
+                                        />
+
+                                        <DetailCard
+                                            label="Phone"
+                                            value={memberData?.phone}
+                                        />
+
+                                        <DetailCard
+                                            label="Email"
+                                            value={memberData?.email}
+                                        />
+
+                                        <DetailCard
+                                            label="Age"
+                                            value={memberData?.age}
+                                        />
+
+                                        <DetailCard
+                                            label="Gender"
+                                            value={memberData?.gender}
+                                        />
+
+                                        <DetailCard
+                                            label="Blood Group"
+                                            value={memberData?.blood_group}
+                                        />
+
+                                        <DetailCard
+                                            label="Location"
+                                            value={memberData?.location}
+                                        />
+
+                                        <DetailCard
+                                            label="Aadhaar"
+                                            value={memberData?.adhaar_number}
+                                        />
 
                                     </div>
+
                                 </section>
 
-                                {/* Body Stats */}
+
+                                {/* BODY */}
+
                                 <section>
-                                    <h3 className="text-xs font-bold text-yellow-600 uppercase tracking-widest mb-4">
-                                        Body Statistics
+
+                                    <h3 className="text-xs font-bold text-yellow-600 tracking-widest mb-4">
+                                        BODY STATISTICS
                                     </h3>
 
+
                                     <div className="grid grid-cols-3 gap-4">
+
                                         <DetailCard
                                             label="Height"
-                                            value={`${member?.height} cm`}
+                                            value={`${memberData?.height || "-"} cm`}
                                         />
+
                                         <DetailCard
                                             label="Weight"
-                                            value={`${member?.weight} kg`}
+                                            value={`${memberData?.weight || "-"} kg`}
                                         />
+
                                         <DetailCard
                                             label="BMI"
-                                            value={member?.bmi || "-"}
+                                            value={memberData?.bmi || "-"}
                                         />
+
+                                        <DetailCard
+                                            label="Goal"
+                                            value={memberData?.goal || "-"}
+                                        />
+
+                                        <DetailCard
+                                            label="Food Category"
+                                            value={memberData?.food_category || "-"}
+                                        />
+
                                     </div>
+
                                 </section>
 
+
+                                {/* MEMBERSHIP */}
+
                                 <section>
+
                                     <h3 className="text-xs font-bold text-yellow-600 uppercase tracking-widest mb-4">
                                         Membership Details
                                     </h3>
+
 
                                     <div className="grid grid-cols-2 gap-4">
 
@@ -323,7 +482,6 @@ const ViewMemberModal = ({ member, onClose }) => {
                                     </div>
 
 
-                                    {/* Pause Status */}
                                     <div className="mt-5">
 
                                         <Pausememberview
@@ -334,40 +492,54 @@ const ViewMemberModal = ({ member, onClose }) => {
 
                                 </section>
 
-                                {/* Payments */}
+
+                                {/* PAYMENTS */}
+
                                 <section>
+
                                     <h3 className="text-xs font-bold text-yellow-600 uppercase tracking-widest mb-4">
                                         Payment Details
                                     </h3>
 
+
                                     <div className="grid grid-cols-2 gap-4">
+
                                         <DetailCard
                                             label="Paid Amount"
-                                            value={`₹${member?.paid_amount}`}
+                                            value={`₹${memberData?.paid_amount}`}
                                         />
 
+
                                         <div className="bg-red-50 border border-red-100 rounded-xl p-4">
+
                                             <p className="text-xs font-semibold text-slate-500 uppercase">
                                                 Due Amount
                                             </p>
+
                                             <h4 className="text-lg font-bold text-red-600 mt-1">
-                                                ₹{member?.due_amount}
+                                                ₹{memberData?.due_amount}
                                             </h4>
+
                                         </div>
+
                                     </div>
+
                                 </section>
 
                             </div>
+
                         </div>
                     )}
 
-
                 </div>
 
-                {/* Footer */}
+
+                {/* FOOTER */}
+
                 <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end">
 
                     {(showDietPlan || showWorkout) ? (
+
                         <button
                             onClick={() => {
                                 setShowDietPlan(false);
@@ -377,31 +549,69 @@ const ViewMemberModal = ({ member, onClose }) => {
                         >
                             Back to Profile
                         </button>
+
                     ) : (
+
                         <button
                             onClick={onClose}
                             className="px-6 py-2 bg-slate-900 text-white rounded-lg"
                         >
                             Close
                         </button>
+
                     )}
 
                 </div>
 
             </div>
+
+            {/* PAUSE MEMBER MODAL */}
+            {showPauseModal && (
+                <PauseMember
+                    member={memberData}
+                    onClose={() => setShowPauseModal(false)}
+                    onSuccess={(updatedMember) => {
+                        setMemberData(updatedMember);
+                        setShowPauseModal(false);
+                    }}
+                />
+            )}
+
+            {/* RESUME MEMBER MODAL */}
+            {showResumeModal && (
+                <ResumeMember
+                    member={memberData}
+                    onClose={() => setShowResumeModal(false)}
+                    onSuccess={(updatedMember) => {
+                        setMemberData(updatedMember);
+                        setShowResumeModal(false);
+                    }}
+                />
+            )}
+
         </div>
     );
 };
 
+
+// =========================
+// DETAIL CARD
+// =========================
+
 const DetailCard = ({ label, value }) => (
+
     <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+
         <p className="text-xs font-semibold text-slate-500 uppercase">
             {label}
         </p>
+
         <h4 className="text-sm font-bold text-slate-900 mt-1">
             {value || "-"}
         </h4>
+
     </div>
 );
+
 
 export default ViewMemberModal;

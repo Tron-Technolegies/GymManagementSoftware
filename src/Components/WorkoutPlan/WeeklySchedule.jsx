@@ -1,22 +1,10 @@
 import React from "react";
-import { Dumbbell } from "lucide-react";
+import {
+    Dumbbell,
+    Clock,
+    Repeat,
+} from "lucide-react";
 
-const getImageUrl = (image) => {
-    if (!image || typeof image !== "string") {
-        return null;
-    }
-
-    const url = image.trim();
-
-    if (
-        url.startsWith("https://") ||
-        url.startsWith("http://")
-    ) {
-        return url;
-    }
-
-    return null;
-};
 
 const WeeklySchedule = ({ workout }) => {
 
@@ -25,14 +13,13 @@ const WeeklySchedule = ({ workout }) => {
         workout
     );
 
-    const days = workout?.days || [];
+    const days = workout || [];
 
-    // =====================================================
-    // NO DAYS
-    // =====================================================
 
     if (!days.length) {
+
         return (
+
             <div className="bg-white rounded-xl border border-slate-200 p-6">
 
                 <div className="flex items-center gap-2">
@@ -49,15 +36,17 @@ const WeeklySchedule = ({ workout }) => {
                 </div>
 
             </div>
+
         );
+
     }
 
+
     return (
+
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
 
-            {/* =================================================
-                TITLE
-            ================================================= */}
+            {/* TITLE */}
 
             <div className="flex items-center gap-2 mb-6">
 
@@ -72,9 +61,8 @@ const WeeklySchedule = ({ workout }) => {
 
             </div>
 
-            {/* =================================================
-                DAYS
-            ================================================= */}
+
+            {/* DAYS */}
 
             <div className="space-y-8">
 
@@ -85,9 +73,7 @@ const WeeklySchedule = ({ workout }) => {
                         className="border border-slate-200 rounded-xl overflow-hidden"
                     >
 
-                        {/* =================================================
-                            DAY HEADER
-                        ================================================= */}
+                        {/* DAY HEADER */}
 
                         <div className="bg-violet-600 text-white px-5 py-4">
 
@@ -101,196 +87,128 @@ const WeeklySchedule = ({ workout }) => {
 
                         </div>
 
-                        {/* =================================================
-                            EXERCISES
-                        ================================================= */}
+
+                        {/* WORKOUTS */}
 
                         <div className="p-5">
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                                {day.exercises?.length > 0 ? (
+                                {day.workouts?.length > 0 ? (
 
-                                    day.exercises.map(
-                                        (exercise, index) => {
+                                    day.workouts.map(
+                                        (workoutItem, index) => (
 
-                                            const imageUrl =
-                                                getImageUrl(
-                                                    exercise.image
-                                                );
+                                            <div
+                                                key={`${day.day}-${index}`}
+                                                className="border border-slate-200 rounded-xl bg-white p-5"
+                                            >
 
-                                            console.log(
-                                                "Exercise:",
-                                                exercise.name,
-                                                "Image:",
-                                                imageUrl
-                                            );
+                                                {/* WORKOUT NAME */}
 
-                                            return (
+                                                <div className="flex items-center gap-2 mb-5">
 
-                                                <div
-                                                    key={
-                                                        exercise.exercise_id ||
-                                                        `${day.day}-${index}`
-                                                    }
-                                                    className="border border-slate-200 rounded-xl overflow-hidden bg-white"
-                                                >
+                                                    <Dumbbell
+                                                        size={20}
+                                                        className="text-yellow-600"
+                                                    />
 
-                                                    {/* =================================================
-                                                        IMAGE
-                                                    ================================================= */}
+                                                    <h4 className="font-semibold text-slate-800 text-lg">
+                                                        {workoutItem.workout_name}
+                                                    </h4>
 
-                                                    <div className="w-full h-64 bg-slate-100 flex items-center justify-center overflow-hidden">
+                                                </div>
 
-                                                        {imageUrl ? (
 
-                                                            <img
-                                                                src={imageUrl}
-                                                                alt={
-                                                                    exercise.name
-                                                                }
-                                                                className="w-full h-full object-contain"
-                                                                loading="lazy"
-                                                                onError={(e) => {
+                                                {/* DETAILS */}
 
-                                                                    console.error(
-                                                                        "IMAGE LOAD ERROR:",
-                                                                        imageUrl
-                                                                    );
+                                                <div className="grid grid-cols-3 gap-3">
 
-                                                                    e.currentTarget.style.display =
-                                                                        "none";
+                                                    {/* SETS */}
 
-                                                                    const parent =
-                                                                        e.currentTarget.parentElement;
+                                                    <div className="bg-violet-50 rounded-lg p-3 text-center">
 
-                                                                    if (parent) {
+                                                        <p className="text-xs text-violet-500 uppercase">
+                                                            Sets
+                                                        </p>
 
-                                                                        parent.innerHTML = `
-                                                                            <div class="text-center">
-                                                                                <p class="text-sm text-slate-400">
-                                                                                    Image unavailable
-                                                                                </p>
-                                                                            </div>
-                                                                        `;
-                                                                    }
-
-                                                                }}
-                                                            />
-
-                                                        ) : (
-
-                                                            <div className="text-center">
-
-                                                                <Dumbbell
-                                                                    size={40}
-                                                                    className="text-slate-300 mx-auto"
-                                                                />
-
-                                                                <p className="text-sm text-slate-400 mt-2">
-                                                                    No image available
-                                                                </p>
-
-                                                            </div>
-
-                                                        )}
+                                                        <p className="text-lg font-bold text-violet-700 mt-1">
+                                                            {workoutItem.sets}
+                                                        </p>
 
                                                     </div>
 
-                                                    {/* =================================================
-                                                        DETAILS
-                                                    ================================================= */}
 
-                                                    <div className="p-5">
+                                                    {/* REPS */}
 
-                                                        {/* =================================================
-                                                            EXERCISE NAME
-                                                        ================================================= */}
+                                                    <div className="bg-blue-50 rounded-lg p-3 text-center">
 
-                                                        <div className="flex items-center gap-2 mb-3">
+                                                        <p className="text-xs text-blue-500 uppercase">
+                                                            Reps
+                                                        </p>
 
-                                                            <Dumbbell
-                                                                size={18}
-                                                                className="text-yellow-600 flex-shrink-0"
-                                                            />
+                                                        <p className="text-lg font-bold text-blue-700 mt-1">
+                                                            {workoutItem.reps}
+                                                        </p>
 
-                                                            <h4 className="font-semibold text-slate-800 text-lg">
-                                                                {exercise.name}
-                                                            </h4>
+                                                    </div>
 
-                                                        </div>
 
-                                                        {/* =================================================
-                                                            HOW TO PERFORM
-                                                        ================================================= */}
+                                                    {/* DURATION */}
 
-                                                        {exercise.description && (
+                                                    <div className="bg-green-50 rounded-lg p-3 text-center">
 
-                                                            <div className="mb-5 bg-slate-50 border border-slate-200 rounded-lg p-4">
+                                                        <p className="text-xs text-green-500 uppercase">
+                                                            Minutes
+                                                        </p>
 
-                                                                {/* <h5 className="font-semibold text-slate-700 mb-2">
-                                                                    How to Perform
-                                                                </h5> */}
-
-                                                                <p className="text-sm text-slate-600 leading-6">
-                                                                    {exercise.description}
-                                                                </p>
-
-                                                            </div>
-
-                                                        )}
-
-                                                        {/* =================================================
-                                                            SETS / REPS / REST
-                                                        ================================================= */}
-
-                                                        <div className="flex flex-wrap gap-2">
-
-                                                            <span className="px-3 py-1 bg-violet-50 text-violet-700 rounded-lg text-sm">
-                                                                {exercise.sets} Sets
-                                                            </span>
-
-                                                            <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm">
-                                                                {exercise.reps} Reps
-                                                            </span>
-
-                                                            <span className="px-3 py-1 bg-green-50 text-green-700 rounded-lg text-sm">
-                                                                Rest:{" "}
-                                                                {exercise.rest}
-                                                            </span>
-
-                                                        </div>
-
-                                                        {/* =================================================
-                                                            EQUIPMENT
-                                                        ================================================= */}
-
-                                                        <div className="mt-4">
-
-                                                            <p className="text-xs text-slate-400 uppercase">
-                                                                Equipment
-                                                            </p>
-
-                                                            <p className="text-sm font-medium text-slate-700 mt-1">
-                                                                {exercise.equipment ||
-                                                                    "Bodyweight"}
-                                                            </p>
-
-                                                        </div>
+                                                        <p className="text-lg font-bold text-green-700 mt-1">
+                                                            {workoutItem.duration}
+                                                        </p>
 
                                                     </div>
 
                                                 </div>
 
-                                            );
 
-                                        }
+                                                {/* BODY PART */}
+
+                                                <div className="mt-4 flex items-center gap-2 text-sm text-slate-500">
+
+                                                    <Repeat
+                                                        size={16}
+                                                    />
+
+                                                    <span>
+                                                        {day.body_part}
+                                                    </span>
+
+                                                </div>
+
+
+                                                {/* DURATION */}
+
+                                                <div className="mt-2 flex items-center gap-2 text-sm text-slate-500">
+
+                                                    <Clock
+                                                        size={16}
+                                                    />
+
+                                                    <span>
+                                                        {workoutItem.duration} minutes
+                                                    </span>
+
+                                                </div>
+
+                                            </div>
+
+                                        )
                                     )
 
                                 ) : (
 
                                     <p className="text-slate-500">
-                                        No exercises available.
+                                        No workouts available.
                                     </p>
 
                                 )}
@@ -306,7 +224,10 @@ const WeeklySchedule = ({ workout }) => {
             </div>
 
         </div>
+
     );
+
 };
+
 
 export default WeeklySchedule;
