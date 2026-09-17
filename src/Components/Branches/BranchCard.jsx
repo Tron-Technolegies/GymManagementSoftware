@@ -10,11 +10,17 @@ import DeleteBranch from "./DeleteBranch";
 
 const BranchCard = ({
     branch,
-    isSuperuser,
+    userRole,
     onClick,
     onEdit,
     onDelete,
 }) => {
+    const canEdit = ["TENANT_ADMIN", "BRANCH_ADMIN"].includes(
+        userRole
+    );
+
+    const canDelete = userRole === "TENANT_ADMIN";
+
     return (
         <div
             onClick={() => onClick(branch)}
@@ -28,25 +34,28 @@ const BranchCard = ({
                 <div className="flex gap-2">
 
                     {/* Edit */}
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onEdit(branch);
-                        }}
-                        className="p-2 rounded-md hover:bg-yellow-100"
-                    >
-                        <Edit2
-                            size={16}
-                            className="text-yellow-600"
-                        />
-                    </button>
+                    {canEdit && (
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onEdit(branch);
+                            }}
+                            className="p-2 rounded-md hover:bg-yellow-100"
+                        >
+                            <Edit2
+                                size={16}
+                                className="text-yellow-600"
+                            />
+                        </button>
+                    )}
 
-                    {/* Delete */}
-                    <DeleteBranch
-                        branch={branch}
-                        isSuperuser={isSuperuser}
-                        onDelete={onDelete}
-                    />
+                    {/* Delete - Tenant Admin only */}
+                    {canDelete && (
+                        <DeleteBranch
+                            branch={branch}
+                            onDelete={onDelete}
+                        />
+                    )}
 
                 </div>
             </div>

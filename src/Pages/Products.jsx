@@ -38,6 +38,20 @@ const Products = () => {
         localStorage.getItem("adminUser") || "null"
     );
 
+    const canManageProducts = [
+        "SUPER_ADMIN",
+        "TENANT_ADMIN",
+        "BRANCH_ADMIN",
+    ].includes(user?.role);
+
+    const canSellProducts = [
+        "SUPER_ADMIN",
+        "TENANT_ADMIN",
+        "BRANCH_ADMIN",
+        "STAFF",
+    ].includes(user?.role);
+
+
     const [showFormModal, setShowFormModal] = useState(false);
     const [editing, setEditing] = useState(null);
 
@@ -140,7 +154,7 @@ const Products = () => {
                 setPriceSort={setPriceSort}
                 stockSort={stockSort}
                 setStockSort={setStockSort}
-                onAdd={openAdd}
+                onAdd={canManageProducts ? openAdd : undefined}
             />
 
             {/* Products */}
@@ -150,6 +164,8 @@ const Products = () => {
                         key={p.id}
                         product={p}
                         user={user}
+                        canManageProducts={canManageProducts}
+                        canSellProducts={canSellProducts}
                         onSell={openSell}
                         onEdit={openEdit}
                         onDelete={(productId) => {

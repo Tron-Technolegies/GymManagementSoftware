@@ -151,9 +151,6 @@ const AddStaffs = ({
 
                     {/* Personal Information */}
                     <div className="mb-6">
-                        <h3 className="text-sm font-semibold text-slate-800 mb-4">
-                            Personal Information
-                        </h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -236,9 +233,6 @@ const AddStaffs = ({
 
                     {/* Professional Information */}
                     <div className="mb-6">
-                        <h3 className="text-sm font-semibold text-slate-800 mb-4">
-                            Professional Information
-                        </h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -402,27 +396,6 @@ const AddStaffs = ({
                         </div>
                     </div>
 
-                    {/* Branch information */}
-                    <div className="mb-6 p-4 rounded-xl bg-yellow-50 border border-yellow-100">
-                        <div className="flex items-start gap-3">
-                            <Briefcase
-                                size={18}
-                                className="text-yellow-600 mt-0.5"
-                            />
-
-                            <div>
-                                <p className="text-sm font-semibold text-slate-800">
-                                    Branch Assignment
-                                </p>
-
-                                <p className="text-xs text-slate-600 mt-1">
-                                    This staff member will automatically be
-                                    assigned to your branch. You cannot assign
-                                    staff to another branch.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
 
                     {/* Buttons */}
                     <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">

@@ -14,6 +14,7 @@ import {
   ChevronRight,
   TrendingUp,
   LogOut,
+  Dumbbell
 } from "lucide-react";
 import originallogo from "../assets/originallogo.png";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -246,6 +247,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             icon={SearchCheck}
             label="Enquiry"
             path="/enquiry"
+            onClick={() => setSidebarOpen(false)}
+          />
+
+          <SidebarItem
+            icon={Dumbbell}
+            label="Equipment"
+            path="/equipment"
             onClick={() => setSidebarOpen(false)}
           />
           <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 mt-8 mb-3">System</p>

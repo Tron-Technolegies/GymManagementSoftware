@@ -4,10 +4,7 @@ import { Trash2 } from "lucide-react";
 const DeleteBranch = ({
     branch,
     onDelete,
-    isSuperuser,
 }) => {
-    if (!isSuperuser) return null;
-
     return (
         <button
             onClick={(e) => {

@@ -24,6 +24,17 @@ const Branches = () => {
     localStorage.getItem("adminUser") || "null"
   );
 
+  const userRole = user?.role;
+
+  // Permissions
+  const canAdd = userRole === "TENANT_ADMIN";
+
+  const canEdit = ["TENANT_ADMIN", "BRANCH_ADMIN"].includes(
+    userRole
+  );
+
+  const canDelete = userRole === "TENANT_ADMIN";
+
   const [selectedBranch, setSelectedBranch] = useState(null);
   const [showBranchModal, setShowBranchModal] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -72,6 +83,7 @@ const Branches = () => {
 
     setShowBranchModal(true);
   };
+
   const openConfirmModal = ({
     title,
     message,
@@ -128,6 +140,8 @@ const Branches = () => {
   // =========================
 
   const openAdd = () => {
+    if (!canAdd) return;
+
     setEditing(null);
     resetForm();
     setShowForm(true);
@@ -138,6 +152,8 @@ const Branches = () => {
   // =========================
 
   const openEdit = (branch) => {
+    if (!canEdit) return;
+
     setEditing(branch);
 
     setFormData({
@@ -167,6 +183,8 @@ const Branches = () => {
 
   const handleSubmit = () => {
     if (editing) {
+      if (!canEdit) return;
+
       openConfirmModal({
         title: "Update Branch",
         message: `Are you sure you want to update ${formData.name || "this branch"
@@ -181,6 +199,8 @@ const Branches = () => {
         },
       });
     } else {
+      if (!canAdd) return;
+
       openConfirmModal({
         title: "Add Branch",
         message: `Are you sure you want to add ${formData.name || "this branch"
@@ -202,6 +222,8 @@ const Branches = () => {
   // =========================
 
   const handleDelete = (branch) => {
+    if (!canDelete) return;
+
     openConfirmModal({
       title: "Delete Branch",
       message: `Are you sure you want to delete ${branch.name}?`,
@@ -224,13 +246,15 @@ const Branches = () => {
           Branches
         </h1>
 
-        <button
-          onClick={openAdd}
-          className="bg-yellow-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm"
-        >
-          <Plus size={18} />
-          Add Branch
-        </button>
+        {canAdd && (
+          <button
+            onClick={openAdd}
+            className="bg-yellow-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm"
+          >
+            <Plus size={18} />
+            Add Branch
+          </button>
+        )}
       </div>
 
       <AddBranch
@@ -247,10 +271,10 @@ const Branches = () => {
           <BranchCard
             key={branch.id}
             branch={branch}
-            isSuperuser={user?.is_superuser}
+            userRole={userRole}
             onClick={openBranchModal}
-            onEdit={openEdit}
-            onDelete={handleDelete}
+            onEdit={canEdit ? openEdit : undefined}
+            onDelete={canDelete ? handleDelete : undefined}
           />
         ))}
       </div>

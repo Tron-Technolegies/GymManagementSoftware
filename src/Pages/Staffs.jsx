@@ -20,6 +20,19 @@ const Staffs = () => {
     const user = JSON.parse(
         localStorage.getItem("adminUser") || "null"
     );
+
+    const canManageStaff = [
+        "SUPER_ADMIN",
+        "TENANT_ADMIN",
+        "BRANCH_ADMIN",
+    ].includes(user?.role);
+
+    const canMakeSalaryPayment = [
+        "SUPER_ADMIN",
+        "TENANT_ADMIN",
+        "BRANCH_ADMIN",
+    ].includes(user?.role);
+
     const { staffs, fetchStaffs } = useStaffs();
     const { remove } = useDeleteStaff();
     const { addPayment } = useStaffPayment();
@@ -234,13 +247,13 @@ const Staffs = () => {
                     <h1 className="font-bold text-xl">Staff Management</h1>
                 </div>
 
-                <button
-                    onClick={() =>
-                        setShowAdd(true)
-                    }
-                    className="px-4 py-2 rounded-md text-sm bg-yellow-500 font-semibold text-white hover:bg-yellow-600 transition">
-                    + ADD STAFF
-                </button>
+                {canManageStaff && (
+                    <button
+                        onClick={() => setShowAdd(true)}
+                        className="px-4 py-2 rounded-md text-sm bg-yellow-500 font-semibold text-white hover:bg-yellow-600 transition">
+                        + ADD STAFF
+                    </button>
+                )}
             </div>
 
             <StaffKPI staffs={staffs} />
@@ -344,8 +357,7 @@ const Staffs = () => {
                         staff={selectedStaff}
                         paymentData={paymentData}
                         setPaymentData={
-                            setPaymentData
-                        }
+                            setPaymentData}
                         onClose={() =>
                             setShowPaymentForm(
                                 false

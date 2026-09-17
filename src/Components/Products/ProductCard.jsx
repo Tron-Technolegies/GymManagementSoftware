@@ -4,6 +4,8 @@ import { Edit2, Trash2 } from "lucide-react";
 const ProductCard = ({
     product,
     user,
+    canManageProducts,
+    canSellProducts,
     onSell,
     onEdit,
     onDelete,
@@ -15,10 +17,8 @@ const ProductCard = ({
             className={`p-6 rounded-xl shadow transition ${Number(p.stock) === 0
                     ? "bg-gray-300 text-gray-500"
                     : "bg-white"
-                }`}
-        >
+                }`}>
             <h3 className="text-xl font-bold">{p.name}</h3>
-
             {p.image && (
                 <img
                     src={p.image}
@@ -31,26 +31,25 @@ const ProductCard = ({
             )}
 
             <p className="text-slate-600 mt-2">{p.description}</p>
-
             <p className="mt-2 text-sm">{p.category}</p>
-
             <div className="flex justify-between mt-4">
                 <p className="font-bold">₹{p.price}</p>
                 <p className="text-sm">Stock: {p.stock}</p>
             </div>
 
             <div className="flex justify-between mt-5">
+
+                {/* OUT OF STOCK */}
                 {Number(p.stock) === 0 ? (
                     <>
                         <span className="text-red-600 font-semibold">
                             Out of Stock
                         </span>
 
-                        {user?.is_superuser && (
+                        {canManageProducts && (
                             <button
                                 className="p-2 rounded-md hover:bg-red-100"
-                                onClick={() => onDelete(p.id)}
-                            >
+                                onClick={() => onDelete(p.id)}>
                                 <Trash2
                                     size={16}
                                     className="text-red-600"
@@ -60,36 +59,41 @@ const ProductCard = ({
                     </>
                 ) : (
                     <>
-                        <button
-                            onClick={() => onSell(p)}
-                            className="px-8 py-2 rounded text-white bg-yellow-500"
-                        >
-                            Sell
-                        </button>
-
-                        <div className="flex gap-2">
+                        {/* SELL */}
+                        {canSellProducts && (
                             <button
-                                className="p-2 rounded-md hover:bg-green-100"
-                                onClick={() => onEdit(p)}
-                            >
-                                <Edit2
-                                    size={16}
-                                    className="text-green-600"
-                                />
+                                onClick={() => onSell(p)}
+                                className="px-8 py-2 rounded text-white bg-yellow-500">
+                                Sell
                             </button>
+                        )}
 
-                            {user?.is_superuser && (
+                        {/* EDIT / DELETE */}
+                        {canManageProducts && (
+                            <div className="flex gap-2">
+
+                                {/* EDIT */}
+                                <button
+                                    className="p-2 rounded-md hover:bg-green-100"
+                                    onClick={() => onEdit(p)}>
+                                    <Edit2
+                                        size={16}
+                                        className="text-green-600"
+                                    />
+                                </button>
+
+                                {/* DELETE */}
                                 <button
                                     className="p-2 rounded-md hover:bg-red-100"
-                                    onClick={() => onDelete(p.id)}
-                                >
+                                    onClick={() => onDelete(p.id)}>
                                     <Trash2
                                         size={16}
                                         className="text-red-600"
                                     />
                                 </button>
-                            )}
-                        </div>
+
+                            </div>
+                        )}
                     </>
                 )}
             </div>

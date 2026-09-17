@@ -17,6 +17,7 @@ const ProductHeader = ({
             <h1 className="text-2xl font-bold">Products</h1>
 
             <div className="flex flex-wrap items-center gap-3 md:gap-5 w-full lg:w-auto">
+
                 <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
@@ -68,13 +69,17 @@ const ProductHeader = ({
                     />
                 </div>
 
-                <button
-                    onClick={onAdd}
-                    className="bg-yellow-500 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-                >
-                    <Plus size={16} />
-                    Add
-                </button>
+                {/* ADD BUTTON - ONLY FOR AUTHORIZED ROLES */}
+                {onAdd && (
+                    <button
+                        onClick={onAdd}
+                        className="bg-yellow-500 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+                    >
+                        <Plus size={16} />
+                        Add
+                    </button>
+                )}
+
             </div>
         </div>
     );

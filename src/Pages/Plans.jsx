@@ -178,12 +178,15 @@ export default function Plans() {
       <div className="flex justify-between items-end">
         <h1 className="text-2xl font-bold">Plans</h1>
 
-        <button
-          onClick={openAdd}
-          className="bg-yellow-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm"
-        >
-          <Plus size={18} />Add Plan
-        </button>
+        {["SUPER_ADMIN", "TENANT_ADMIN"].includes(user?.role) && (
+          <button
+            onClick={openAdd}
+            className="bg-yellow-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm"
+          >
+            <Plus size={18} />
+            Add Plan
+          </button>
+        )}
 
       </div>
 
@@ -214,15 +217,19 @@ export default function Plans() {
             <div className="flex justify-between">
               <h3 className="font-bold">{p.name}</h3>
               <div className="flex gap-2">
-                <button
-                  onClick={() => openEdit(p)}
-                  className="p-2 rounded-md hover:bg-yellow-100">
-                  <Edit2
-                    size={16}
-                    className="text-yellow-600" />
-                </button>
+                {["SUPER_ADMIN", "TENANT_ADMIN"].includes(user?.role) && (
+                  <button
+                    onClick={() => openEdit(p)}
+                    className="p-2 rounded-md hover:bg-yellow-100"
+                  >
+                    <Edit2
+                      size={16}
+                      className="text-yellow-600"
+                    />
+                  </button>
+                )}
 
-                {user?.is_superuser && (
+                {["SUPER_ADMIN", "TENANT_ADMIN"].includes(user?.role) && (
                   <button
                     onClick={() => handleDelete(p)}
                     className="p-2 rounded-md hover:bg-red-100"

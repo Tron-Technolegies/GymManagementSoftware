@@ -15,6 +15,7 @@ import Login from "./Pages/Login";
 import WorkoutPlan from "./Pages/WorkoutPlan";
 import Layout from "./Layout/Layout";
 import Products from "./Pages/Products";
+import Equipments from "./Pages/Equipments";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
       { path: "/workplan", element: <WorkoutPlan /> },
 
       { path: "staffs", element: <Staffs /> },
+      { path: "/equipment", element: <Equipments /> },
       { path: "enquiry", element: <Enquiry /> },
       { path: "/transaction", element: <Transaction /> },
       { path: "/profit_loss", element: <Profit_loss /> },
