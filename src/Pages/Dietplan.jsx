@@ -159,7 +159,7 @@ const DietPlan = ({
                     className="space-y-6"
                 >
 
-                    <NutritionCards
+                    <NutritionCard
                         nutrition={diet.nutrition}
                     />
 
@@ -168,7 +168,7 @@ const DietPlan = ({
 
                         <div className="lg:col-span-8">
 
-                            <MealPlan
+                            <MealPlans
                                 diet={diet}
                             />
 
@@ -189,15 +189,15 @@ const DietPlan = ({
                                 }
                             />
 
-                            <Supplements
-                                supplements={
-                                    diet.supplements
+                            <Supplement
+                                supplement={
+                                    diet.supplement
                                 }
                             />
 
-                            <Tips
-                                tips={
-                                    diet.tips
+                            <Tip
+                                tip={
+                                    diet.tip
                                 }
                             />
 
