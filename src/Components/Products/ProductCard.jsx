@@ -15,8 +15,8 @@ const ProductCard = ({
     return (
         <div
             className={`p-6 rounded-xl shadow transition ${Number(p.stock) === 0
-                    ? "bg-gray-300 text-gray-500"
-                    : "bg-white"
+                ? "bg-gray-300 text-gray-500"
+                : "bg-white"
                 }`}>
             <h3 className="text-xl font-bold">{p.name}</h3>
             {p.image && (
@@ -24,8 +24,8 @@ const ProductCard = ({
                     src={p.image}
                     alt={p.name}
                     className={`w-full h-48 object-cover rounded-lg mt-2 ${Number(p.stock) === 0
-                            ? "grayscale opacity-50"
-                            : ""
+                        ? "grayscale opacity-50"
+                        : ""
                         }`}
                 />
             )}

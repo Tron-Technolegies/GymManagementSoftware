@@ -8,7 +8,7 @@ export const useWorkoutPlan = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const generate = useCallback(async (memberId) => {
+    const generate = useCallback(async (memberId, experienceLevel) => {
 
         setLoading(true);
         setError(null);
@@ -17,7 +17,10 @@ export const useWorkoutPlan = () => {
 
         try {
 
-            const response = await generateWorkoutPlan(memberId);
+            const response = await generateWorkoutPlan(
+                memberId,
+                experienceLevel
+            );
 
             const data = response.data;
 

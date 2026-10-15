@@ -128,10 +128,10 @@ const StaffTable = ({
                                 <td className="px-6 py-4 text-sm">
                                     <span
                                         className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${staff.status?.toLowerCase() === "active"
-                                                ? "bg-green-100 text-green-700"
-                                                : staff.status?.toLowerCase() === "blocked"
-                                                    ? "bg-red-100 text-red-700"
-                                                    : "bg-slate-100 text-slate-600"
+                                            ? "bg-green-100 text-green-700"
+                                            : staff.status?.toLowerCase() === "blocked"
+                                                ? "bg-red-100 text-red-700"
+                                                : "bg-slate-100 text-slate-600"
                                             }`}>
                                         {staff.status}
                                     </span>

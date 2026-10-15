@@ -1,13 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     X,
     Pause,
     CirclePlay,
     Sparkles,
-    Dumbbell
+    Dumbbell,
+    ChevronDown
 } from "lucide-react";
-
-import { useState } from "react";
 
 import PauseMember from "./PauseMember";
 import ResumeMember from "./ResumeMember";
@@ -30,8 +29,8 @@ const ViewMemberModal = ({ member, onClose }) => {
         memberData: fetchedMember,
         loading: memberLoading,
         error: memberError,
+        fetchMember,
     } = useMember(member?.id);
-
 
     // =========================
     // LOCAL MEMBER DATA
@@ -40,7 +39,6 @@ const ViewMemberModal = ({ member, onClose }) => {
     const [memberData, setMemberData] = useState(member);
 
 
-    // Use latest API data when available
     React.useEffect(() => {
         if (fetchedMember) {
             setMemberData(fetchedMember);
@@ -56,6 +54,10 @@ const ViewMemberModal = ({ member, onClose }) => {
     const [showResumeModal, setShowResumeModal] = useState(false);
     const [showDietPlan, setShowDietPlan] = useState(false);
     const [showWorkout, setShowWorkout] = useState(false);
+
+    // Workout dropdown
+    const [showWorkoutLevels, setShowWorkoutLevels] = useState(false);
+    const [experienceLevel, setExperienceLevel] = useState("beginner");
 
     const [dietData, setDietData] = useState(null);
     const [loadingDiet, setLoadingDiet] = useState(false);
@@ -134,15 +136,40 @@ const ViewMemberModal = ({ member, onClose }) => {
     // GENERATE WORKOUT
     // =========================
 
-    const handleGenerateWorkout = async () => {
+    const handleGenerateWorkout = async (level) => {
 
-        if (!memberData?.id) {
+        if (!memberData?.id || loadingWorkout) {
             return;
         }
 
+        // Save selected level
+        setExperienceLevel(level);
+
+        // Close dropdown
+        setShowWorkoutLevels(false);
+
+        // Open workout screen
         setShowWorkout(true);
 
-        await generate(memberData.id);
+        // Generate workout using selected level
+        await generate(
+            memberData.id,
+            level
+        );
+    };
+
+
+    // =========================
+    // WORKOUT DROPDOWN TOGGLE
+    // =========================
+
+    const handleWorkoutButtonClick = () => {
+
+        if (loadingWorkout) {
+            return;
+        }
+
+        setShowWorkoutLevels((prev) => !prev);
     };
 
 
@@ -296,7 +323,7 @@ const ViewMemberModal = ({ member, onClose }) => {
                                                 ? setShowResumeModal(true)
                                                 : setShowPauseModal(true)
                                         }
-                                        className={`flex items-center gap-2 rounded-md px-5 py-2 text-white ${memberData?.is_paused
+                                        className={`flex items-center gap-2 rounded-md px-4 py-2 text-white ${memberData?.is_paused
                                             ? "bg-green-600"
                                             : "bg-yellow-500"
                                             }`}
@@ -334,22 +361,80 @@ const ViewMemberModal = ({ member, onClose }) => {
                                     </button>
 
 
-                                    {/* WORKOUT */}
+                                    {/* WORKOUT DROPDOWN */}
 
-                                    <button
-                                        onClick={handleGenerateWorkout}
-                                        disabled={loadingWorkout}
-                                        className="inline-flex items-center gap-2 rounded-lg bg-violet-500 px-8 py-2 text-white hover:bg-violet-700 disabled:opacity-60"
-                                    >
+                                    <div className="relative">
 
-                                        <Dumbbell size={18} />
+                                        <button
+                                            type="button"
+                                            onClick={handleWorkoutButtonClick}
+                                            disabled={loadingWorkout}
+                                            className="inline-flex items-center justify-center gap-2 rounded-lg bg-violet-600 px-5 py-2 text-white hover:bg-violet-700 disabled:opacity-60"
+                                        >
 
-                                        {loadingWorkout
-                                            ? "Generating..."
-                                            : "AI Workout Plan"
-                                        }
+                                            <Dumbbell size={18} />
 
-                                    </button>
+                                            {loadingWorkout
+                                                ? "Generating..."
+                                                : "AI Workout Plan"
+                                            }
+
+                                            {!loadingWorkout && (
+                                                <ChevronDown
+                                                    size={17}
+                                                    className={`transition-transform ${showWorkoutLevels
+                                                        ? "rotate-180"
+                                                        : ""
+                                                        }`}
+                                                />
+                                            )}
+
+                                        </button>
+
+
+                                        {/* LEVEL OPTIONS */}
+
+                                        {showWorkoutLevels && !loadingWorkout && (
+
+                                            <div className="absolute left-0 right-0 mt-2 bg-blue-200 border border-slate-200 rounded-lg shadow-lg overflow-hidden z-50 ">
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleGenerateWorkout("beginner")
+                                                    }
+                                                    className="w-full px-4 py-3 text-left text-sm font-medium text-blue-700 hover:bg-slate-50"
+                                                >
+                                                    Beginner
+                                                </button>
+
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleGenerateWorkout("intermediate")
+                                                    }
+                                                    className="w-full px-4 py-3 text-left text-sm font-medium text-blue-700 hover:bg-slate-50 border-t border-slate-100"
+                                                >
+                                                    Intermediate
+                                                </button>
+
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleGenerateWorkout("advanced")
+                                                    }
+                                                    className="w-full px-4 py-4 text-left text-sm font-medium text-blue-700 hover:bg-slate-50 border-t border-slate-100"
+                                                >
+                                                    Advanced
+                                                </button>
+
+                                            </div>
+
+                                        )}
+
+                                    </div>
 
                                 </div>
 
@@ -544,6 +629,7 @@ const ViewMemberModal = ({ member, onClose }) => {
                             onClick={() => {
                                 setShowDietPlan(false);
                                 setShowWorkout(false);
+                                setShowWorkoutLevels(false);
                             }}
                             className="px-6 py-2 bg-slate-900 text-white rounded-lg"
                         >
@@ -554,8 +640,7 @@ const ViewMemberModal = ({ member, onClose }) => {
 
                         <button
                             onClick={onClose}
-                            className="px-6 py-2 bg-slate-900 text-white rounded-lg"
-                        >
+                            className="px-6 py-2 bg-white text-black border rounded-lg">
                             Close
                         </button>
 
@@ -565,19 +650,23 @@ const ViewMemberModal = ({ member, onClose }) => {
 
             </div>
 
+
             {/* PAUSE MEMBER MODAL */}
+
             {showPauseModal && (
                 <PauseMember
                     member={memberData}
                     onClose={() => setShowPauseModal(false)}
-                    onSuccess={(updatedMember) => {
-                        setMemberData(updatedMember);
-                        setShowPauseModal(false);
+                    onSuccess={async () => {
+                        await fetchMember();
+                        setShowResumeModal(false);
                     }}
                 />
             )}
 
+
             {/* RESUME MEMBER MODAL */}
+
             {showResumeModal && (
                 <ResumeMember
                     member={memberData}
@@ -615,3 +704,4 @@ const DetailCard = ({ label, value }) => (
 
 
 export default ViewMemberModal;
+

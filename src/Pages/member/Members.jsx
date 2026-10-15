@@ -903,15 +903,13 @@ const Members = () => {
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={closePaymentForm}
-                                className="px-4 py-2 bg-gray-500 text-white rounded-lg"
-                            >
+                                className="px-4 py-2 bg-white text-black border rounded-lg">
                                 Cancel
                             </button>
 
                             <button
                                 onClick={handleSavePayment}
-                                className="px-4 py-2 bg-yellow-600 text-white rounded-lg"
-                            >
+                                className="px-4 py-2 bg-yellow-600 text-white rounded-lg">
                                 Save
                             </button>
                         </div>

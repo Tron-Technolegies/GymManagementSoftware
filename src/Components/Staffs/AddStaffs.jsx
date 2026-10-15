@@ -161,16 +161,11 @@ const AddStaffs = ({
                                 </label>
 
                                 <div className="relative">
-                                    <User
-                                        size={17}
-                                        className="absolute left-3 top-3 text-slate-400"
-                                    />
 
                                     <input
                                         type="text"
                                         name="name"
                                         value={form.name}
-                                        placeholder="Enter staff name"
                                         onChange={handleChange}
                                         className={inputClass("name")}
                                     />
@@ -190,16 +185,10 @@ const AddStaffs = ({
                                 </label>
 
                                 <div className="relative">
-                                    <Phone
-                                        size={17}
-                                        className="absolute left-3 top-3 text-slate-400"
-                                    />
-
                                     <input
                                         type="tel"
                                         name="phone"
                                         value={form.phone}
-                                        placeholder="10-digit mobile number"
                                         maxLength={10}
                                         onChange={(e) => {
                                             const value =
@@ -243,16 +232,10 @@ const AddStaffs = ({
                                 </label>
 
                                 <div className="relative">
-                                    <Briefcase
-                                        size={17}
-                                        className="absolute left-3 top-3 text-slate-400"
-                                    />
-
                                     <input
                                         type="text"
                                         name="role"
                                         value={form.role}
-                                        placeholder="e.g. Trainer"
                                         onChange={handleChange}
                                         className={inputClass("role")}
                                     />
@@ -266,16 +249,10 @@ const AddStaffs = ({
                                 </label>
 
                                 <div className="relative">
-                                    <Award
-                                        size={17}
-                                        className="absolute left-3 top-3 text-slate-400"
-                                    />
-
                                     <input
                                         type="text"
                                         name="specialization"
                                         value={form.specialization}
-                                        placeholder="e.g. Weight Training"
                                         onChange={handleChange}
                                         className={inputClass("specialization")}
                                     />
@@ -289,16 +266,11 @@ const AddStaffs = ({
                                 </label>
 
                                 <div className="relative">
-                                    <Activity
-                                        size={17}
-                                        className="absolute left-3 top-3 text-slate-400"
-                                    />
 
                                     <input
                                         type="number"
                                         name="experience"
                                         value={form.experience}
-                                        placeholder="Years of experience"
                                         min="0"
                                         max="50"
                                         onChange={handleChange}
@@ -320,10 +292,6 @@ const AddStaffs = ({
                                 </label>
 
                                 <div className="relative">
-                                    <Calendar
-                                        size={17}
-                                        className="absolute left-3 top-3 text-slate-400"
-                                    />
 
                                     <input
                                         type="date"
@@ -342,16 +310,11 @@ const AddStaffs = ({
                                 </label>
 
                                 <div className="relative">
-                                    <IndianRupee
-                                        size={17}
-                                        className="absolute left-3 top-3 text-slate-400"
-                                    />
 
                                     <input
                                         type="number"
                                         name="salary"
                                         value={form.salary}
-                                        placeholder="Monthly salary"
                                         min="0"
                                         onChange={handleChange}
                                         className={inputClass("salary")}
@@ -372,10 +335,6 @@ const AddStaffs = ({
                                 </label>
 
                                 <div className="relative">
-                                    <Activity
-                                        size={17}
-                                        className="absolute left-3 top-3 text-slate-400"
-                                    />
 
                                     <select
                                         name="status"

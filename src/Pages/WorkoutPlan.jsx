@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 
 import {
     X,
@@ -14,6 +14,8 @@ import WeeklySchedule from "../Components/WorkoutPlan/WeeklySchedule";
 import {
     sendWorkoutPlanWhatsApp
 } from "../utils/SendWorkoutPlan";
+
+import { useWorkout } from "../hooks/useworkout";
 
 
 const WorkoutPlan = ({
@@ -33,10 +35,25 @@ const WorkoutPlan = ({
     } = useDownloadPDF();
 
 
+    // Rename hook function to avoid naming conflict
+    const {
+        handleCompleteWorkout: completeWorkoutDay
+    } = useWorkout();
+
+
     const displayMember =
         workoutMember ||
         member ||
         {};
+
+
+    const [currentWorkoutDay, setCurrentWorkoutDay] = useState(
+        Number(displayMember?.current_workout_day) || 1
+    );
+
+
+    const [completingWorkout, setCompletingWorkout] =
+        useState(false);
 
 
     console.log(
@@ -54,6 +71,70 @@ const WorkoutPlan = ({
         workoutMember
     );
 
+    console.log(
+        "WorkoutPlan currentWorkoutDay:",
+        currentWorkoutDay
+    );
+
+
+    // ==========================================
+    // COMPLETE WORKOUT DAY
+    // ==========================================
+
+    const handleCompleteWorkout = async () => {
+
+        if (!displayMember?.id) {
+
+            console.error(
+                "Member ID not found"
+            );
+
+            return;
+        }
+
+
+        try {
+
+            setCompletingWorkout(true);
+
+
+            const data =
+                await completeWorkoutDay(
+                    displayMember.id
+                );
+
+
+            console.log(
+                "Complete workout response:",
+                data
+            );
+
+
+            if (data?.success) {
+
+                setCurrentWorkoutDay(
+                    Number(
+                        data.next_workout_day
+                    )
+                );
+
+            }
+
+        } catch (err) {
+
+            console.error(
+                "Failed to complete workout:",
+                err
+            );
+
+        } finally {
+
+            setCompletingWorkout(false);
+
+        }
+
+    };
+
 
     return (
 
@@ -62,9 +143,11 @@ const WorkoutPlan = ({
             <div className="flex justify-between items-center mb-6">
 
                 <div>
+
                     <h2 className="text-2xl font-bold text-slate-900">
                         AI Workout Plan
                     </h2>
+
                     <p className="text-slate-500 mt-1">
 
                         Personalized workout program for{" "}
@@ -80,7 +163,6 @@ const WorkoutPlan = ({
                 {!loading && workout && (
 
                     <div className="flex items-center gap-3">
-
 
                         {/* ==================================
                             DOWNLOAD PDF
@@ -240,6 +322,15 @@ const WorkoutPlan = ({
 
                     <WeeklySchedule
                         workout={workout}
+                        currentWorkoutDay={
+                            currentWorkoutDay
+                        }
+                        onCompleteWorkout={
+                            handleCompleteWorkout
+                        }
+                        completingWorkout={
+                            completingWorkout
+                        }
                     />
 
                 </div>
@@ -247,7 +338,9 @@ const WorkoutPlan = ({
             )}
 
         </div>
+
     );
+
 };
 
 

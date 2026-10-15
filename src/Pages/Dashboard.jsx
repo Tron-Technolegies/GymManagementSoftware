@@ -28,7 +28,7 @@ const Dashboard = () => {
   } = useBlockedMembers(handleRenewed);
 
   return (
-    <div className="flex flex-col gap-8 p-6 bg-slate-50 min-h-screen">
+    <div className="flex flex-col gap-8 p-6 bg-white-100 min-h-screen">
 
       <h1 className="text-2xl font-bold text-slate-900">
         Dashboard

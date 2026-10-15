@@ -17,7 +17,7 @@ const EquipmentTable = ({
     return (
         <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-x-auto">
 
-            <table className="w-full min-w-[600px]">
+            <table className="w-full min-w-[800px]">
 
                 <thead className="bg-slate-100 border-b border-slate-200">
 
@@ -28,8 +28,16 @@ const EquipmentTable = ({
                         </th>
 
                         <th className="px-6 py-4 text-left text-xs font-bold text-slate-600">
-                            BRANCH
+                            QUANTITY
                         </th>
+
+                        <th className="px-6 py-4 text-left text-xs font-bold text-slate-600">
+                            WEIGHT
+                        </th>
+
+                        {/* <th className="px-6 py-4 text-left text-xs font-bold text-slate-600">
+                            BRANCH
+                        </th> */}
 
                         <th className="px-6 py-4 text-left text-xs font-bold text-slate-600">
                             ACTIONS
@@ -45,7 +53,7 @@ const EquipmentTable = ({
 
                         <tr>
                             <td
-                                colSpan="3"
+                                colSpan="5"
                                 className="px-6 py-4 text-center"
                             >
                                 Loading...
@@ -66,8 +74,20 @@ const EquipmentTable = ({
                                 </td>
 
                                 <td className="px-6 py-4">
-                                    {item.branch?.name || "-"}
+                                    {item.quantity ?? 1}
                                 </td>
+
+                                <td className="px-6 py-4">
+                                    {item.weight !== null &&
+                                        item.weight !== undefined &&
+                                        item.weight !== ""
+                                        ? `${item.weight} kg`
+                                        : "-"}
+                                </td>
+
+                                {/* <td className="px-6 py-4">
+                                    {item.branch?.name || "-"}
+                                </td> */}
 
                                 <td className="px-6 py-4">
 
@@ -111,7 +131,7 @@ const EquipmentTable = ({
 
                         <tr>
                             <td
-                                colSpan="3"
+                                colSpan="5"
                                 className="px-6 py-4 text-center text-slate-500"
                             >
                                 No equipment found.

@@ -16,6 +16,9 @@ import WorkoutPlan from "./Pages/WorkoutPlan";
 import Layout from "./Layout/Layout";
 import Products from "./Pages/Products";
 import Equipments from "./Pages/Equipments";
+import EsslMapping from "./Pages/EsslMapping";
+import Attendance from "./Pages/Attendance";
+
 
 const router = createBrowserRouter([
   {
@@ -43,6 +46,8 @@ const router = createBrowserRouter([
       { path: "enquiry", element: <Enquiry /> },
       { path: "/transaction", element: <Transaction /> },
       { path: "/profit_loss", element: <Profit_loss /> },
+      { path: "essl-mapping", element: <EsslMapping /> },
+      { path: "attendance", element: <Attendance />, }
 
 
     ],

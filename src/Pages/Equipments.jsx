@@ -21,6 +21,8 @@ const Equipments = () => {
 
     const [formData, setFormData] = React.useState({
         name: "",
+        quantity: 1,
+        weight: "",
         branch_id: "",
     });
 
@@ -54,6 +56,8 @@ const Equipments = () => {
 
         setFormData({
             name: "",
+            quantity: 1,
+            weight: "",
             branch_id: "",
         });
 
@@ -166,7 +170,10 @@ const Equipments = () => {
         setFormData({
             id: equipmentItem.id,
             name: equipmentItem.name || "",
+            quantity: equipmentItem.quantity ?? 1,
+            weight: equipmentItem.weight ?? "",
             branch_id: equipmentItem.branch?.id || "",
+            is_available: equipmentItem.is_available ?? true,
         });
 
         setShowAddCard(true);
@@ -279,12 +286,6 @@ const Equipments = () => {
                         : handleAddEquipment
                 }
                 userRole={userRole}
-
-                /*
-                 * Pass your branch list here.
-                 * Replace `user?.branches` with wherever
-                 * your application already stores/fetches branches.
-                 */
                 branches={user?.branches || []}
             />
 
