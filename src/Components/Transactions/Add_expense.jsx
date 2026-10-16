@@ -208,7 +208,7 @@ const Add_expense = ({ onClose, onSubmit }) => {
                         <button
                             type="submit"
                             disabled={submitting}
-                            className="px-5 py-2 rounded-lg bg-yellow-500 text-white"
+                            className="px-5 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white"
                         >
                             {submitting ? "Adding..." : "Add Expense"}
                         </button>

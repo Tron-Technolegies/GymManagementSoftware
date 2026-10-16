@@ -73,10 +73,10 @@ const ProductHeader = ({
                 {onAdd && (
                     <button
                         onClick={onAdd}
-                        className="bg-yellow-500 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
                     >
                         <Plus size={16} />
-                        Add
+                        Add Product
                     </button>
                 )}
 

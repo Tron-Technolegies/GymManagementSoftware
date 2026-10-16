@@ -371,16 +371,10 @@ const AddStaffs = ({
 
                         <button
                             type="submit"
-                            className="flex items-center gap-2 px-5 py-2.5
-                            rounded-lg bg-yellow-500 text-white text-sm
-                            font-semibold hover:bg-yellow-600
-                            active:bg-yellow-700 transition shadow-sm"
-                        >
-                            <Save size={17} />
-
+                            className="px-8 py-2 text-sm bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg shadow-sm">
                             {isEdit
-                                ? "Update Staff"
-                                : "Save Staff"}
+                                ? "Update"
+                                : "Save"}
                         </button>
 
                     </div>

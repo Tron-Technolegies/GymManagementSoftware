@@ -250,7 +250,7 @@ const Staffs = () => {
                 {canManageStaff && (
                     <button
                         onClick={() => setShowAdd(true)}
-                        className="px-4 py-2 rounded-md text-sm bg-yellow-500 font-semibold text-white hover:bg-yellow-600 transition">
+                        className="px-4 py-2 rounded-md text-sm bg-yellow-500 hover:bg-yellow-600 font-semibold text-white hover:bg-yellow-600 transition">
                         + ADD STAFF
                     </button>
                 )}

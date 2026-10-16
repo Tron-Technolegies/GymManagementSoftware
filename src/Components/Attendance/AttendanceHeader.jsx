@@ -67,7 +67,7 @@ export default function AttendanceHeader({
                         type="button"
                         onClick={onSync}
                         disabled={syncing || loading}
-                        className="inline-flex items-center gap-2 rounded-lg bg-[#FED505] px-4 py-2.5 text-sm font-semibold text-gray-900 hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="inline-flex items-center gap-2 rounded-lg  px-4 py-2.5 text-sm font-semibold text-gray-900 bg-yellow-500 hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         <DownloadCloud
                             size={17}

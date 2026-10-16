@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAttendance, syncAttendance } from "../api/attendance";
 
@@ -46,7 +45,6 @@ export default function useAttendance() {
     const [loading, setLoading] = useState(false);
     const [syncing, setSyncing] = useState(false);
     const [error, setError] = useState("");
-    const [message, setMessage] = useState("");
 
     const loadAttendance = useCallback(async () => {
         setLoading(true);
@@ -69,7 +67,6 @@ export default function useAttendance() {
     const runSync = useCallback(async () => {
         setSyncing(true);
         setError("");
-        setMessage("");
 
         try {
             const response = await syncAttendance(
@@ -78,19 +75,15 @@ export default function useAttendance() {
 
             const data = response?.data ?? {};
 
-            setMessage(
-                data.message ||
-                `Attendance sync completed. Created: ${data.created ?? 0
-                }, updated: ${data.updated ?? 0}.`
-            );
-
-            // Reload attendance after a successful sync.
+            // Reload attendance after successful synchronization.
             await loadAttendance();
 
             return data;
         } catch (err) {
-            setError(getErrorMessage(err));
-            return null;
+            const errorMessage = getErrorMessage(err);
+            setError(errorMessage);
+
+            return { error: errorMessage };
         } finally {
             setSyncing(false);
         }
@@ -176,7 +169,6 @@ export default function useAttendance() {
         loading,
         syncing,
         error,
-        message,
         runSync,
         loadAttendance,
     };

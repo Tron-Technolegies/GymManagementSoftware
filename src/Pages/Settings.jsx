@@ -284,7 +284,7 @@ const Settings = () => {
                         <button
                             onClick={handleUpdatePassword}
                             disabled={loading}
-                            className="w-full h-12 rounded-xl bg-yellow-600 hover:bg-yellow-700 text-white font-semibold transition disabled:opacity-60"
+                            className="w-full h-12 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white font-semibold transition disabled:opacity-60"
                         >
                             {loading ? "Updating..." : "Update Password"}
                         </button>

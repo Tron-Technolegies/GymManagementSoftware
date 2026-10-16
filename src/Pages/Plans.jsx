@@ -181,7 +181,7 @@ export default function Plans() {
         {["SUPER_ADMIN", "TENANT_ADMIN"].includes(user?.role) && (
           <button
             onClick={openAdd}
-            className="bg-yellow-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm"
+            className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm"
           >
             <Plus size={18} />
             Add Plan

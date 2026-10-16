@@ -4,6 +4,8 @@ import AttendanceKPIs from "../Components/Attendance/AttendanceKPIs";
 import AttendanceTable from "../Components/Attendance/AttendanceTable";
 import AttendanceMemberModal from "../Components/Attendance/AttendanceMemberModal";
 import useAttendance from "../hooks/useAttendance";
+import ConfirmActionModal from "../Components/ConfirmActionModal";
+import AlertMessage from "../Components/AlertMessage";
 
 const PAGE_SIZE = 10;
 
@@ -27,6 +29,11 @@ export default function Attendance() {
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
 
+    const [showSyncConfirm, setShowSyncConfirm] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertType, setAlertType] = useState("success");
+
     // Reset pagination when filters change
     useEffect(() => {
         setCurrentPage(1);
@@ -43,13 +50,25 @@ export default function Attendance() {
     );
 
     const handleSync = async () => {
-        const confirmed = window.confirm(
-            "Synchronize attendance logs from the eSSL device for the selected date?"
-        );
+        setShowSyncConfirm(false);
 
-        if (!confirmed) return;
+        try {
+            await runSync();
 
-        await runSync();
+            setAlertMessage("Attendance synchronization completed.");
+            setAlertType("success");
+            setShowAlert(true);
+        } catch (error) {
+            setAlertMessage(
+                error?.message || "Failed to synchronize attendance."
+            );
+            setAlertType("error");
+            setShowAlert(true);
+        }
+    };
+
+    const handleConfirmSync = async () => {
+        await handleSync();
     };
 
     const handleRefresh = async () => {
@@ -67,7 +86,7 @@ export default function Attendance() {
                 loading={loading}
                 syncing={syncing}
                 onRefresh={loadAttendance}
-                onSync={handleSync}
+                onSync={() => setShowSyncConfirm(true)}
             />
 
             {/* API feedback */}
@@ -171,6 +190,24 @@ export default function Attendance() {
                 isOpen={Boolean(selectedEmployee)}
                 employee={selectedEmployee}
                 onClose={() => setSelectedEmployee(null)}
+            />
+            <ConfirmActionModal
+                isOpen={showSyncConfirm}
+                title="Synchronize Attendance"
+                message="Synchronize attendance logs from the eSSL device for the selected date?"
+                confirmText="Synchronize"
+                cancelText="Cancel"
+                onConfirm={handleConfirmSync}
+                onCancel={() => setShowSyncConfirm(false)}
+                loading={syncing}
+                type="update"
+            />
+
+            <AlertMessage
+                show={showAlert}
+                message={alertMessage}
+                type={alertType}
+                onClose={() => setShowAlert(false)}
             />
         </div>
     );

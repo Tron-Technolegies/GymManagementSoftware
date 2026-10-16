@@ -744,9 +744,10 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                         </button>
                         <button
                             onClick={openConfirmModal}
-                            className="px-8 py-2 text-sm font-bold bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
+                            className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg"
+
                         >
-                            {member ? "Update Member" : "Save Member"}
+                            {member ? "Update Member" : "Save"}
                         </button>
                     </div>
                 </div>

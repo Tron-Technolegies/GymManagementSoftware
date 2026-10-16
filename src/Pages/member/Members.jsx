@@ -406,7 +406,7 @@ const Members = () => {
                 </div>
 
                 <button
-                    className="px-4 py-2 rounded-md text-sm bg-yellow-500 font-semibold text-white hover:bg-yellow-600 transition"
+                    className="px-4 py-2 rounded-md text-sm bg-yellow-500  hover:bg-yellow-600 font-semibold text-white  transition"
                     onClick={() => setShowAddMember(true)}
                 >
                     + ADD MEMBER
@@ -909,7 +909,7 @@ const Members = () => {
 
                             <button
                                 onClick={handleSavePayment}
-                                className="px-4 py-2 bg-yellow-600 text-white rounded-lg">
+                                className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg">
                                 Save
                             </button>
                         </div>

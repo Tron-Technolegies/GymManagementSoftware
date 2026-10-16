@@ -59,7 +59,7 @@ const Transaction = () => {
                             key={tab}
                             onClick={() => setActive(tab)}
                             className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${active === tab
-                                ? "bg-yellow-600 text-white shadow"
+                                ? "bg-yellow-500 text-white shadow"
                                 : "text-slate-500 hover:bg-white hover:text-slate-900"
                                 }`}>
                             {tab}
@@ -68,7 +68,7 @@ const Transaction = () => {
                 </div>
                 <button
                     onClick={handleAdd}
-                    className="px-4 py-2 rounded-lg text-sm font-semibold bg-yellow-600 text-white hover:bg-yellow-700">
+                    className="px-4 py-2 rounded-lg text-sm font-semibold bg-yellow-500 hover:bg-yellow-600 text-white">
                     {active === "Income"
                         ? "Add Income +"
                         : "Add Expense +"
