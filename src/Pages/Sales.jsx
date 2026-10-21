@@ -1,35 +1,43 @@
 import React, { useRef, useState } from "react";
 import { ArrowDownToLine } from "lucide-react";
 
-import { useSales, useTodaySales } from "../hooks/Sales/useSales"
+import { useSales, useTodaySales } from "../hooks/Sales/useSales";
 
 import Invoice from "../Components/Sales/Invoice";
 import SalesHeader from "../Components/Sales/SalesHeader";
 import SalesFilter from "../Components/Sales/SalesFilter";
 import SalesTable from "../Components/Sales/SalesTable";
+
 import { createInvoiceData } from "../hooks/InvoiceData";
 import { generateInvoicePDF } from "../hooks/InvoiceDownload";
+import useBranches from "../hooks/useBranches";
 
 const Sales = () => {
-    const { todaySales } = useTodaySales();
+    const user = JSON.parse(
+        localStorage.getItem("adminUser") || "null"
+    );
 
+    const [selectedBranch, setSelectedBranch] = useState("all");
     const [period, setPeriod] = useState("daily");
 
     const [selectedDate, setSelectedDate] = useState(
         new Date().toISOString().split("T")[0]
     );
 
+    // Fetch branches using the existing custom hook
+    const { branches } = useBranches();
+
+    // Fetch sales using the selected branch
+    const { todaySales } = useTodaySales(selectedBranch);
+
     const { sales, loading } = useSales(
         period,
-        selectedDate
+        selectedDate,
+        selectedBranch
     );
 
-    const invoiceRef = useRef();
-
-    const [selectedSale, setSelectedSale] =
-        useState(null);
-
-    if (loading) return <p>Loading...</p>;
+    const invoiceRef = useRef(null);
+    const [selectedSale, setSelectedSale] = useState(null);
 
     const invoiceData = createInvoiceData(sales);
 
@@ -49,15 +57,23 @@ const Sales = () => {
         );
     };
 
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
     return (
         <div className="flex flex-col gap-8">
             <SalesHeader onDownload={handleDownload} />
 
             <SalesFilter
+                user={user}
+                branches={branches}
                 period={period}
                 setPeriod={setPeriod}
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
+                selectedBranch={selectedBranch}
+                setSelectedBranch={setSelectedBranch}
             />
 
             {todaySales.map((sale) => (
@@ -79,7 +95,6 @@ const Sales = () => {
                                 <p className="text-xs text-slate-400">
                                     Products Sold
                                 </p>
-
                                 <p className="text-xs font-bold">
                                     {sale.products_sold}
                                 </p>
@@ -89,7 +104,6 @@ const Sales = () => {
                                 <p className="text-xs text-slate-400">
                                     Sales Count
                                 </p>
-
                                 <p className="text-xs font-bold">
                                     {sale.sales_count}
                                 </p>

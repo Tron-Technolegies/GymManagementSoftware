@@ -35,9 +35,9 @@ const EquipmentTable = ({
                             WEIGHT
                         </th>
 
-                        {/* <th className="px-6 py-4 text-left text-xs font-bold text-slate-600">
+                        <th className="px-6 py-4 text-left text-xs font-bold text-slate-600">
                             BRANCH
-                        </th> */}
+                        </th>
 
                         <th className="px-6 py-4 text-left text-xs font-bold text-slate-600">
                             ACTIONS
@@ -85,9 +85,9 @@ const EquipmentTable = ({
                                         : "-"}
                                 </td>
 
-                                {/* <td className="px-6 py-4">
-                                    {item.branch?.name || "-"}
-                                </td> */}
+                                <td className="px-6 py-4">
+                                    {item.branch_name || item.branch?.name || "-"}
+                                </td>
 
                                 <td className="px-6 py-4">
 

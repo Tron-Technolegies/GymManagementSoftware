@@ -1,40 +1,50 @@
+
 import React from "react";
 import { Plus } from "lucide-react";
 
 import useEnquiry from "../hooks/useEnquiry";
 import usePlans from "../hooks/plans";
+import useBranches from "../hooks/useBranches";
+
 import AddEnquiry from "../Components/Enquiry/AddEnquiry";
-import EnquiryTable from "../Components/Enquiry/EnquiryTable"
+import EnquiryTable from "../Components/Enquiry/EnquiryTable";
 import AlertMessage from "../Components/AlertMessage";
 import ConfirmActionModal from "../Components/ConfirmActionModal";
 
 const Enquiry = () => {
+    const user = JSON.parse(
+        localStorage.getItem("adminUser") || "null"
+    );
+
     const {
         enquiries,
         loading,
         addEnquiries,
         removeEnquiries,
+        fetchEnquiries,
     } = useEnquiry();
 
-    const { plans } = usePlans();
+    const { plans = [] } = usePlans();
+    const { branches = [] } = useBranches();
 
     const [showAddCard, setShowAddCard] = React.useState(false);
+
     const [formData, setFormData] = React.useState({
         name: "",
         phone: "",
         plan: "",
         date: "",
+        branch_id: "",
     });
+
+    const [selectedBranchId, setSelectedBranchId] =
+        React.useState("all");
 
     const [alertState, setAlertState] = React.useState({
         show: false,
         message: "",
         type: "success",
     });
-
-    const user = JSON.parse(
-        localStorage.getItem("adminUser") || "null"
-    );
 
     const [confirmOpen, setConfirmOpen] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
@@ -48,12 +58,26 @@ const Enquiry = () => {
         action: null,
     });
 
+    // Fetch enquiries whenever the tenant admin changes the branch filter.
+    React.useEffect(() => {
+        const branchId =
+            user?.role === "TENANT_ADMIN" &&
+                selectedBranchId !== "all"
+                ? selectedBranchId
+                : "";
+
+        fetchEnquiries(branchId).catch((error) => {
+            console.error("Failed to fetch enquiries:", error);
+        });
+    }, [selectedBranchId, user?.role, fetchEnquiries]);
+
     const resetForm = () => {
         setFormData({
             name: "",
             phone: "",
             plan: "",
             date: "",
+            branch_id: "",
         });
     };
 
@@ -98,7 +122,7 @@ const Enquiry = () => {
 
             setConfirmOpen(false);
         } catch (error) {
-            console.error(error);
+            console.error("Enquiry action failed:", error);
 
             setAlertState({
                 show: true,
@@ -120,7 +144,6 @@ const Enquiry = () => {
             confirmText: "Delete",
             type: "delete",
             successMessage: "Enquiry deleted successfully",
-
             action: async () => {
                 await removeEnquiries(enquiry.id);
             },
@@ -135,19 +158,26 @@ const Enquiry = () => {
             confirmText: "Save",
             type: "add",
             successMessage: "Enquiry added successfully",
-
             action: async () => {
                 await addEnquiries(formData);
 
                 setShowAddCard(false);
                 resetForm();
+
+                // Refresh the list using the currently selected branch.
+                const branchId =
+                    user?.role === "TENANT_ADMIN" &&
+                        selectedBranchId !== "all"
+                        ? selectedBranchId
+                        : "";
+
+                await fetchEnquiries(branchId);
             },
         });
     };
 
     return (
         <div className="flex flex-col gap-8">
-
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold">
                     Enquiries
@@ -155,25 +185,48 @@ const Enquiry = () => {
 
                 <button
                     onClick={() => setShowAddCard(true)}
-                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm">
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm"
+                >
                     <Plus size={18} />
                     Add Enquiry
                 </button>
             </div>
 
+            {user?.role === "TENANT_ADMIN" && (
+                <select
+                    value={selectedBranchId}
+                    onChange={(e) =>
+                        setSelectedBranchId(e.target.value)
+                    }
+                    className="rounded-lg border border-slate-300 px-4 py-2"
+                >
+                    <option value="all">All Branches</option>
+
+                    {branches.map((branch) => (
+                        <option key={branch.id} value={branch.id}>
+                            {branch.name}
+                        </option>
+                    ))}
+                </select>
+            )}
+
             <EnquiryTable
                 enquiries={enquiries}
                 loading={loading}
-                isSuperuser={user?.is_superuser}
-                onDelete={handleDelete} />
+                canDelete={["TENANT_ADMIN", "BRANCH_ADMIN"].includes(user?.role)}
+                onDelete={handleDelete}
+            />
 
             <AddEnquiry
                 isOpen={showAddCard}
                 formData={formData}
                 setFormData={setFormData}
                 plans={plans}
+                branches={branches}
+                userRole={user?.role}
                 onClose={closeAddCard}
-                onSubmit={handleAddEnquiry} />
+                onSubmit={handleAddEnquiry}
+            />
 
             <AlertMessage
                 show={alertState.show}
@@ -183,9 +236,10 @@ const Enquiry = () => {
                     setAlertState((prev) => ({
                         ...prev,
                         show: false,
-                    }))} />
+                    }))
+                }
+            />
 
-            {/* Confirmation */}
             <ConfirmActionModal
                 isOpen={confirmOpen}
                 title={confirmConfig.title}

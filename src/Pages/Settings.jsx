@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import {
     User,
@@ -8,8 +9,8 @@ import {
     HardDrive,
     Shield,
 } from "lucide-react";
-import AlertMessage from "../Components/AlertMessage"
-import useAdminSettings from "../hooks/useAdminSettings"
+import AlertMessage from "../Components/AlertMessage";
+import useAdminSettings from "../hooks/useAdminSettings";
 
 const Settings = () => {
     const { admin, loading, fetchAdminProfile, updateAdminPassword } =
@@ -32,6 +33,10 @@ const Settings = () => {
         message: "",
         type: "success",
     });
+
+    // Dummy database information for display only
+    const databaseName = "GymX_db";
+    const databaseStatus = "CONNECTED";
 
     useEffect(() => {
         loadProfile();
@@ -97,7 +102,8 @@ const Settings = () => {
             setAlertState({
                 show: true,
                 message:
-                    error.response?.data?.error || "Failed to update password",
+                    error.response?.data?.error ||
+                    "Failed to update password",
                 type: "error",
             });
         }
@@ -106,7 +112,9 @@ const Settings = () => {
     return (
         <div className="overflow-hidden">
             <div className="mb-2 m-5">
-                <h1 className="text-xl font-bold text-slate-900">Settings</h1>
+                <h1 className="text-xl font-bold text-slate-900">
+                    Settings
+                </h1>
                 <p className="text-slate-500 text-sm">
                     Global system configuration and security preferences.
                 </p>
@@ -187,7 +195,11 @@ const Settings = () => {
 
                             <div className="relative">
                                 <input
-                                    type={showPassword.current ? "text" : "password"}
+                                    type={
+                                        showPassword.current
+                                            ? "text"
+                                            : "password"
+                                    }
                                     name="current_password"
                                     value={passwordData.current_password}
                                     onChange={handlePasswordChange}
@@ -221,7 +233,11 @@ const Settings = () => {
 
                                 <div className="relative">
                                     <input
-                                        type={showPassword.new ? "text" : "password"}
+                                        type={
+                                            showPassword.new
+                                                ? "text"
+                                                : "password"
+                                        }
                                         name="new_password"
                                         value={passwordData.new_password}
                                         onChange={handlePasswordChange}
@@ -254,7 +270,11 @@ const Settings = () => {
 
                                 <div className="relative">
                                     <input
-                                        type={showPassword.confirm ? "text" : "password"}
+                                        type={
+                                            showPassword.confirm
+                                                ? "text"
+                                                : "password"
+                                        }
                                         name="confirm_password"
                                         value={passwordData.confirm_password}
                                         onChange={handlePasswordChange}
@@ -312,7 +332,7 @@ const Settings = () => {
                     </div>
 
                     <div className="flex items-center gap-2 bg-yellow-50 text-yellow-600 px-4 py-2 rounded-full text-sm font-semibold">
-                        CONNECTED
+                        {databaseStatus}
                     </div>
                 </div>
 
@@ -320,13 +340,14 @@ const Settings = () => {
                     <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-3">
                             <HardDrive className="w-4 h-4 text-slate-400" />
+
                             <span className="text-xs font-semibold uppercase text-slate-500">
-                                Database Location
+                                Database Name
                             </span>
                         </div>
 
                         <p className="text-sm text-slate-700 break-all">
-                            C:\Users\admin\AppData\Roaming\GymManagementSystem\gym.db
+                            {databaseName}
                         </p>
                     </div>
 
@@ -337,7 +358,7 @@ const Settings = () => {
                             </p>
 
                             <p className="font-bold text-slate-900">
-                                SYNCHRONIZED & SECURE
+                                SYNCHRONIZED &amp; SECURE
                             </p>
                         </div>
 

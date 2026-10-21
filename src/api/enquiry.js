@@ -1,7 +1,10 @@
+
 import api from "./api";
 
-export const getEnquiry = () => {
-    return api.get("admin/api/enquiries/");
+export const getEnquiry = (branchId = "") => {
+    return api.get("admin/api/enquiries/", {
+        params: branchId ? { branch_id: branchId } : {},
+    });
 };
 
 export const createEnquiry = (data) => {
@@ -12,10 +15,11 @@ export const createEnquiry = (data) => {
     formData.append("plan", data.plan);
     formData.append("date", data.date);
 
-    return api.post(
-        "admin/api/add_enquiries/",
-        formData
-    );
+    if (data.branch_id) {
+        formData.append("branch_id", data.branch_id);
+    }
+
+    return api.post("admin/api/add_enquiries/", formData);
 };
 
 export const deleteEnquiry = (id) => {

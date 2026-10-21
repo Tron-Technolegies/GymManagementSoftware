@@ -1,6 +1,6 @@
 import api from "./api";
 
-// GET - View all equipment
+// GET - List all equipment
 export const getGymEquipment = () => {
     return api.get("admin/api/gym-equipment/");
 };
@@ -24,17 +24,21 @@ export const createGymEquipment = (data) => {
         formData.append("weight", data.weight);
     }
 
-    if (data.branch_id) {
+    if (
+        data.branch_id !== null &&
+        data.branch_id !== undefined &&
+        data.branch_id !== ""
+    ) {
         formData.append("branch_id", data.branch_id);
     }
 
     return api.post(
-        "admin/api/gym-equipment/",
+        "admin/api/gym-equipment/create/",
         formData
     );
 };
 
-// GET - View single equipment
+// GET - Retrieve single equipment
 export const getGymEquipmentDetail = (id) => {
     return api.get(
         `admin/api/gym-equipment/${id}/`
@@ -61,7 +65,7 @@ export const updateGymEquipment = (id, data) => {
     }
 
     return api.put(
-        `admin/api/gym-equipment/${id}/`,
+        `admin/api/gym-equipment/${id}/update/`,
         formData
     );
 };
@@ -69,6 +73,6 @@ export const updateGymEquipment = (id, data) => {
 // DELETE - Delete equipment
 export const deleteGymEquipment = (id) => {
     return api.delete(
-        `admin/api/gym-equipment/${id}/`
+        `admin/api/gym-equipment/${id}/delete/`
     );
 };

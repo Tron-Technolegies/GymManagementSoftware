@@ -109,7 +109,7 @@ const AddStaffs = ({
             >
 
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200">
+                <div className="flex items-center justify-between px-6 py-5  border-slate-200">
                     <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-xl bg-yellow-100 flex items-center justify-center">
                             <UserPlus
@@ -122,12 +122,6 @@ const AddStaffs = ({
                             <h2 className="text-xl font-bold text-slate-800">
                                 {isEdit ? "Update Staff" : "Add Staff"}
                             </h2>
-
-                            <p className="text-sm text-slate-500 mt-0.5">
-                                {isEdit
-                                    ? "Update staff member information"
-                                    : "Add a new staff member to your branch"}
-                            </p>
                         </div>
                     </div>
 

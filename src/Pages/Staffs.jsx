@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+
 import {
     useStaffs,
     useDeleteStaff,
@@ -6,7 +7,10 @@ import {
     useCreateStaff,
     useUpdateStaff,
 } from "../hooks/staffs";
+
 import useStaffFilters from "../hooks/useStaffFilters";
+import useBranches from "../hooks/useBranches";
+
 import AddStaffs from "../Components/Staffs/AddStaffs";
 import ViewStaffsModal from "../Components/Staffs/ViewStaffsModal";
 import StaffKPI from "../Components/Staffs/StaffKPI";
@@ -34,10 +38,32 @@ const Staffs = () => {
     ].includes(user?.role);
 
     const { staffs, fetchStaffs } = useStaffs();
+    const { branches } = useBranches();
+
+    const [selectedBranch, setSelectedBranch] = useState("all");
+
     const { remove } = useDeleteStaff();
     const { addPayment } = useStaffPayment();
     const { create } = useCreateStaff();
     const { update } = useUpdateStaff();
+
+    // Branch filtering applies only to TENANT_ADMIN.
+    // Other roles keep their existing API-provided staff list.
+    const branchFilteredStaffs = useMemo(() => {
+        if (
+            user?.role !== "TENANT_ADMIN" ||
+            selectedBranch === "all"
+        ) {
+            return staffs;
+        }
+
+        return staffs.filter(
+            (staff) =>
+                String(staff.branch?.id) ===
+                String(selectedBranch)
+        );
+    }, [staffs, selectedBranch, user?.role]);
+
     const {
         search,
         setSearch,
@@ -48,13 +74,15 @@ const Staffs = () => {
         itemsPerPage,
         filteredStaffs,
         paginatedStaffs,
-    } = useStaffFilters(staffs);
+    } = useStaffFilters(branchFilteredStaffs);
+
     const [showAdd, setShowAdd] = useState(false);
     const [showUpdate, setShowUpdate] = useState(false);
     const [editStaff, setEditStaff] = useState(null);
     const [showStaff, setShowStaff] = useState(false);
     const [selectedStaff, setSelectedStaff] = useState(null);
     const [showPaymentForm, setShowPaymentForm] = useState(false);
+
     const [paymentData, setPaymentData] = useState({
         amount: "",
         payment_date: "",
@@ -69,8 +97,8 @@ const Staffs = () => {
     });
 
     const [confirmOpen, setConfirmOpen] = useState(false);
-    const [confirmLoading, setConfirmLoading] =
-        useState(false);
+    const [confirmLoading, setConfirmLoading] = useState(false);
+
     const [confirmConfig, setConfirmConfig] = useState({
         title: "",
         message: "",
@@ -88,7 +116,6 @@ const Staffs = () => {
         successMessage = "Operation completed successfully",
         action,
     }) => {
-
         setConfirmConfig({
             title,
             message,
@@ -106,18 +133,19 @@ const Staffs = () => {
 
         try {
             setConfirmLoading(true);
+
             await confirmConfig.action();
+
             setAlertState({
                 show: true,
-                message:
-                    confirmConfig.successMessage,
+                message: confirmConfig.successMessage,
                 type: "success",
             });
 
             setConfirmOpen(false);
         } catch (error) {
-
             console.error(error);
+
             setAlertState({
                 show: true,
                 message:
@@ -130,29 +158,23 @@ const Staffs = () => {
             setConfirmLoading(false);
         }
     };
-    const handleAddStaff = (formData) => {
 
+    const handleAddStaff = (formData) => {
         openConfirmModal({
             title: "Add Staff",
             message: `Are you sure you want to add ${formData.name || "this staff"
                 }?`,
             confirmText: "Save",
             type: "add",
-            successMessage:
-                "Staff added successfully",
+            successMessage: "Staff added successfully",
 
             action: async () => {
-
                 const payload = new FormData();
 
-                Object.keys(formData).forEach(
-                    (key) => {
-                        payload.append(
-                            key,
-                            formData[key]
-                        );
-                    }
-                );
+                Object.keys(formData).forEach((key) => {
+                    payload.append(key, formData[key]);
+                });
+
                 await create(payload);
                 await fetchStaffs();
                 setShowAdd(false);
@@ -162,20 +184,17 @@ const Staffs = () => {
 
     const handleUpdateStaff = (formData) => {
         if (!editStaff) return;
+
         openConfirmModal({
             title: "Update Staff",
             message: `Are you sure you want to update ${formData.name || "this staff"
                 }?`,
-
             confirmText: "Update",
             type: "update",
-            successMessage:
-                "Staff updated successfully",
+            successMessage: "Staff updated successfully",
+
             action: async () => {
-                await update(
-                    editStaff.id,
-                    formData
-                );
+                await update(editStaff.id, formData);
                 await fetchStaffs();
 
                 setSelectedStaff((prev) =>
@@ -186,34 +205,33 @@ const Staffs = () => {
                         }
                         : prev
                 );
+
                 setShowUpdate(false);
                 setEditStaff(null);
             },
         });
     };
+
     const handleDelete = (staff) => {
         openConfirmModal({
             title: "Delete Staff",
             message: `Are you sure you want to delete ${staff.name}?`,
             confirmText: "Delete",
             type: "delete",
-            successMessage:
-                "Staff deleted successfully",
+            successMessage: "Staff deleted successfully",
+
             action: async () => {
                 await remove(staff.id);
                 await fetchStaffs();
             },
         });
     };
-    const handleSavePayment = async () => {
 
+    const handleSavePayment = async () => {
         if (!selectedStaff) return;
 
         try {
-            await addPayment(
-                selectedStaff.id,
-                paymentData
-            );
+            await addPayment(selectedStaff.id, paymentData);
 
             setAlertState({
                 show: true,
@@ -227,10 +245,13 @@ const Staffs = () => {
                 amount: "",
                 payment_date: "",
                 payment_method: "",
+                payment_type: "",
             });
+
             await fetchStaffs();
         } catch (error) {
             console.error(error);
+
             setAlertState({
                 show: true,
                 message:
@@ -240,62 +261,78 @@ const Staffs = () => {
             });
         }
     };
+
     return (
         <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="font-bold text-xl">Staff Management</h1>
+                    <h1 className="font-bold text-xl">
+                        Staff Management
+                    </h1>
                 </div>
 
                 {canManageStaff && (
                     <button
                         onClick={() => setShowAdd(true)}
-                        className="px-4 py-2 rounded-md text-sm bg-yellow-500 hover:bg-yellow-600 font-semibold text-white hover:bg-yellow-600 transition">
+                        className="px-4 py-2 rounded-md text-sm bg-yellow-500 hover:bg-yellow-600 font-semibold text-white transition"
+                    >
                         + ADD STAFF
                     </button>
                 )}
             </div>
 
-            <StaffKPI staffs={staffs} />
+            {/* KPI follows the selected branch for Tenant Admin */}
+            <StaffKPI staffs={branchFilteredStaffs} />
 
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 py-2 px-2 rounded-lg border border-slate-100 shadow-sm">
-
                 <input
                     type="text"
                     placeholder="Search Staffs..."
                     value={search}
-                    onChange={(e) =>
-                        setSearch(e.target.value)
-                    }
+                    onChange={(e) => setSearch(e.target.value)}
                     className="w-full md:w-72 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 />
 
-                <div className="flex gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                    {/* Branch dropdown is visible only to Tenant Admin */}
+                    {user?.role === "TENANT_ADMIN" && (
+                        <select
+                            value={selectedBranch}
+                            onChange={(e) =>
+                                setSelectedBranch(e.target.value)
+                            }
+                            className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                        >
+                            <option value="all">
+                                All Branches
+                            </option>
 
-                    {[
-                        "All",
-                        "Active",
-                        "Blocked",
-                    ].map((status) => (
+                            {branches.map((branch) => (
+                                <option
+                                    key={branch.id}
+                                    value={String(branch.id)}
+                                >
+                                    {branch.name}
+                                </option>
+                            ))}
+                        </select>
+                    )}
 
+                    {["All", "Active", "Blocked"].map((status) => (
                         <button
                             key={status}
-                            onClick={() =>
-                                setActive(status)
-                            }
+                            onClick={() => setActive(status)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium ${active === status
-                                ? "bg-yellow-500 text-white"
-                                : "bg-slate-100 text-slate-600"
+                                    ? "bg-yellow-500 text-white"
+                                    : "bg-slate-100 text-slate-600"
                                 }`}
                         >
                             {status}
                         </button>
-
                     ))}
-
                 </div>
-
             </div>
+
             <StaffTable
                 staffs={paginatedStaffs}
                 allStaffs={staffs}
@@ -314,21 +351,22 @@ const Staffs = () => {
                 }}
                 onDelete={handleDelete}
             />
+
             <Pagination
                 currentPage={currentPage}
                 totalItems={filteredStaffs.length}
                 itemsPerPage={itemsPerPage}
                 onPageChange={setCurrentPage}
             />
+
             {showAdd && (
                 <AddStaffs
-                    onClose={() =>
-                        setShowAdd(false)
-                    }
+                    onClose={() => setShowAdd(false)}
                     onSubmit={handleAddStaff}
                     isEdit={false}
                 />
             )}
+
             {showUpdate && (
                 <AddStaffs
                     staff={editStaff}
@@ -340,34 +378,27 @@ const Staffs = () => {
                     onSubmit={handleUpdateStaff}
                 />
             )}
-            {showStaff &&
-                selectedStaff && (
-                    <ViewStaffsModal
-                        staff={selectedStaff}
-                        onClose={() => {
-                            setShowStaff(false);
-                            setSelectedStaff(null);
-                        }}
-                    />
-                )}
 
-            {showPaymentForm &&
-                selectedStaff && (
-                    <StaffPayment
-                        staff={selectedStaff}
-                        paymentData={paymentData}
-                        setPaymentData={
-                            setPaymentData}
-                        onClose={() =>
-                            setShowPaymentForm(
-                                false
-                            )
-                        }
-                        onSubmit={
-                            handleSavePayment
-                        }
-                    />
-                )}
+            {showStaff && selectedStaff && (
+                <ViewStaffsModal
+                    staff={selectedStaff}
+                    onClose={() => {
+                        setShowStaff(false);
+                        setSelectedStaff(null);
+                    }}
+                />
+            )}
+
+            {showPaymentForm && selectedStaff && (
+                <StaffPayment
+                    staff={selectedStaff}
+                    paymentData={paymentData}
+                    setPaymentData={setPaymentData}
+                    onClose={() => setShowPaymentForm(false)}
+                    onSubmit={handleSavePayment}
+                />
+            )}
+
             <AlertMessage
                 show={alertState.show}
                 message={alertState.message}
@@ -379,23 +410,17 @@ const Staffs = () => {
                     }))
                 }
             />
+
             <ConfirmActionModal
                 isOpen={confirmOpen}
                 title={confirmConfig.title}
                 message={confirmConfig.message}
-                confirmText={
-                    confirmConfig.confirmText
-                }
+                confirmText={confirmConfig.confirmText}
                 type={confirmConfig.type}
                 loading={confirmLoading}
-                onCancel={() =>
-                    setConfirmOpen(false)
-                }
-                onConfirm={
-                    handleConfirmAction
-                }
+                onCancel={() => setConfirmOpen(false)}
+                onConfirm={handleConfirmAction}
             />
-
         </div>
     );
 };

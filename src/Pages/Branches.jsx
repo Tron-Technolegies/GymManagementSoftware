@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
 
@@ -9,6 +10,16 @@ import ConfirmActionModal from "../Components/ConfirmActionModal";
 import AddBranch from "../Components/Branches/AddBranch";
 import BranchCard from "../Components/Branches/BranchCard";
 import BranchMembers from "../Components/Branches/BranchMembers";
+
+const createEmptyForm = () => ({
+  name: "",
+  phone: "",
+  location: "",
+  manager_name: "",
+  capacity: "",
+  admin_username: "",
+  admin_password: "",
+});
 
 const Branches = () => {
   const {
@@ -26,7 +37,6 @@ const Branches = () => {
 
   const userRole = user?.role;
 
-  // Permissions
   const canAdd = userRole === "TENANT_ADMIN";
 
   const canEdit = ["TENANT_ADMIN", "BRANCH_ADMIN"].includes(
@@ -40,13 +50,7 @@ const Branches = () => {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    location: "",
-    manager_name: "",
-    capacity: "",
-  });
+  const [formData, setFormData] = useState(createEmptyForm);
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -67,20 +71,12 @@ const Branches = () => {
   });
 
   const resetForm = () => {
-    setFormData({
-      name: "",
-      phone: "",
-      location: "",
-      manager_name: "",
-      capacity: "",
-    });
+    setFormData(createEmptyForm());
   };
 
   const openBranchModal = async (branch) => {
     setSelectedBranch(branch);
-
     await fetchBranchMembers(branch.id);
-
     setShowBranchModal(true);
   };
 
@@ -135,10 +131,7 @@ const Branches = () => {
     }
   };
 
-  // =========================
   // ADD
-  // =========================
-
   const openAdd = () => {
     if (!canAdd) return;
 
@@ -147,43 +140,45 @@ const Branches = () => {
     setShowForm(true);
   };
 
-  // =========================
   // EDIT
-  // =========================
-
   const openEdit = (branch) => {
     if (!canEdit) return;
 
     setEditing(branch);
 
+    // Never prefill or submit admin credentials during branch editing.
     setFormData({
       name: branch.name || "",
       phone: branch.phone || "",
       location: branch.location || "",
       manager_name: branch.manager_name || "",
-      capacity: branch.capacity || "",
+      capacity: branch.capacity ?? "",
+      admin_username: "",
+      admin_password: "",
     });
 
     setShowForm(true);
   };
 
-  // =========================
   // CLOSE FORM
-  // =========================
-
   const closeForm = () => {
     setShowForm(false);
     setEditing(null);
     resetForm();
   };
 
-  // =========================
   // SUBMIT
-  // =========================
-
   const handleSubmit = () => {
     if (editing) {
       if (!canEdit) return;
+
+      const branchPayload = {
+        name: formData.name,
+        phone: formData.phone,
+        location: formData.location,
+        manager_name: formData.manager_name,
+        capacity: formData.capacity,
+      };
 
       openConfirmModal({
         title: "Update Branch",
@@ -194,12 +189,44 @@ const Branches = () => {
         successMessage: "Branch updated successfully!",
 
         action: async () => {
-          await editBranch(editing.id, formData);
+          await editBranch(editing.id, branchPayload);
           closeForm();
         },
       });
     } else {
       if (!canAdd) return;
+
+      const adminUsername = formData.admin_username?.trim();
+      const adminPassword = formData.admin_password || "";
+
+      if (!adminUsername) {
+        setAlertState({
+          show: true,
+          message: "Enter a username for the Branch Admin.",
+          type: "error",
+        });
+        return;
+      }
+
+      if (adminPassword.length < 8) {
+        setAlertState({
+          show: true,
+          message: "Branch Admin password must be at least 8 characters.",
+          type: "error",
+        });
+        return;
+      }
+
+      // Explicitly include the credentials in the create request.
+      const branchPayload = {
+        name: formData.name,
+        phone: formData.phone,
+        location: formData.location,
+        manager_name: formData.manager_name,
+        capacity: formData.capacity,
+        admin_username: adminUsername,
+        admin_password: adminPassword,
+      };
 
       openConfirmModal({
         title: "Add Branch",
@@ -210,17 +237,14 @@ const Branches = () => {
         successMessage: "Branch added successfully!",
 
         action: async () => {
-          await addBranch(formData);
+          await addBranch(branchPayload);
           closeForm();
         },
       });
     }
   };
 
-  // =========================
   // DELETE
-  // =========================
-
   const handleDelete = (branch) => {
     if (!canDelete) return;
 
@@ -239,7 +263,6 @@ const Branches = () => {
 
   return (
     <div className="flex flex-col gap-8">
-
       {/* HEADER */}
       <div className="flex justify-between items-end">
         <h1 className="text-2xl font-bold text-slate-900">
@@ -249,7 +272,7 @@ const Branches = () => {
         {canAdd && (
           <button
             onClick={openAdd}
-            className="bg-yellow-500  hover:bg-yellow-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm"
+            className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm"
           >
             <Plus size={18} />
             Add Branch

@@ -28,16 +28,15 @@ const useStaffFilters = (staffs = []) => {
         });
     }, [staffs, search, active]);
 
+    // Reset pagination when search, status, or branch-filtered
+    // staff data changes.
     useEffect(() => {
         setCurrentPage(1);
-    }, [search, active]);
+    }, [search, active, staffs]);
 
     const paginatedStaffs = useMemo(() => {
-        const start =
-            (currentPage - 1) * itemsPerPage;
-
-        const end =
-            currentPage * itemsPerPage;
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = currentPage * itemsPerPage;
 
         return filteredStaffs.slice(start, end);
     }, [filteredStaffs, currentPage]);
@@ -45,15 +44,11 @@ const useStaffFilters = (staffs = []) => {
     return {
         search,
         setSearch,
-
         active,
         setActive,
-
         currentPage,
         setCurrentPage,
-
         itemsPerPage,
-
         filteredStaffs,
         paginatedStaffs,
     };

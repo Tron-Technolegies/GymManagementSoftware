@@ -60,7 +60,26 @@ const Products = () => {
 
     const [alertOpen, setAlertOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
+    const [selectedBranch, setSelectedBranch] = useState("all");
 
+    const branchOptions = [
+        ...new Map(
+            products
+                .filter((p) => p.branch && p.branch_name)
+                .map((p) => [
+                    String(p.branch),
+                    {
+                        id: String(p.branch),
+                        name: p.branch_name,
+                    },
+                ])
+        ).values(),
+    ];
+
+    const branchFilteredProducts = filteredProducts.filter((p) =>
+        selectedBranch === "all" ||
+        String(p.branch) === selectedBranch
+    );
     const invoiceRef = useRef();
 
     const {
@@ -157,9 +176,38 @@ const Products = () => {
                 onAdd={canManageProducts ? openAdd : undefined}
             />
 
+            {/* Branch Filter */}
+            {user?.role === "TENANT_ADMIN" && (
+                <div className="flex items-center gap-3">
+                    <label
+                        htmlFor="productBranch"
+                        className="text-sm font-medium text-slate-700"
+                    >
+                        Branch:
+                    </label>
+
+                    <select
+                        id="productBranch"
+                        value={selectedBranch}
+                        onChange={(e) => setSelectedBranch(e.target.value)}
+                        className="border border-slate-300 rounded-lg px-4 py-2
+                       bg-white focus:ring-2 focus:ring-yellow-400
+                       outline-none"
+                    >
+                        <option value="all">All Branches</option>
+
+                        {branchOptions.map((branch) => (
+                            <option key={branch.id} value={branch.id}>
+                                {branch.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            )}
+
             {/* Products */}
             <div className="grid md:grid-cols-3 gap-6">
-                {filteredProducts.map((p) => (
+                {branchFilteredProducts.map((p) => (
                     <ProductCard
                         key={p.id}
                         product={p}

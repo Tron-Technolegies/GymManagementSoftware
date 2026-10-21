@@ -1,15 +1,16 @@
+
 import React from "react";
 import { Trash2 } from "lucide-react";
 
 const EnquiryTable = ({
-    enquiries,
+    enquiries = [],
     loading,
-    isSuperuser,
+    canDelete,
     onDelete,
 }) => {
     return (
         <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-x-auto">
-            <table className="w-full min-w-[600px]">
+            <table className="w-full min-w-[800px]">
                 <thead className="bg-slate-100 border-b border-slate-200">
                     <tr>
                         <th className="px-6 py-4 text-left text-xs font-bold text-slate-600">
@@ -25,54 +26,78 @@ const EnquiryTable = ({
                             DATE
                         </th>
                         <th className="px-6 py-4 text-left text-xs font-bold text-slate-600">
+                            BRANCH
+                        </th>
+                        <th className="px-6 py-4 text-center text-xs font-bold text-slate-600">
+                            ACTION
                         </th>
                     </tr>
                 </thead>
-                <tbody>
 
+                <tbody>
                     {loading ? (
                         <tr>
-                            <td
-                                colSpan="5"
-                                className="px-6 py-4 text-center">
+                            <td colSpan={6} className="px-6 py-4 text-center">
                                 Loading...
                             </td>
                         </tr>
                     ) : enquiries.length > 0 ? (
-
                         enquiries.map((enquiry) => (
-                            <tr key={enquiry.id}
-                                className="hover:bg-slate-50">
-                                <td className="px-6 py-4">{enquiry.name}</td>
-                                <td className="px-6 py-4">{enquiry.phone}</td>
-                                <td className="px-6 py-4">{enquiry.plan}</td>
-                                <td className="px-6 py-4">{enquiry.date}</td>
+                            <tr
+                                key={enquiry.id}
+                                className="hover:bg-slate-50 border-b border-slate-100"
+                            >
+                                <td className="px-6 py-4">
+                                    {enquiry.name}
+                                </td>
+
+                                <td className="px-6 py-4">
+                                    {enquiry.phone}
+                                </td>
+
+                                <td className="px-6 py-4">
+                                    {enquiry.plan_name ||
+                                        enquiry.plan ||
+                                        "-"}
+                                </td>
+
+                                <td className="px-6 py-4">
+                                    {enquiry.date || "-"}
+                                </td>
+
+                                <td className="px-6 py-4">
+                                    {enquiry.branch_name ||
+                                        enquiry.branch?.name ||
+                                        "-"}
+                                </td>
+
                                 <td className="px-6 py-4 text-center">
-                                    {isSuperuser && (
+                                    {canDelete && (
                                         <button
-                                            onClick={() =>
-                                                onDelete(enquiry)}
-                                            className="p-2 rounded-md hover:bg-red-100">
+                                            type="button"
+                                            onClick={() => onDelete(enquiry)}
+                                            className="p-2 rounded-md hover:bg-red-100"
+                                            title="Delete enquiry"
+                                        >
                                             <Trash2
                                                 size={16}
-                                                className="text-red-600" />
+                                                className="text-red-600"
+                                            />
                                         </button>
                                     )}
                                 </td>
                             </tr>
                         ))
-
                     ) : (
-
                         <tr>
                             <td
-                                colSpan="5"
-                                className="px-6 py-4 text-center text-slate-500">
+                                colSpan={6}
+                                className="px-6 py-4 text-center text-slate-500"
+                            >
                                 No enquiries found.
                             </td>
                         </tr>
                     )}
-
                 </tbody>
             </table>
         </div>

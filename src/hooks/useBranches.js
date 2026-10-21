@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 
 import {
@@ -25,14 +26,25 @@ export default function useBranches() {
             setBranches(res.data);
         } catch (error) {
             console.error("Error fetching branches:", error);
+            throw error;
         } finally {
             setLoading(false);
         }
     };
 
-    // CREATE BRANCH
+    // CREATE BRANCH + BRANCH ADMIN CREDENTIALS
     const addBranch = async (data) => {
-        await createBranch(data);
+        const payload = {
+            name: data.name,
+            phone: data.phone,
+            location: data.location,
+            manager_name: data.manager_name,
+            capacity: data.capacity,
+            admin_username: data.admin_username,
+            admin_password: data.admin_password,
+        };
+
+        await createBranch(payload);
         await fetchBranches();
     };
 
@@ -42,9 +54,7 @@ export default function useBranches() {
         await fetchBranches();
     };
 
-    // =========================
     // DELETE BRANCH
-    // =========================
     const removeBranch = async (id) => {
         await deleteBranch(id);
 
@@ -59,14 +69,9 @@ export default function useBranches() {
 
         try {
             const res = await getBranchMembers(branchId);
-
             setMembers(res.data.customers || []);
         } catch (error) {
-            console.error(
-                "Failed to fetch branch members:",
-                error
-            );
-
+            console.error("Failed to fetch branch members:", error);
             setMembers([]);
         } finally {
             setMembersLoading(false);
@@ -75,11 +80,10 @@ export default function useBranches() {
 
     // INITIAL FETCH
     useEffect(() => {
-        fetchBranches();
+        fetchBranches().catch(() => { });
     }, []);
 
     return {
-        // Branches
         branches,
         loading,
         fetchBranches,
@@ -87,7 +91,6 @@ export default function useBranches() {
         editBranch,
         removeBranch,
 
-        // Branch members
         members,
         membersLoading,
         fetchBranchMembers,

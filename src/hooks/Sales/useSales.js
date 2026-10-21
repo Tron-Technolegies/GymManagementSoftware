@@ -1,65 +1,40 @@
-import { useEffect, useState } from "react";
+
+import { useEffect, useState, useCallback } from "react";
 import {
     getSales,
     Saleslist,
-} from "../../api/getSales"
-
+} from "../../api/getSales";
 
 export const useSales = (
     period = "daily",
-    selectedDate = null
+    selectedDate = null,
+    selectedBranch = "all"
 ) => {
-
     const [sales, setSales] = useState([]);
     const [loading, setLoading] = useState(false);
 
-
-    const fetchSales = async () => {
-
+    const fetchSales = useCallback(async () => {
         try {
-
             setLoading(true);
-
 
             const data = await getSales(
                 period,
-                selectedDate
+                selectedDate,
+                selectedBranch
             );
 
-
-            setSales(
-                data?.sales || []
-            );
-
-
+            setSales(data?.sales || []);
         } catch (error) {
-
-            console.error(
-                "Error fetching sales:",
-                error
-            );
-
+            console.error("Error fetching sales:", error);
             setSales([]);
-
-
         } finally {
-
             setLoading(false);
-
         }
-
-    };
-
+    }, [period, selectedDate, selectedBranch]);
 
     useEffect(() => {
-
         fetchSales();
-
-    }, [
-        period,
-        selectedDate
-    ]);
-
+    }, [fetchSales]);
 
     return {
         sales,
@@ -68,54 +43,31 @@ export const useSales = (
     };
 };
 
-
-
-export const useTodaySales = () => {
-
+export const useTodaySales = (selectedBranch = "all") => {
     const [todaySales, setTodaySales] = useState([]);
     const [loading, setLoading] = useState(false);
 
-
-    const fetchTodaySales = async () => {
-
+    const fetchTodaySales = useCallback(async () => {
         try {
-
             setLoading(true);
 
+            const response = await Saleslist(selectedBranch);
 
-            const res = await Saleslist();
-
-
-            setTodaySales(
-                res?.data?.sales || []
-            );
-
-
+            setTodaySales(response?.data?.sales || []);
         } catch (error) {
-
             console.error(
                 "Error fetching today's sales:",
                 error
             );
-
             setTodaySales([]);
-
-
         } finally {
-
             setLoading(false);
-
         }
-
-    };
-
+    }, [selectedBranch]);
 
     useEffect(() => {
-
         fetchTodaySales();
-
-    }, []);
-
+    }, [fetchTodaySales]);
 
     return {
         todaySales,

@@ -47,10 +47,6 @@ const AddEquipment = ({
 
                     {/* QUANTITY */}
                     <div>
-                        <label className="block text-sm font-medium mb-1">
-                            Quantity
-                        </label>
-
                         <input
                             type="number"
                             min="1"
@@ -68,9 +64,6 @@ const AddEquipment = ({
 
                     {/* WEIGHT */}
                     <div>
-                        <label className="block text-sm font-medium mb-1">
-                            Weight (kg)
-                        </label>
 
                         <input
                             type="number"
@@ -95,10 +88,6 @@ const AddEquipment = ({
 
                     {/* AVAILABILITY */}
                     <div>
-                        <label className="block text-sm font-medium mb-1">
-                            Availability
-                        </label>
-
                         <select
                             value={formData.is_available ?? true ? "true" : "false"}
                             onChange={(e) =>

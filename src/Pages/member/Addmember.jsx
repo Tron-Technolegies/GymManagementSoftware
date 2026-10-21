@@ -29,7 +29,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
     });
 
     const webcamRef = useRef(null);
-
+    const user = JSON.parse(localStorage.getItem("adminUser") || "null");
     const [showCamera, setShowCamera] = useState(false);
     const [preview, setPreview] = useState(null);
     const [errors, setErrors] = useState({});
@@ -594,28 +594,32 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                                         </div>
 
 
-                                        <div>
-                                            <label className="text-xs font-medium text-slate-600">
-                                                BRANCH
-                                            </label>
-                                            <select
-                                                value={formData.branch}
-                                                onChange={(e) =>
-                                                    setFormData({
-                                                        ...formData,
-                                                        branch: e.target.value,
-                                                    })
-                                                }
-                                                className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                                            >
-                                                <option value="">Select Branch</option>
-                                                {branches.map((branch) => (
-                                                    <option key={branch.id} value={branch.id}>
-                                                        {branch.name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
+
+                                        {user?.role === "TENANT_ADMIN" && (
+                                            <div>
+                                                <label className="text-xs font-medium text-slate-600">
+                                                    BRANCH
+                                                </label>
+                                                <select
+                                                    value={formData.branch}
+                                                    onChange={(e) =>
+                                                        setFormData({
+                                                            ...formData,
+                                                            branch: e.target.value,
+                                                        })
+                                                    }
+                                                    className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                                >
+                                                    <option value="">Select Branch</option>
+                                                    {branches.map((branch) => (
+                                                        <option key={branch.id} value={branch.id}>
+                                                            {branch.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        )}
+
 
                                         <div>
                                             <label className="text-xs font-medium text-slate-600">

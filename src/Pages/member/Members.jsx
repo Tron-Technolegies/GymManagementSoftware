@@ -386,7 +386,7 @@ const Members = () => {
             case "Active":
                 return "bg-green-100 text-green-700";
             case "Expired":
-                return "bg-yellow-100 text-yellow-700";
+                return "bg-violet-100 text-violet-700";
             case "Blocked":
                 return "bg-red-100 text-red-700";
             case "Paused":
@@ -411,6 +411,33 @@ const Members = () => {
                 >
                     + ADD MEMBER
                 </button>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-3">
+
+                <div className="flex gap-2 sm:gap-3 flex-wrap">
+                    {buttons.map((btn) => (
+                        <button
+                            key={btn}
+                            onClick={() => setActive(btn)}
+                            className={`px-4 py-1 rounded-md transition text-sm ${active === btn
+                                ? "bg-yellow-500 font-semibold text-white"
+                                : "bg-white text-slate-400 font-bold hover:text-black"
+                                }`}
+                        >
+                            {btn}
+                        </button>
+                    ))}
+                </div>
+
+                <input
+                    type="text"
+                    placeholder="Search members..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="w-72 px-3 py-2 border border-slate-300 rounded-lg
+                       focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
@@ -466,32 +493,7 @@ const Members = () => {
             <div className="rounded-lg border border-slate-100 shadow-sm p-3 space-y-4">
 
                 {/* Row 1 - Status + Search */}
-                <div className="flex flex-wrap items-center justify-between gap-3">
 
-                    <div className="flex gap-2 sm:gap-3 flex-wrap">
-                        {buttons.map((btn) => (
-                            <button
-                                key={btn}
-                                onClick={() => setActive(btn)}
-                                className={`px-4 py-1 rounded-md transition text-sm ${active === btn
-                                    ? "bg-yellow-500 font-semibold text-white"
-                                    : "bg-white text-slate-400 font-bold hover:text-black"
-                                    }`}
-                            >
-                                {btn}
-                            </button>
-                        ))}
-                    </div>
-
-                    <input
-                        type="text"
-                        placeholder="Search members..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="w-72 px-3 py-2 border border-slate-300 rounded-lg
-                       focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                    />
-                </div>
 
 
                 {/* Row 2 - Financial Filters + Single Date */}
