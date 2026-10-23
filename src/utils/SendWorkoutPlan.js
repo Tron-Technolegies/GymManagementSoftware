@@ -13,7 +13,7 @@ export const sendWorkoutPlanWhatsApp = (member) => {
 
 Your AI Workout Plan is ready.
 Please find your personalized workout plan attached.
-Thank you for choosing GYMPACT.`;
+Thank you for choosing MR GYM.`;
 
     const url =
         `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import useAdditionalExpenses from "../../hooks/useExpenses";
 import Pagination from "../Pagination";
+import { getBranches } from "../../api/branches";
 
 const Expense = () => {
 
@@ -15,17 +16,61 @@ const Expense = () => {
     const itemsPerPage = 10;
 
 
+    const [branches, setBranches] = useState([]);
+    const [selectedBranch, setSelectedBranch] = useState("all");
+
     useEffect(() => {
         fetchAdditionalExpenses();
     }, []);
 
-    const filteredExpense = expenses;
+    useEffect(() => {
+        const fetchBranches = async () => {
+            try {
+                const response = await getBranches();
+                const data = response.data;
+
+                setBranches(
+                    Array.isArray(data)
+                        ? data
+                        : data?.results ?? data?.branches ?? []
+                );
+            } catch (error) {
+                console.error("Failed to fetch branches:", error);
+            }
+        };
+
+        fetchBranches();
+    }, []);
+
+    const filteredExpense = useMemo(() => {
+        if (selectedBranch === "all") return expenses;
+
+        return expenses.filter((expense) => {
+            const branchId =
+                expense.branch?.id ??
+                expense.branch_id ??
+                expense.branch;
+
+            return String(branchId ?? "") === String(selectedBranch);
+        });
+    }, [expenses, selectedBranch]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedBranch]);
 
 
     const paginatedExpense = filteredExpense.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
+
+    const adminUser = JSON.parse(
+        localStorage.getItem("adminUser") || "{}"
+    );
+
+    const isTenantAdmin =
+        adminUser.role === "TENANT_ADMIN";
 
 
     return (
@@ -41,6 +86,23 @@ const Expense = () => {
             ) : (
 
                 <>
+                    {isTenantAdmin && (
+                        <div className="flex justify-end p-4">
+                            <select
+                                value={selectedBranch}
+                                onChange={(e) => setSelectedBranch(e.target.value)}
+                                className="w-full sm:w-64 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                            >
+                                <option value="all">All Branches</option>
+
+                                {branches.map((branch) => (
+                                    <option key={branch.id} value={String(branch.id)}>
+                                        {branch.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
 
                     <table className="w-full min-w-[1000px]">
 

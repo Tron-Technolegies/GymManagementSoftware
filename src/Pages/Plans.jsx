@@ -1,8 +1,7 @@
 import { useState } from "react";
 import usePlans from "../hooks/plans";
 
-import { Plus, Edit2, Trash2 } from "lucide-react";
-
+import { Plus, Edit2, Trash2, BadgeCheck } from "lucide-react";
 import AlertMessage from "../Components/AlertMessage";
 import ConfirmActionModal from "../Components/ConfirmActionModal";
 import AddPlan from "../Components/Plans/AddPlan";
@@ -208,48 +207,84 @@ export default function Plans() {
         />
       )}
 
-      <div className="grid md:grid-cols-3 gap-6">
 
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {plans.map((p) => (
           <div
             key={p.id}
-            className="bg-white p-6 rounded-xl border border-slate-300 shadow-md">
-            <div className="flex justify-between">
-              <h3 className="font-bold">{p.name}</h3>
-              <div className="flex gap-2">
-                {["SUPER_ADMIN", "TENANT_ADMIN"].includes(user?.role) && (
-                  <button
-                    onClick={() => openEdit(p)}
-                    className="p-2 rounded-md hover:bg-yellow-100"
-                  >
-                    <Edit2
-                      size={16}
-                      className="text-yellow-600"
-                    />
-                  </button>
-                )}
+            className="flex min-w-0 flex-col overflow-hidden
+                rounded-2xl border border-yellow-200
+                border-b-4 border-b-yellow-400 bg-white
+                shadow-sm transition-all duration-200
+                hover:border-yellow-300 hover:shadow-md"
+          >
+            {/* Yellow Header */}
+            <div className="flex min-w-0 items-center justify-between
+                gap-2 bg-yellow-50 px-4 py-3">
 
-                {["SUPER_ADMIN", "TENANT_ADMIN"].includes(user?.role) && (
-                  <button
-                    onClick={() => handleDelete(p)}
-                    className="p-2 rounded-md hover:bg-red-100"
-                  >
-                    <Trash2
-                      size={16}
-                      className="text-red-600"
-                    />
-                  </button>
-                )}
+              {/* Plan Icon and Name */}
+              <div className="flex min-w-0 items-center gap-2">
+                <div className="flex h-9 w-9 shrink-0 items-center
+                        justify-center rounded-xl bg-yellow-100">
+                  <BadgeCheck
+                    size={20}
+                    className="text-yellow-600"
+                  />
+                </div>
 
+                <h3 className="min-w-0 truncate text-base
+                        font-bold text-slate-800">
+                  {p.name}
+                </h3>
               </div>
+
+              {/* Action Icons - Right Side */}
+              {["SUPER_ADMIN", "TENANT_ADMIN"].includes(user?.role) && (
+                <div className="flex shrink-0 items-center gap-1">
+                  <button
+                    type="button"
+                    aria-label={`Edit ${p.name}`}
+                    onClick={() => openEdit(p)}
+                    className="flex h-8 w-8 items-center
+                                justify-center rounded-lg
+                                text-yellow-700 transition
+                                hover:bg-yellow-200"
+                  >
+                    <Edit2 size={16} />
+                  </button>
+
+                  <button
+                    type="button"
+                    aria-label={`Delete ${p.name}`}
+                    onClick={() => handleDelete(p)}
+                    className="flex h-8 w-8 items-center
+                                justify-center rounded-lg
+                                text-red-500 transition
+                                hover:bg-red-100"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              )}
             </div>
 
-            <div className="mt-4 font-semibold">₹{p.price} / {p.duration} days</div>
+            {/* Price Section */}
+            <div className="flex flex-1 flex-col justify-center
+                bg-white px-4 py-4">
+              <div className="text-2xl font-extrabold text-yellow-600">
+                ₹{p.price}
+              </div>
 
+              <div className="mt-1 text-sm font-medium text-slate-500">
+                {p.duration} days
+              </div>
+
+            </div>
           </div>
         ))}
-
       </div>
+
 
       <AlertMessage
         show={alertState.show}

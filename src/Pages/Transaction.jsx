@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import Income from "../Components/Transactions/Income";
 import Expense from "../Components/Transactions/Expense";
@@ -7,15 +8,19 @@ import useAdditionalExpenses from "../hooks/useExpenses";
 import useAdditionalIncomes from "../hooks/useIncomes";
 
 const Transaction = () => {
-
     const [active, setActive] = useState("Income");
     const [showExpenseModal, setShowExpenseModal] = useState(false);
     const [showIncomeModal, setShowIncomeModal] = useState(false);
+    const [incomeRefreshKey, setIncomeRefreshKey] = useState(0);
     const { createIncome } = useAdditionalIncomes();
     const { createExpense } = useAdditionalExpenses();
-    const tabs = ["Income", "Expense"];
-    const handleAdd = () => {
 
+    // Trigger Expense history refresh after a successful addition
+    const [expenseRefreshKey, setExpenseRefreshKey] = useState(0);
+
+    const tabs = ["Income", "Expense"];
+
+    const handleAdd = () => {
         if (active === "Income") {
             setShowIncomeModal(true);
         } else {
@@ -27,71 +32,68 @@ const Transaction = () => {
         try {
             await createExpense(data);
             setShowExpenseModal(false);
+            setExpenseRefreshKey((key) => key + 1);
         } catch (error) {
-
-            console.error(
-                "Expense adding failed:",
-                error
-            );
+            console.error("Expense adding failed:", error);
         }
     };
+
     const handleIncomeSubmit = async (data) => {
         try {
             await createIncome(data);
             setShowIncomeModal(false);
+            setIncomeRefreshKey((key) => key + 1);
         } catch (error) {
-            console.error(
-                "Income adding failed:",
-                error
-            );
+            console.error("Income adding failed:", error);
         }
     };
 
     return (
         <div className="flex flex-col gap-8">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-
                 <div className="inline-flex rounded-xl bg-slate-100 p-1 shadow-sm gap-1">
-
                     {tabs.map((tab) => (
-
                         <button
                             key={tab}
                             onClick={() => setActive(tab)}
                             className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${active === tab
                                 ? "bg-yellow-500 text-white shadow"
                                 : "text-slate-500 hover:bg-white hover:text-slate-900"
-                                }`}>
+                                }`}
+                        >
                             {tab}
                         </button>
                     ))}
                 </div>
+
                 <button
                     onClick={handleAdd}
-                    className="px-4 py-2 rounded-lg text-sm font-semibold bg-yellow-500 hover:bg-yellow-600 text-white">
-                    {active === "Income"
-                        ? "Add Income +"
-                        : "Add Expense +"
-                    }
+                    className="px-4 py-2 rounded-lg text-sm font-semibold bg-yellow-500 hover:bg-yellow-600 text-white"
+                >
+                    {active === "Income" ? "Add Income +" : "Add Expense +"}
                 </button>
             </div>
+
             <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
-
-                {active === "Income"
-                    ? <Income />
-                    : <Expense />
-                }
-
+                {active === "Income" ? (
+                    <Income refreshKey={incomeRefreshKey} />
+                ) : (
+                    <Expense refreshKey={expenseRefreshKey} />
+                )}
             </div>
+
             {showExpenseModal && (
                 <Add_expense
                     onClose={() => setShowExpenseModal(false)}
-                    onSubmit={handleExpenseSubmit} />
+                    onSubmit={handleExpenseSubmit}
+                />
             )}
+
             {showIncomeModal && (
                 <Add_Income
                     onClose={() => setShowIncomeModal(false)}
-                    onSubmit={handleIncomeSubmit} />
+                    onSubmit={handleIncomeSubmit}
+                />
             )}
         </div>
     );

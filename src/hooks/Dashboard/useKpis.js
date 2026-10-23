@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { getDashboardStats } from "../../api/dashboardapi"
 
-const useKpis = () => {
+import { useCallback, useEffect, useState } from "react";
+import { getDashboardStats } from "../../api/dashboardapi";
 
+const useKpis = (branchId = null) => {
     const [stats, setStats] = useState({
         total_members: 0,
         active_members: 0,
@@ -25,47 +25,33 @@ const useKpis = () => {
 
     const [loading, setLoading] = useState(false);
 
-
-    const fetchStats = async () => {
-
+    const fetchStats = useCallback(async () => {
         try {
-
             setLoading(true);
 
-            const res = await getDashboardStats();
+            const response = await getDashboardStats(
+                "daily",
+                null,
+                branchId
+            );
 
-            setStats(res.data);
-
-        } catch (err) {
-
-            console.log(err);
-
+            setStats(response.data || {});
+        } catch (error) {
+            console.error("Failed to fetch dashboard KPIs:", error);
         } finally {
-
             setLoading(false);
-
         }
-
-    };
-
+    }, [branchId]);
 
     useEffect(() => {
-
         fetchStats();
-
-    }, []);
-
+    }, [fetchStats]);
 
     return {
-
         stats,
-
         loading,
-
         fetchStats,
-
     };
-
 };
 
 export default useKpis;

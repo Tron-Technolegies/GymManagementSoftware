@@ -9,7 +9,7 @@ export const sendWhatsApp = (member) => {
 
 Your payment of ₹${member.due_amount} is due on ${member.expiry_date}.
 Please make the payment on time.
-Thank you for choosing GYMPACT.`;
+Thank you for choosing MR GYM.`;
 
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
@@ -27,7 +27,7 @@ export const sendPlanExpiryWhatsApp = (member) => {
 
 Your ${member.plan?.name || "membership plan"} expired on ${member.expiry_date}.
 Please renew your membership on time to continue enjoying our gym services.
-Thank you for choosing GYMPACT.`;
+Thank you for choosing MR GYM.`;
 
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 

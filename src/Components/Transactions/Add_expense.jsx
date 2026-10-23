@@ -1,9 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ConfirmActionModal from "../ConfirmActionModal";
+import { getBranches } from "../../api/branches";
 
 const Add_expense = ({ onClose, onSubmit }) => {
     const [showConfirm, setShowConfirm] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+
+    const [branches, setBranches] = useState([]);
+    const [selectedBranch, setSelectedBranch] = useState("");
+
+    // Read the logged-in user's role safely
+    const getAdminUser = () => {
+        try {
+            return JSON.parse(localStorage.getItem("adminUser") || "{}");
+        } catch {
+            return {};
+        }
+    };
+
+    const adminUser = getAdminUser();
+    const isTenantAdmin = adminUser?.role === "TENANT_ADMIN";
 
     const [formData, setFormData] = useState({
         title: "",
@@ -16,6 +32,28 @@ const Add_expense = ({ onClose, onSubmit }) => {
         date: "",
     });
 
+    // Fetch branches only for tenant admin
+    useEffect(() => {
+        if (!isTenantAdmin) return;
+
+        const fetchBranches = async () => {
+            try {
+                const response = await getBranches();
+                const data = response.data;
+
+                const branchList = Array.isArray(data)
+                    ? data
+                    : data?.results ?? data?.branches ?? [];
+
+                setBranches(branchList);
+            } catch (error) {
+                console.error("Failed to fetch branches:", error);
+            }
+        };
+
+        fetchBranches();
+    }, [isTenantAdmin]);
+
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -23,8 +61,27 @@ const Add_expense = ({ onClose, onSubmit }) => {
         });
     };
 
+    const resetForm = () => {
+        setFormData({
+            title: "",
+            name: "",
+            phone: "",
+            category: "misc",
+            description: "",
+            amount: "",
+            payment_method: "cash",
+            date: "",
+        });
+        setSelectedBranch("");
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (isTenantAdmin && !selectedBranch) {
+            return;
+        }
+
         setShowConfirm(true);
     };
 
@@ -32,19 +89,16 @@ const Add_expense = ({ onClose, onSubmit }) => {
         try {
             setSubmitting(true);
 
-            await onSubmit(formData);
+            // Include the selected branch for tenant admin only
+            const payload = {
+                ...formData,
+                ...(isTenantAdmin ? { branch_id: Number(selectedBranch) } : {}),
+            };
 
-            setFormData({
-                title: "",
-                name: "",
-                phone: "",
-                category: "misc",
-                description: "",
-                amount: "",
-                payment_method: "cash",
-                date: "",
-            });
 
+            await onSubmit(payload);
+
+            resetForm();
             setShowConfirm(false);
             onClose();
         } catch (error) {
@@ -63,6 +117,7 @@ const Add_expense = ({ onClose, onSubmit }) => {
                     </h2>
 
                     <button
+                        type="button"
                         onClick={() => {
                             setShowConfirm(false);
                             onClose();
@@ -74,6 +129,35 @@ const Add_expense = ({ onClose, onSubmit }) => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Branch selector: tenant admin only */}
+                    {isTenantAdmin && (
+                        <div>
+                            <label className="text-sm font-medium">
+                                Branch
+                            </label>
+
+                            <select
+                                value={selectedBranch}
+                                onChange={(e) =>
+                                    setSelectedBranch(e.target.value)
+                                }
+                                className="w-full mt-1 shadow-sm rounded-lg px-3 py-3 border border-slate-200"
+                                required
+                            >
+                                <option value="">Select Branch</option>
+
+                                {branches.map((branch) => (
+                                    <option
+                                        key={branch.id}
+                                        value={String(branch.id)}
+                                    >
+                                        {branch.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
                     <div>
                         <input
                             type="text"
@@ -135,12 +219,13 @@ const Add_expense = ({ onClose, onSubmit }) => {
                             <label className="text-sm font-medium">
                                 Amount
                             </label>
-
                             <input
                                 type="number"
                                 name="amount"
                                 value={formData.amount}
                                 onChange={handleChange}
+                                min="0"
+                                step="0.01"
                                 className="w-full mt-1 shadow-lg rounded-lg px-3 py-3"
                                 required
                             />
@@ -152,7 +237,6 @@ const Add_expense = ({ onClose, onSubmit }) => {
                             <label className="text-sm font-medium">
                                 Payment Method
                             </label>
-
                             <select
                                 name="payment_method"
                                 value={formData.payment_method}
@@ -170,7 +254,6 @@ const Add_expense = ({ onClose, onSubmit }) => {
                             <label className="text-sm font-medium">
                                 Date
                             </label>
-
                             <input
                                 type="date"
                                 name="date"

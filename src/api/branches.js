@@ -39,7 +39,7 @@ export const updateBranch = (id, data) => {
     formData.append("phone", data.phone);
     formData.append("capacity", data.capacity);
 
-    return api.post(`admin/api/branches/${id}/update/`, formData);
+    return api.put(`admin/api/branches/${id}/update/`, formData);
 };
 
 // DELETE

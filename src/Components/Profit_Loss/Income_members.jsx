@@ -4,14 +4,15 @@ import useAdditionalIncomes from "../../hooks/useIncomes";
 const Income_members = ({
     period = "daily",
     selectedDate,
+    branchId = null,
 }) => {
-
     const {
         memberIncome = [],
         loading,
     } = useAdditionalIncomes(
         period,
-        selectedDate
+        selectedDate,
+        branchId
     );
 
 

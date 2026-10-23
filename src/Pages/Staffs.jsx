@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState } from "react";
 
 import {
@@ -48,7 +49,6 @@ const Staffs = () => {
     const { update } = useUpdateStaff();
 
     // Branch filtering applies only to TENANT_ADMIN.
-    // Other roles keep their existing API-provided staff list.
     const branchFilteredStaffs = useMemo(() => {
         if (
             user?.role !== "TENANT_ADMIN" ||
@@ -172,7 +172,7 @@ const Staffs = () => {
                 const payload = new FormData();
 
                 Object.keys(formData).forEach((key) => {
-                    payload.append(key, formData[key]);
+                    payload.append(key, formData[key] ?? "");
                 });
 
                 await create(payload);
@@ -294,7 +294,6 @@ const Staffs = () => {
                 />
 
                 <div className="flex flex-wrap items-center gap-2">
-                    {/* Branch dropdown is visible only to Tenant Admin */}
                     {user?.role === "TENANT_ADMIN" && (
                         <select
                             value={selectedBranch}
@@ -303,9 +302,7 @@ const Staffs = () => {
                             }
                             className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
                         >
-                            <option value="all">
-                                All Branches
-                            </option>
+                            <option value="all">All Branches</option>
 
                             {branches.map((branch) => (
                                 <option
@@ -364,6 +361,8 @@ const Staffs = () => {
                     onClose={() => setShowAdd(false)}
                     onSubmit={handleAddStaff}
                     isEdit={false}
+                    userRole={user?.role}
+                    branches={branches}
                 />
             )}
 
@@ -371,6 +370,8 @@ const Staffs = () => {
                 <AddStaffs
                     staff={editStaff}
                     isEdit={true}
+                    userRole={user?.role}
+                    branches={branches}
                     onClose={() => {
                         setShowUpdate(false);
                         setEditStaff(null);

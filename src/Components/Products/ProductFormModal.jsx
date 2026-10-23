@@ -1,11 +1,14 @@
+
 import React, { useEffect, useState } from "react";
-import ConfirmActionModal from "../ConfirmActionModal"
+import ConfirmActionModal from "../ConfirmActionModal";
 
 const ProductFormModal = ({
     open,
     onClose,
     onSubmit,
     editing = null,
+    userRole,
+    branches = [],
 }) => {
     const [formData, setFormData] = useState({
         name: "",
@@ -14,6 +17,7 @@ const ProductFormModal = ({
         stock: "",
         category: "",
         image: null,
+        branch: "",
     });
 
     const [showConfirm, setShowConfirm] = useState(false);
@@ -27,6 +31,7 @@ const ProductFormModal = ({
                 stock: editing.stock || "",
                 category: editing.category || "",
                 image: null,
+                branch: editing.branch_id || editing.branch?.id || "",
             });
         } else {
             setFormData({
@@ -36,6 +41,7 @@ const ProductFormModal = ({
                 stock: "",
                 category: "",
                 image: null,
+                branch: "",
             });
         }
     }, [editing, open]);
@@ -43,6 +49,13 @@ const ProductFormModal = ({
     if (!open) return null;
 
     const handleMainSubmit = () => {
+        if (
+            userRole === "TENANT_ADMIN" &&
+            !formData.branch
+        ) {
+            return;
+        }
+
         setShowConfirm(true);
     };
 
@@ -65,7 +78,10 @@ const ProductFormModal = ({
                             placeholder="Product Name"
                             value={formData.name}
                             onChange={(e) =>
-                                setFormData({ ...formData, name: e.target.value })
+                                setFormData({
+                                    ...formData,
+                                    name: e.target.value,
+                                })
                             }
                             className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                         />
@@ -75,7 +91,10 @@ const ProductFormModal = ({
                             placeholder="Description"
                             value={formData.description}
                             onChange={(e) =>
-                                setFormData({ ...formData, description: e.target.value })
+                                setFormData({
+                                    ...formData,
+                                    description: e.target.value,
+                                })
                             }
                             className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                         />
@@ -84,7 +103,10 @@ const ProductFormModal = ({
                             name="category"
                             value={formData.category}
                             onChange={(e) =>
-                                setFormData({ ...formData, category: e.target.value })
+                                setFormData({
+                                    ...formData,
+                                    category: e.target.value,
+                                })
                             }
                             required
                             className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500"
@@ -99,12 +121,42 @@ const ProductFormModal = ({
                             <option value="other">Other</option>
                         </select>
 
+                        {/* Branch selection for Tenant Admin only */}
+                        {userRole === "TENANT_ADMIN" && (
+                            <select
+                                name="branch"
+                                value={formData.branch}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        branch: e.target.value,
+                                    })
+                                }
+                                required
+                                className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                            >
+                                <option value="">Select Branch</option>
+
+                                {branches.map((branch) => (
+                                    <option
+                                        key={branch.id}
+                                        value={branch.id}
+                                    >
+                                        {branch.name}
+                                    </option>
+                                ))}
+                            </select>
+                        )}
+
                         <input
                             type="number"
                             placeholder="Price"
                             value={formData.price}
                             onChange={(e) =>
-                                setFormData({ ...formData, price: e.target.value })
+                                setFormData({
+                                    ...formData,
+                                    price: e.target.value,
+                                })
                             }
                             className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                         />
@@ -114,7 +166,10 @@ const ProductFormModal = ({
                             placeholder="Stock"
                             value={formData.stock}
                             onChange={(e) =>
-                                setFormData({ ...formData, stock: e.target.value })
+                                setFormData({
+                                    ...formData,
+                                    stock: e.target.value,
+                                })
                             }
                             className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                         />

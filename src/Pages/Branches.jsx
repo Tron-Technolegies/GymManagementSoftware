@@ -28,6 +28,7 @@ const Branches = () => {
     editBranch,
     removeBranch,
     members,
+    membersLoading,
     fetchBranchMembers,
   } = useBranches();
 
@@ -74,11 +75,27 @@ const Branches = () => {
     setFormData(createEmptyForm());
   };
 
+
+
   const openBranchModal = async (branch) => {
+    if (userRole !== "TENANT_ADMIN") return;
+
     setSelectedBranch(branch);
-    await fetchBranchMembers(branch.id);
-    setShowBranchModal(true);
+
+    try {
+      await fetchBranchMembers(branch.id);
+      setShowBranchModal(true);
+    } catch (error) {
+      setAlertState({
+        show: true,
+        message:
+          error?.response?.data?.error ||
+          "Failed to load branch members.",
+        type: "error",
+      });
+    }
   };
+
 
   const openConfirmModal = ({
     title,
@@ -289,13 +306,17 @@ const Branches = () => {
         onSubmit={handleSubmit}
       />
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {branches.map((branch) => (
           <BranchCard
             key={branch.id}
             branch={branch}
             userRole={userRole}
-            onClick={openBranchModal}
+            onClick={
+              userRole === "TENANT_ADMIN"
+                ? openBranchModal
+                : undefined
+            }
             onEdit={canEdit ? openEdit : undefined}
             onDelete={canDelete ? handleDelete : undefined}
           />
@@ -318,6 +339,7 @@ const Branches = () => {
         isOpen={showBranchModal}
         branch={selectedBranch}
         members={members}
+        loading={membersLoading}
         onClose={() => {
           setShowBranchModal(false);
           setSelectedBranch(null);

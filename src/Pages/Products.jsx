@@ -1,9 +1,10 @@
-import React, { useRef, useState } from "react";
+
+import React, { useRef, useState, useEffect } from "react";
 
 import useProducts from "../hooks/Products/useProducts";
 import useProductFilters from "../hooks/Products/useProductFilters";
 import useProductSale from "../hooks/Products/useProductSale";
-import { useSaleInvoice } from "../hooks/Sales/useSaleInvoice"
+import { useSaleInvoice } from "../hooks/Sales/useSaleInvoice";
 import ProductHeader from "../Components/Products/ProductHeader";
 import ProductCard from "../Components/Products/ProductCard";
 import ProductFormModal from "../Components/Products/ProductFormModal";
@@ -12,6 +13,7 @@ import SellProductModal from "../Components/Products/SellProductModal";
 import SaleSuccessModal from "../Components/Products/SaleSuccessModal";
 import ProductInvoice from "../Components/Products/ProductInvoice";
 import AlertMessage from "../Components/AlertMessage";
+import { getBranches } from "../api/branches";
 
 const Products = () => {
     const {
@@ -37,7 +39,20 @@ const Products = () => {
     const user = JSON.parse(
         localStorage.getItem("adminUser") || "null"
     );
+    const [branches, setBranches] = useState([]);
 
+    useEffect(() => {
+        const fetchBranches = async () => {
+            try {
+                const res = await getBranches();
+                setBranches(res.data);
+            } catch (err) {
+                console.error("Fetch branches error:", err);
+            }
+        };
+
+        fetchBranches();
+    }, []);
     const canManageProducts = [
         "SUPER_ADMIN",
         "TENANT_ADMIN",
@@ -51,7 +66,6 @@ const Products = () => {
         "STAFF",
     ].includes(user?.role);
 
-
     const [showFormModal, setShowFormModal] = useState(false);
     const [editing, setEditing] = useState(null);
 
@@ -62,24 +76,15 @@ const Products = () => {
     const [alertMessage, setAlertMessage] = useState("");
     const [selectedBranch, setSelectedBranch] = useState("all");
 
-    const branchOptions = [
-        ...new Map(
-            products
-                .filter((p) => p.branch && p.branch_name)
-                .map((p) => [
-                    String(p.branch),
-                    {
-                        id: String(p.branch),
-                        name: p.branch_name,
-                    },
-                ])
-        ).values(),
-    ];
-
+    const branchOptions = branches.map((branch) => ({
+        id: String(branch.id),
+        name: branch.name,
+    }));
     const branchFilteredProducts = filteredProducts.filter((p) =>
         selectedBranch === "all" ||
         String(p.branch) === selectedBranch
     );
+
     const invoiceRef = useRef();
 
     const {
@@ -234,6 +239,8 @@ const Products = () => {
                     }}
                     onSubmit={handleSaveProduct}
                     editing={editing}
+                    userRole={user?.role}
+                    branches={branches}
                 />
             )}
 

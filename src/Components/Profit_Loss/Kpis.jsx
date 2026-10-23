@@ -6,17 +6,23 @@ import {
     TrendingUp,
 } from "lucide-react";
 import useDashboard from "../../hooks/useDashboard";
+
+
 const Kpis = ({
     period = "daily",
     selectedDate,
+    branchId = null,
 }) => {
     const {
         stats,
         loading,
     } = useDashboard(
         period,
-        selectedDate
+        selectedDate,
+        branchId
     );
+
+    // Keep all your existing code below unchanged.
     const formatAmount = (value) => {
 
         return Number(

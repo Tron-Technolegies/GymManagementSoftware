@@ -13,7 +13,7 @@ export const sendDietPlanWhatsApp = (member) => {
 
 Your AI Diet Plan is ready.
 Please find your personalized diet plan attached.
-Thank you for choosing GYMPACT.`;
+Thank you for choosing MR GYM.`;
 
 
     const url =

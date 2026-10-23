@@ -259,21 +259,27 @@ const Members = () => {
 
     const handleOpenRenewForm = (member) => {
         setSelectedMember(member);
+
         setRenewForm({
-            plan: member.plan || "",
+            plan: member.plan?.id
+                ? String(member.plan.id)
+                : "",
             expiry_date: "",
         });
+
         setShowRenewForm(true);
     };
 
     const handleRenewPlanChange = (e) => {
-        const selectedPlanName = e.target.value;
+        const selectedPlanId = e.target.value;
 
-        const selectedPlan = plans.find((p) => p.name === selectedPlanName);
+        const selectedPlan = plans.find(
+            (p) => String(p.id) === String(selectedPlanId)
+        );
 
         if (!selectedPlan) {
             setRenewForm({
-                plan: selectedPlanName,
+                plan: selectedPlanId,
                 expiry_date: "",
             });
             return;
@@ -287,12 +293,17 @@ const Members = () => {
         );
 
         const today = new Date();
-
         let baseDate = today;
 
         if (selectedMember?.expiry_date) {
-            const memberExpiry = new Date(selectedMember.expiry_date);
-            if (!isNaN(memberExpiry.getTime()) && memberExpiry >= today) {
+            const memberExpiry = new Date(
+                selectedMember.expiry_date
+            );
+
+            if (
+                !isNaN(memberExpiry.getTime()) &&
+                memberExpiry >= today
+            ) {
                 baseDate = memberExpiry;
             }
         }
@@ -300,9 +311,13 @@ const Members = () => {
         const expiry = new Date(baseDate);
         expiry.setDate(expiry.getDate() + duration);
 
+        const year = expiry.getFullYear();
+        const month = String(expiry.getMonth() + 1).padStart(2, "0");
+        const day = String(expiry.getDate()).padStart(2, "0");
+
         setRenewForm({
-            plan: selectedPlanName,
-            expiry_date: expiry.toISOString().split("T")[0],
+            plan: selectedPlanId,
+            expiry_date: `${year}-${month}-${day}`,
         });
     };
 
@@ -937,8 +952,9 @@ const Members = () => {
                                 className="w-full border border-slate-300 shadow-md rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                             >
                                 <option value="">Select Plan</option>
+
                                 {plans.map((plan) => (
-                                    <option key={plan.id} value={plan.name}>
+                                    <option key={plan.id} value={String(plan.id)}>
                                         {plan.name}
                                     </option>
                                 ))}

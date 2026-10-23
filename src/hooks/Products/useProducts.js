@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import {
     getProducts,
@@ -37,6 +38,12 @@ export default function useProducts() {
         formData.append("price", data.price);
         formData.append("stock", data.stock);
 
+        // Send selected branch for Tenant Admin.
+        // Branch Admin's branch is assigned by Django.
+        if (data.branch) {
+            formData.append("branch", data.branch);
+        }
+
         if (data.image) {
             formData.append("image", data.image);
         }
@@ -55,6 +62,10 @@ export default function useProducts() {
         formData.append("stock", data.stock);
         formData.append("category", data.category);
 
+        if (data.branch) {
+            formData.append("branch", data.branch);
+        }
+
         if (data.image instanceof File) {
             formData.append("image", data.image);
         }
@@ -66,7 +77,9 @@ export default function useProducts() {
     // DELETE
     const removeProduct = async (id) => {
         await deleteProduct(id);
-        setProducts((prev) => prev.filter((p) => p.id !== id));
+        setProducts((prev) =>
+            prev.filter((p) => p.id !== id)
+        );
     };
 
     return {

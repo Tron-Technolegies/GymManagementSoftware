@@ -32,6 +32,23 @@ export default function useBranches() {
         }
     };
 
+    // FETCH BRANCH MEMBERS
+    const fetchBranchMembers = async (branchId) => {
+        setMembersLoading(true);
+        setMembers([]);
+
+        try {
+            const res = await getBranchMembers(branchId);
+            setMembers(res.data.members || []);
+        } catch (error) {
+            console.error("Failed to fetch branch members:", error);
+            setMembers([]);
+            throw error;
+        } finally {
+            setMembersLoading(false);
+        }
+    };
+
     // CREATE BRANCH + BRANCH ADMIN CREDENTIALS
     const addBranch = async (data) => {
         const payload = {
@@ -63,21 +80,6 @@ export default function useBranches() {
         );
     };
 
-    // FETCH BRANCH MEMBERS
-    const fetchBranchMembers = async (branchId) => {
-        setMembersLoading(true);
-
-        try {
-            const res = await getBranchMembers(branchId);
-            setMembers(res.data.customers || []);
-        } catch (error) {
-            console.error("Failed to fetch branch members:", error);
-            setMembers([]);
-        } finally {
-            setMembersLoading(false);
-        }
-    };
-
     // INITIAL FETCH
     useEffect(() => {
         fetchBranches().catch(() => { });
@@ -90,7 +92,6 @@ export default function useBranches() {
         addBranch,
         editBranch,
         removeBranch,
-
         members,
         membersLoading,
         fetchBranchMembers,
