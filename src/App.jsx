@@ -18,6 +18,7 @@ import Products from "./Pages/Products";
 import Equipments from "./Pages/Equipments";
 import EsslMapping from "./Pages/EsslMapping";
 import Attendance from "./Pages/Attendance";
+import AuthExpiryWatcher from "./Components/AuthExpiryWatcher";
 
 
 const router = createBrowserRouter([
@@ -26,9 +27,15 @@ const router = createBrowserRouter([
     element: <Login />,
   },
 
+
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <>
+        <AuthExpiryWatcher />
+        <Layout />
+      </>
+    ),
     children: [
       { index: true, element: <Dashboard /> },
       { path: "dashboard", element: <Dashboard /> },
@@ -39,19 +46,17 @@ const router = createBrowserRouter([
       { path: "settings", element: <Settings /> },
       { path: "sales", element: <Sales /> },
       { path: "diet", element: <DietPlan /> },
-      { path: "/workplan", element: <WorkoutPlan /> },
-
+      { path: "workplan", element: <WorkoutPlan /> },
       { path: "staffs", element: <Staffs /> },
-      { path: "/equipment", element: <Equipments /> },
+      { path: "equipment", element: <Equipments /> },
       { path: "enquiry", element: <Enquiry /> },
-      { path: "/transaction", element: <Transaction /> },
-      { path: "/profit_loss", element: <Profit_loss /> },
+      { path: "transaction", element: <Transaction /> },
+      { path: "profit_loss", element: <Profit_loss /> },
       { path: "essl-mapping", element: <EsslMapping /> },
-      { path: "attendance", element: <Attendance />, }
-
-
+      { path: "attendance", element: <Attendance /> },
     ],
-  },
+  }
+
 ]);
 
 const App = () => {
