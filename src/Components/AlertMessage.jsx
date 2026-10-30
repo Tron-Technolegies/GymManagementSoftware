@@ -19,9 +19,9 @@ const AlertMessage = ({
     if (!show) return null;
 
     const styles = {
-        success: "bg-yellow-100 border-yellow-500 text-yellow-700",
+        success: "bg-green-100 border-green-500 text-green-700",
         error: "bg-red-100 border-red-500 text-red-700",
-        warning: "bg-yellow-100 border-yellow-500 text-yellow-700",
+        warning: "bg-amber-100 border-amber-500 text-amber-800",
     };
 
     return (

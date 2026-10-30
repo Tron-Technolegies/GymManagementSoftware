@@ -816,9 +816,9 @@ const Members = () => {
                 <Addmember
                     onClose={() => setShowAddMember(false)}
                     onSuccess={handleMemberSuccess}
+                    onNotify={setAlertState}
                 />
             )}
-
             {showEditMember && (
                 <Addmember
                     member={selectedMember}
@@ -827,6 +827,7 @@ const Members = () => {
                         setSelectedMember(null);
                     }}
                     onSuccess={handleMemberSuccess}
+                    onNotify={setAlertState}
                 />
             )}
 

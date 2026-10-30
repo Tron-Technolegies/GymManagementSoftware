@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { X, Camera, Upload } from "lucide-react";
 import api from "../../api/api";
 import ConfirmActionModal from "../../Components/ConfirmActionModal";
-import AlertMessage from "../../Components/AlertMessage";
+// import AlertMessage from "../../Components/AlertMessage";
 import Webcam from "react-webcam";
 
-const Addmember = ({ member, onClose, onSuccess }) => {
+const Addmember = ({ member, onClose, onSuccess, onNotify }) => {
     const [formData, setFormData] = useState({
         name: member?.name || "",
         phone: member?.phone || "",
@@ -45,11 +45,11 @@ const Addmember = ({ member, onClose, onSuccess }) => {
         type: "default",
     });
 
-    const [alertState, setAlertState] = useState({
-        show: false,
-        message: "",
-        type: "success",
-    });
+    // const [alertState, setAlertState] = useState({
+    //     show: false,
+    //     message: "",
+    //     type: "success",
+    // });
 
     useEffect(() => {
         fetchPlans();
@@ -144,21 +144,19 @@ const Addmember = ({ member, onClose, onSuccess }) => {
     };
 
 
+
+
     const handleConfirmSubmit = async () => {
         try {
             setConfirmLoading(true);
-
-            // Clear old errors
             setErrors({});
 
             const payload = new FormData();
 
             Object.keys(formData).forEach((key) => {
                 if (key === "plan") {
-                    // Send only Plan ID
                     payload.append("plan", String(formData.plan || ""));
                 } else if (key === "branch") {
-                    // Send only Branch ID
                     payload.append("branch", String(formData.branch || ""));
                 } else {
                     payload.append(key, formData[key] ?? "");
@@ -166,39 +164,85 @@ const Addmember = ({ member, onClose, onSuccess }) => {
             });
 
             if (member) {
+                // Existing edit-member API flow remains unchanged.
                 await api.post(
                     `admin/api/members/${member.id}/update/`,
                     payload
                 );
 
-                setAlertState({
+                setConfirmOpen(false);
+
+                if (onSuccess) {
+                    await onSuccess();
+                }
+
+                onClose();
+
+                onNotify?.({
                     show: true,
                     message: "Member updated successfully",
                     type: "success",
                 });
 
-            } else {
-                await api.post(
-                    "admin/api/members/create/",
-                    payload
-                );
-
-                setAlertState({
-                    show: true,
-                    message: "Member added successfully",
-                    type: "success",
-                });
+                return;
             }
 
+            // Create member and read the backend response.
+            const response = await api.post(
+                "admin/api/members/create/",
+                payload
+            );
+
+            const {
+                biometric_status,
+                biometric_message,
+                member_id,
+            } = response.data;
+
+            console.log("Created Member ID:", member_id);
+            console.log("Biometric Status:", biometric_status);
+            console.log("Biometric Message:", biometric_message);
+
+            let notification;
+
+            if (biometric_status === "registered") {
+                notification = {
+                    show: true,
+                    message: `Member ${member_id} created successfully. ${biometric_message || "Registered in eBioServer."
+                        }`,
+                    type: "success",
+                };
+            } else if (biometric_status === "pending") {
+                notification = {
+                    show: true,
+                    message: `Member ${member_id} created, but biometric registration is pending. ${biometric_message || ""
+                        }`,
+                    type: "warning",
+                };
+            } else {
+                notification = {
+                    show: true,
+                    message: `Member ${member_id || ""} added successfully.`,
+                    type: "success",
+                };
+            }
+
+            // Close the confirmation modal.
             setConfirmOpen(false);
 
+            // Close the form and show the notification immediately.
+            onClose();
+            onNotify?.(notification);
+
+            // Refresh members and dashboard after displaying the notification.
             if (onSuccess) {
-                await onSuccess();
+                try {
+                    await onSuccess();
+                } catch (refreshError) {
+                    console.error("Member created, but refresh failed:", refreshError);
+                }
             }
 
-            setTimeout(() => {
-                onClose();
-            }, 800);
         } catch (error) {
             console.error(
                 "Backend error:",
@@ -207,11 +251,8 @@ const Addmember = ({ member, onClose, onSuccess }) => {
 
             const backendError = error.response?.data;
 
-            if (
-                backendError?.error ===
-                "Mobile number already exists"
-            ) {
-                setAlertState({
+            if (backendError?.error === "Mobile number already exists") {
+                onNotify?.({
                     show: true,
                     message: "Mobile number already exists. Please use a different number.",
                     type: "error",
@@ -221,11 +262,8 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                 return;
             }
 
-            if (
-                backendError?.error ===
-                "Email already exists"
-            ) {
-                setAlertState({
+            if (backendError?.error === "Email already exists") {
+                onNotify?.({
                     show: true,
                     message: "Email already exists. Please use a different email.",
                     type: "error",
@@ -235,18 +273,18 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                 return;
             }
 
-            setAlertState({
+            onNotify?.({
                 show: true,
-                message:
-                    backendError?.error ||
-                    "Something went wrong",
+                message: backendError?.error || "Something went wrong",
                 type: "error",
             });
-
         } finally {
             setConfirmLoading(false);
         }
-    }
+    };
+
+
+
 
     const capture = async () => {
 
@@ -757,7 +795,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                 </div>
             </div>
 
-            <AlertMessage
+            {/* <AlertMessage
                 show={alertState.show}
                 message={alertState.message}
                 type={alertState.type}
@@ -767,7 +805,7 @@ const Addmember = ({ member, onClose, onSuccess }) => {
                         show: false,
                     }))
                 }
-            />
+            /> */}
 
             <ConfirmActionModal
                 isOpen={confirmOpen}
