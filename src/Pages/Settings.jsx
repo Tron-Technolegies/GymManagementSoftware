@@ -112,10 +112,10 @@ const Settings = () => {
     return (
         <div className="overflow-hidden">
             <div className="mb-2 m-5">
-                <h1 className="text-xl font-bold text-slate-900">
+                <h1 className="text-2xl font-bold text-gray-900">
                     Settings
                 </h1>
-                <p className="text-slate-500 text-sm">
+                <p className="text-slate-500 text-sm py-3">
                     Global system configuration and security preferences.
                 </p>
             </div>
@@ -313,7 +313,7 @@ const Settings = () => {
             </div>
 
             {/* Database Card */}
-            <div className="mt-4 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            {/* <div className="mt-4 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-xl bg-yellow-50 flex items-center justify-center">
@@ -365,7 +365,7 @@ const Settings = () => {
                         <Shield className="w-7 h-7 text-slate-300" />
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             <AlertMessage
                 show={alertState.show}
