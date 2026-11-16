@@ -360,8 +360,11 @@ const Members = () => {
 
             // Status filter
             if (active === "Due") {
-                matchesStatus = Number(member.due_amount) > 0;
-            } else if (active !== "All") {
+                matchesStatus =
+                    Number(member.paid_amount || 0) <= 0 ||
+                    Number(member.due_amount || 0) > 0;
+            }
+            else if (active !== "All") {
                 matchesStatus =
                     member.status?.toLowerCase() === active.toLowerCase();
             }
@@ -372,10 +375,15 @@ const Members = () => {
             }
 
             // Search filter
+            // const matchesSearch =
+            //     member.name?.toLowerCase().includes(search.toLowerCase()) ||
+            //     member.phone?.includes(search) ||
+            //     String(member.id).includes(search);
+
             const matchesSearch =
                 member.name?.toLowerCase().includes(search.toLowerCase()) ||
                 member.phone?.includes(search) ||
-                String(member.id).includes(search);
+                String(member.mbid || "").includes(search);
 
             return matchesStatus && matchesDate && matchesSearch;
         })
@@ -399,7 +407,7 @@ const Members = () => {
     const getStatusStyle = (status) => {
         switch (status) {
             case "Active":
-                return "bg-green-100 text-green-700";
+                return "bg-yellow-100 text-yellow-700";
             case "Expired":
                 return "bg-violet-100 text-violet-700";
             case "Blocked":
@@ -473,7 +481,7 @@ const Members = () => {
                         <p className="text-xs sm:text-sm text-slate-500 tracking-wide">
                             PAUSED MEMBERS
                         </p>
-                        <ShieldCheck size={22} className="text-green-500 shrink-0" />
+                        <ShieldCheck size={22} className="text-yellow-500 shrink-0" />
                     </div>
                     <h2 className="text-2xl md:text-3xl font-bold mt-3 text-slate-900">
                         {stats?.paused_members ?? 0}
@@ -485,7 +493,7 @@ const Members = () => {
                         <p className="text-xs sm:text-sm text-slate-500 tracking-wide">
                             EXPIRED MEMBERS
                         </p>
-                        <ShieldCheck size={22} className="text-yellow-500 shrink-0" />
+                        <ShieldCheck size={22} className="text-green-500 shrink-0" />
                     </div>
                     <h2 className="text-2xl md:text-3xl font-bold mt-3 text-slate-900">
                         {stats?.expired_members ?? 0}
@@ -632,7 +640,7 @@ const Members = () => {
                             <th className="w-[110px] px-6 py-4 text-left text-xs font-bold text-slate-600">
                                 BRANCH
                             </th>
-                            <th className="w-[140px] px-6 py-4 text-left text-xs font-bold text-slate-600">
+                            <th className="w-[170px] px-6 py-4 text-left text-xs font-bold text-slate-600">
                                 JOIN DATE
                             </th>
                             <th className="w-[140px] px-6 py-4 text-left text-xs font-bold text-slate-600">
@@ -659,7 +667,11 @@ const Members = () => {
                                 onClick={() => handleViewMember(member.id)}
                             >
                                 <td className="px-6 py-4 text-sm font-medium whitespace-nowrap">
-                                    #{member.id}
+                                    {/* #{member.id} */}
+                                    {/* {member.mbid ? `#${member.mbid}` : "—"} */}
+                                    {member.mbid || member.id
+                                        ? `#${member.mbid || member.id}`
+                                        : "—"}
                                 </td>
 
                                 <td className="px-6 py-4">
@@ -735,7 +747,43 @@ const Members = () => {
                                             <Bolt size={20} className="text-purple-600" />
                                         </button>
 
-                                        {member.due_amount <= 0 ? (
+                                        {Number(member.paid_amount || 0) > 0 &&
+                                            Number(member.due_amount || 0) <= 0 ? (
+                                            // Fully Paid
+                                            <span className="pt-2 px-2 bg-yellow-100 rounded-full text-xs">
+                                                <CircleCheckBig size={18} className="text-yellow-600" />
+                                            </span>
+                                        ) : (
+                                            // Due / No Payment
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+
+                                                    if (member.status === "Blocked") {
+                                                        setAlertState({
+                                                            show: true,
+                                                            message: "Blocked members cannot make payments",
+                                                            type: "warning",
+                                                        });
+                                                        return;
+                                                    }
+
+                                                    setSelectedMember(member);
+                                                    setShowPaymentForm(true);
+                                                }}
+                                            >
+                                                <X
+                                                    size={25}
+                                                    className={
+                                                        member.status === "Blocked"
+                                                            ? "text-red-600 rounded-md hover:bg-red-100"
+                                                            : "text-yellow-600"
+                                                    }
+                                                />
+                                            </button>
+                                        )}
+
+                                        {/* {member.due_amount <= 0 ? (
                                             <span className="pt-2 px-2 bg-yellow-100 rounded-full text-xs">
                                                 <CircleCheckBig size={18} className="text-yellow-600" />
                                             </span>
@@ -762,21 +810,21 @@ const Members = () => {
                                                     className={
                                                         member.status === "Blocked"
                                                             ? "text-red-600 hover-p- rounded-md hover:bg-red-100"
-                                                            : "text-green-600"
+                                                            : "text-yellow-600"
                                                     }
                                                 />
                                             </button>
-                                        )}
+                                        )} */}
 
                                         <button
-                                            className="p-2 rounded-md hover:bg-yellow-100"
+                                            className="p-2 rounded-md hover:bg-green-100"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 setSelectedMember(member);
                                                 setShowEditMember(true);
                                             }}
                                         >
-                                            <Pencil size={18} className="text-yellow-600" />
+                                            <Pencil size={18} className="text-green-600" />
                                         </button>
                                         {["SUPER_ADMIN", "TENANT_ADMIN", "BRANCH_ADMIN"].includes(user?.role) && (
                                             <button
@@ -850,7 +898,8 @@ const Members = () => {
                             <p className="text-sm text-black mb-4">
                                 Member:{" "}
                                 <span className="font-semibold">
-                                    {selectedMember?.id}/{selectedMember?.name}
+                                    {/* {selectedMember?.id}/{selectedMember?.name} */}
+                                    {selectedMember?.mbid || "N/A"}/{selectedMember?.name}
                                 </span>
                             </p>
 
@@ -942,7 +991,8 @@ const Members = () => {
 
                         <div className="space-y-4">
                             <input
-                                value={`${selectedMember?.id}/${selectedMember?.name}`}
+                                // value={`${selectedMember?.id}/${selectedMember?.name}`}
+                                value={`${selectedMember?.mbid || "N/A"}/${selectedMember?.name}`}
                                 readOnly
                                 className="w-full border border-slate-300 shadow-md rounded-lg px-3 py-2 bg-slate-50"
                             />

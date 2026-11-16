@@ -88,11 +88,11 @@ const WeeklySchedule = ({ workout }) => {
                                                     </p>
                                                 </div>
 
-                                                <div className="bg-blue-50 rounded-lg p-3 text-center">
-                                                    <p className="text-xs text-blue-500 uppercase">
+                                                <div className="bg-yellow-50 rounded-lg p-3 text-center">
+                                                    <p className="text-xs text-yellow-500 uppercase">
                                                         Reps
                                                     </p>
-                                                    <p className="text-lg font-bold text-blue-700 mt-1">
+                                                    <p className="text-lg font-bold text-yellow-700 mt-1">
                                                         {workoutItem.reps}
                                                     </p>
                                                 </div>

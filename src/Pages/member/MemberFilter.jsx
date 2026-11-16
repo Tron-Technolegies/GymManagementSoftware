@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import {
     ShoppingCart,
@@ -68,10 +69,10 @@ const MemberFilter = () => {
                             <button
                                 key={option}
                                 onClick={() => setPeriod(option)}
-                                className={`px - 5 py - 2.5 rounded - xl text - sm font - medium transition - all ${period === option
-                                    ? "bg-slate-900 text-white shadow-sm"
-                                    : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-                                    } `}
+                                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${period === option
+                                        ? "bg-slate-900 text-white shadow-sm"
+                                        : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                                    }`}
                             >
                                 {periodLabel[option]}
                             </button>
@@ -82,6 +83,7 @@ const MemberFilter = () => {
                 {/* Custom Date Range */}
                 {period === "custom" && (
                     <div className="flex flex-col sm:flex-row gap-3">
+
                         <div className="flex flex-col gap-1">
                             <label className="text-xs font-medium text-slate-500">
                                 From
@@ -130,7 +132,7 @@ const MemberFilter = () => {
                             <div className="flex items-center gap-5">
 
                                 <div
-                                    className={`w - 11 h - 11 rounded - xl flex items - center justify - center ${card.iconStyle} `}
+                                    className={`w-11 h-11 rounded-xl flex items-center justify-center ${card.iconStyle}`}
                                 >
                                     <Icon size={22} />
                                 </div>
@@ -158,3 +160,5 @@ const MemberFilter = () => {
         </div>
     );
 };
+
+export default MemberFilter;

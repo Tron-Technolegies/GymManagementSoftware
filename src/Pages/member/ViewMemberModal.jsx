@@ -86,7 +86,7 @@ const ViewMemberModal = ({ member, onClose }) => {
         switch (status) {
 
             case "Active":
-                return "bg-green-100 text-green-700";
+                return "bg-yellow-100 text-yellow-700";
 
             case "Blocked":
                 return "bg-red-100 text-red-700";
@@ -281,21 +281,26 @@ const ViewMemberModal = ({ member, onClose }) => {
                                 <div className="w-44 h-44 rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
 
                                     {memberData?.photo ? (
-
                                         <img
-                                            src={memberData.photo}
+                                            key={memberData.photo}
+                                            src={memberData.photo.trim()}
                                             alt={memberData.name}
                                             className="w-full h-full object-cover"
+                                            onLoad={() => {
+                                                console.log("Member image loaded:", memberData.photo);
+                                            }}
+                                            onError={(e) => {
+                                                console.error(
+                                                    "Member image failed:",
+                                                    memberData.photo
+                                                );
+                                                console.error("Image error:", e);
+                                            }}
                                         />
-
                                     ) : (
-
                                         <div className="w-full h-full flex items-center justify-center text-5xl font-bold text-slate-400">
-
                                             {memberData?.name?.charAt(0)}
-
                                         </div>
-
                                     )}
 
                                 </div>
@@ -324,7 +329,7 @@ const ViewMemberModal = ({ member, onClose }) => {
                                                 : setShowPauseModal(true)
                                         }
                                         className={`flex items-center gap-2 rounded-md px-4 py-2 text-white ${memberData?.is_paused
-                                            ? "bg-green-600"
+                                            ? "bg-yellow-600"
                                             : "bg-yellow-500"
                                             }`}
                                     >
@@ -348,7 +353,7 @@ const ViewMemberModal = ({ member, onClose }) => {
                                     <button
                                         onClick={handleGenerateDiet}
                                         disabled={loadingDiet}
-                                        className="inline-flex items-center gap-2 rounded-lg bg-blue-500 px-3 py-2 text-white hover:bg-blue-700 disabled:opacity-60"
+                                        className="inline-flex items-center gap-2 rounded-lg bg-yellow-500 px-3 py-2 text-white hover:bg-yellow-700 disabled:opacity-60"
                                     >
 
                                         <Sparkles size={16} />
@@ -396,14 +401,14 @@ const ViewMemberModal = ({ member, onClose }) => {
 
                                         {showWorkoutLevels && !loadingWorkout && (
 
-                                            <div className="absolute left-0 right-0 mt-2 bg-blue-200 border border-slate-200 rounded-lg shadow-lg overflow-hidden z-50 ">
+                                            <div className="absolute left-0 right-0 mt-2 bg-yellow-200 border border-slate-200 rounded-lg shadow-lg overflow-hidden z-50 ">
 
                                                 <button
                                                     type="button"
                                                     onClick={() =>
                                                         handleGenerateWorkout("beginner")
                                                     }
-                                                    className="w-full px-4 py-3 text-left text-sm font-medium text-blue-700 hover:bg-slate-50"
+                                                    className="w-full px-4 py-3 text-left text-sm font-medium text-yellow-700 hover:bg-slate-50"
                                                 >
                                                     Beginner
                                                 </button>
@@ -414,7 +419,7 @@ const ViewMemberModal = ({ member, onClose }) => {
                                                     onClick={() =>
                                                         handleGenerateWorkout("intermediate")
                                                     }
-                                                    className="w-full px-4 py-3 text-left text-sm font-medium text-blue-700 hover:bg-slate-50 border-t border-slate-100"
+                                                    className="w-full px-4 py-3 text-left text-sm font-medium text-yellow-700 hover:bg-slate-50 border-t border-slate-100"
                                                 >
                                                     Intermediate
                                                 </button>
@@ -425,7 +430,7 @@ const ViewMemberModal = ({ member, onClose }) => {
                                                     onClick={() =>
                                                         handleGenerateWorkout("advanced")
                                                     }
-                                                    className="w-full px-4 py-4 text-left text-sm font-medium text-blue-700 hover:bg-slate-50 border-t border-slate-100"
+                                                    className="w-full px-4 py-4 text-left text-sm font-medium text-yellow-700 hover:bg-slate-50 border-t border-slate-100"
                                                 >
                                                     Advanced
                                                 </button>

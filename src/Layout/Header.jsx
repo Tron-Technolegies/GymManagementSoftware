@@ -16,7 +16,7 @@ const Header = ({ setSidebarOpen }) => {
 
                 <div className="flex items-center gap-3">
                     <button
-                        className="p-2 -ml-2 text-slate-600 lg:hidden hover:bg-slate-100 rounded-lg"
+                        className="p-2 -ml-2 text-slate-600 lg:hidden hover:bg-zzzzzz-100 rounded-lg"
                         onClick={() => setSidebarOpen(true)}
                     >
                         <Menu size={24} />

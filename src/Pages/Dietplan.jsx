@@ -72,7 +72,7 @@ const DietPlan = ({
                                 }
                             )
                         }
-                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4 py-2"
+                        className="flex items-center gap-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg px-4 py-2"
                     >
 
                         <ArrowDownToLine size={18} />
