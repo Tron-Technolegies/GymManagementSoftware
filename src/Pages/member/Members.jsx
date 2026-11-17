@@ -188,10 +188,27 @@ const Members = () => {
         }
     };
 
-    const handleViewMember = async (id) => {
+    // const handleViewMember = async (id) => {
+    //     try {
+    //         const res = await api.get(`admin/api/members/${id}/`);
+    //         setSelectedMember(res.data);
+    //         setshowMember(true);
+    //     } catch (error) {
+    //         console.error("Error fetching member:", error);
+    //     }
+    // };
+    const handleViewMember = async (member) => {
         try {
-            const res = await api.get(`admin/api/members/${id}/`);
-            setSelectedMember(res.data);
+            const res = await api.get(
+                `admin/api/members/${member.id}/`
+            );
+
+            setSelectedMember({
+                ...member,
+                ...res.data,
+                mbid: res.data.mbid ?? member.mbid,
+            });
+
             setshowMember(true);
         } catch (error) {
             console.error("Error fetching member:", error);
@@ -664,7 +681,7 @@ const Members = () => {
                             <tr
                                 key={member.id}
                                 className="hover:bg-slate-50 transition"
-                                onClick={() => handleViewMember(member.id)}
+                                onClick={() => handleViewMember(member)}
                             >
                                 <td className="px-6 py-4 text-sm font-medium whitespace-nowrap">
                                     {/* #{member.id} */}

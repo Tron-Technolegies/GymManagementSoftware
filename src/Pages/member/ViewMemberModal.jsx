@@ -41,9 +41,13 @@ const ViewMemberModal = ({ member, onClose }) => {
 
     React.useEffect(() => {
         if (fetchedMember) {
-            setMemberData(fetchedMember);
+            setMemberData((prev) => ({
+                ...prev,
+                ...fetchedMember,
+                mbid: fetchedMember.mbid ?? prev?.mbid ?? member?.mbid,
+            }));
         }
-    }, [fetchedMember]);
+    }, [fetchedMember, member?.mbid]);
 
 
     // =========================
@@ -464,7 +468,7 @@ const ViewMemberModal = ({ member, onClose }) => {
 
                                         <DetailCard
                                             label="Member ID"
-                                            value={memberData?.id}
+                                            value={memberData?.mbid || memberData?.id}
                                         />
 
                                         <DetailCard
