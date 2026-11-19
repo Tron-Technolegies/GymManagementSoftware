@@ -1,8 +1,26 @@
-import React from "react";
+
+import React, { useState, useEffect } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import { sendWhatsApp } from "../../utils/sendWhatsApp";
+import Pagination from "../Pagination";
 
 const Upcomingexpiry = ({ expiredMembers = [] }) => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [expiredMembers]);
+
+    const totalItems = expiredMembers.length;
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+
+    const paginatedMembers = expiredMembers.slice(
+        startIndex,
+        startIndex + itemsPerPage
+    );
+
     return (
         <div className="lg:col-span-2 min-w-0">
             <div className="p-4 border-b border-slate-100">
@@ -34,8 +52,8 @@ const Upcomingexpiry = ({ expiredMembers = [] }) => {
                     </thead>
 
                     <tbody>
-                        {expiredMembers.length > 0 ? (
-                            expiredMembers.map((m, i) => (
+                        {paginatedMembers.length > 0 ? (
+                            paginatedMembers.map((m, i) => (
                                 <tr
                                     key={m.id ?? i}
                                     className="border-t border-slate-100 hover:bg-slate-50 transition"
@@ -80,6 +98,13 @@ const Upcomingexpiry = ({ expiredMembers = [] }) => {
                         )}
                     </tbody>
                 </table>
+
+                <Pagination
+                    currentPage={currentPage}
+                    totalItems={totalItems}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                />
             </div>
         </div>
     );

@@ -1,7 +1,8 @@
-import React from "react";
+
+import React, { useState, useEffect } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import { sendPlanExpiryWhatsApp } from "../../utils/sendWhatsApp";
-
+import Pagination from "../Pagination";
 
 const Blockedmember = ({
     blockedMembers = [],
@@ -19,7 +20,30 @@ const Blockedmember = ({
     setShowRenewConfirm,
 }) => {
 
-    // Get selected plan object from the plan ID
+    // -------------------------------------------------
+    // PAGINATION
+    // -------------------------------------------------
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [blockedMembers]);
+
+    const totalItems = blockedMembers.length;
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+
+    const paginatedMembers = blockedMembers.slice(
+        startIndex,
+        startIndex + itemsPerPage
+    );
+
+    // -------------------------------------------------
+    // SELECTED PLAN
+    // -------------------------------------------------
+
     const selectedPlan = plans.find(
         (plan) =>
             String(plan.id) === String(renewForm?.plan)
@@ -73,12 +97,11 @@ const Blockedmember = ({
 
                             </thead>
 
-
                             <tbody>
 
-                                {blockedMembers.length > 0 ? (
+                                {paginatedMembers.length > 0 ? (
 
-                                    blockedMembers.map((m, i) => (
+                                    paginatedMembers.map((m, i) => (
 
                                         <tr
                                             key={m.id || i}
@@ -91,13 +114,11 @@ const Blockedmember = ({
                                                 {m.name || "N/A"}
                                             </td>
 
-
                                             {/* PHONE */}
 
                                             <td className="p-4 text-sm text-slate-600">
                                                 {m.phone || "N/A"}
                                             </td>
-
 
                                             {/* JOIN DATE */}
 
@@ -105,13 +126,11 @@ const Blockedmember = ({
                                                 {m.join_date || "N/A"}
                                             </td>
 
-
                                             {/* EXPIRY DATE */}
 
                                             <td className="p-4 text-sm text-slate-600">
                                                 {m.expiry_date || "N/A"}
                                             </td>
-
 
                                             {/* ACTIONS */}
 
@@ -130,7 +149,6 @@ const Blockedmember = ({
                                                     >
                                                         <FaWhatsapp size={18} />
                                                     </button>
-
 
                                                     {/* RENEW */}
 
@@ -171,12 +189,20 @@ const Blockedmember = ({
 
                         </table>
 
+                        {/* PAGINATION */}
+
+                        <Pagination
+                            currentPage={currentPage}
+                            totalItems={totalItems}
+                            itemsPerPage={itemsPerPage}
+                            onPageChange={setCurrentPage}
+                        />
+
                     </div>
 
                 </div>
 
             </div>
-
 
             {/* =====================================================
                 RENEW MEMBERSHIP MODAL
@@ -193,7 +219,6 @@ const Blockedmember = ({
                         <h2 className="text-lg font-bold text-slate-800 mb-5">
                             Renew Membership
                         </h2>
-
 
                         <div className="space-y-4">
 
@@ -212,7 +237,6 @@ const Blockedmember = ({
                                 />
 
                             </div>
-
 
                             {/* PLAN */}
 
@@ -247,7 +271,6 @@ const Blockedmember = ({
 
                             </div>
 
-
                             {/* PLAN DETAILS */}
 
                             {selectedPlan && (
@@ -266,7 +289,6 @@ const Blockedmember = ({
 
                                     </div>
 
-
                                     <div className="flex justify-between text-sm mb-1">
 
                                         <span className="text-slate-500">
@@ -278,7 +300,6 @@ const Blockedmember = ({
                                         </span>
 
                                     </div>
-
 
                                     <div className="flex justify-between text-sm">
 
@@ -295,7 +316,6 @@ const Blockedmember = ({
                                 </div>
 
                             )}
-
 
                             {/* NEW EXPIRY */}
 
@@ -314,7 +334,6 @@ const Blockedmember = ({
 
                             </div>
 
-
                             {/* BUTTONS */}
 
                             <div className="flex justify-end gap-2 pt-2">
@@ -326,7 +345,6 @@ const Blockedmember = ({
                                 >
                                     Cancel
                                 </button>
-
 
                                 <button
                                     type="button"
@@ -350,7 +368,6 @@ const Blockedmember = ({
 
             )}
 
-
             {/* =====================================================
                 CONFIRMATION MODAL
             ===================================================== */}
@@ -367,7 +384,6 @@ const Blockedmember = ({
                             Confirm Renewal
                         </h2>
 
-
                         {/* MESSAGE */}
 
                         <p className="text-slate-600 mb-4">
@@ -382,7 +398,6 @@ const Blockedmember = ({
 
                         </p>
 
-
                         {/* RENEWAL DETAILS */}
 
                         <div className="bg-slate-50 rounded-lg p-4 mb-5 text-sm text-slate-700 space-y-2">
@@ -396,13 +411,10 @@ const Blockedmember = ({
                                 </span>
 
                                 <span className="font-semibold text-slate-900">
-
                                     {selectedPlan?.name || "Not selected"}
-
                                 </span>
 
                             </div>
-
 
                             {/* DURATION */}
 
@@ -422,7 +434,6 @@ const Blockedmember = ({
 
                             )}
 
-
                             {/* PRICE */}
 
                             {selectedPlan && (
@@ -441,7 +452,6 @@ const Blockedmember = ({
 
                             )}
 
-
                             {/* NEW EXPIRY */}
 
                             <div className="flex justify-between">
@@ -458,7 +468,6 @@ const Blockedmember = ({
 
                         </div>
 
-
                         {/* BUTTONS */}
 
                         <div className="flex justify-end gap-3">
@@ -472,7 +481,6 @@ const Blockedmember = ({
                             >
                                 Cancel
                             </button>
-
 
                             <button
                                 type="button"
